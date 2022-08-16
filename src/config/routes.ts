@@ -1,5 +1,5 @@
-export const RoutePats = {
-	Entry: '/',
-	Register: '/register',
-	Login: '/login'
+export enum RoutePaths {
+	Register = '/register',
+	Login = '/login',
+	Entry = '/',
 }
