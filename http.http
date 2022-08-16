@@ -1,0 +1,20 @@
+//sign in
+POST https://rslang-project1.herokuapp.com/signin
+Content-Type: application/json
+
+{
+    "email": "test@email.com",
+    "password": "test1234"
+}
+
+###
+
+//create user
+POST https://rslang-project1.herokuapp.com/users
+Content-Type: application/json
+
+{
+  "name": "test-user",
+  "email": "test@email.com",
+  "password": "test1234"
+}
