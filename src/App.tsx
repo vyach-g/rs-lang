@@ -1,13 +1,15 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Pages from './pages/Pages';
+import AuthContextProvider from './context/AuthContextProvider';
 
 function App() {
   return (
-    <div className="App">
-      <Pages />
-    </div>
+    <AuthContextProvider>
+      <div className="App">
+        <Pages />
+      </div>
+    </AuthContextProvider>
   );
 }
 
