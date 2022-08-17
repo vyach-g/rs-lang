@@ -1,14 +1,12 @@
 import React from 'react';
-import './App.css';
-import Pages from './pages/Pages';
+
 import AuthContextProvider from './context/AuthContextProvider';
+import { DefaultRoutes } from './components/routing';
 
 function App() {
   return (
     <AuthContextProvider>
-      <div className="App">
-        <Pages />
-      </div>
+      <DefaultRoutes />
     </AuthContextProvider>
   );
 }

@@ -1,16 +1,21 @@
 import React from 'react';
+
 import { Link } from 'react-router-dom';
+
 import { signIn } from '../../api/apiCalls';
 import { RoutePaths } from '../../config/routes';
 import { useAuthContext } from '../../context/AuthContextProvider';
 
-export default function Login() {
+import Box from '@mui/material/Box';
+import { Button, Stack, TextField, Typography } from '@mui/material';
+
+const Login = () => {
   const { setAuth } = useAuthContext();
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-    const target = e.target as HTMLFormElement;
+    const target = event.target as HTMLFormElement;
 
     const credentials = {
       email: target.email.value,
@@ -19,29 +24,58 @@ export default function Login() {
 
     const response = await signIn(credentials);
     setAuth(response?.data);
-  }
+  };
 
   return (
-    <div>
-      <div>Login</div>
-      <p>
-        Dont have account?
-        <Link to={RoutePaths.Register}>Register</Link>
-      </p>
-
+    <Box
+      sx={{
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Typography variant="h2">Login</Typography>
       <form onSubmit={handleSubmit}>
-        <label>
-          email
-          <input type="email" id="email" />
-        </label>
-
-        <label>
-          password
-          <input type="password" id="password" />
-        </label>
-
-        <button type="submit">Submit</button>
+        <Stack>
+          <TextField
+            variant="filled"
+            label="Username"
+            type="email"
+            name="Name"
+            margin="normal"
+            sx={{ width: '310px' }}
+          />
+          <TextField
+            variant="filled"
+            label="Password"
+            type="password"
+            name="Name"
+            margin="normal"
+            sx={{ width: '310px' }}
+          />
+          <Button variant="contained" type="submit" sx={{ mt: '1rem' }}>
+            Login
+          </Button>
+        </Stack>
       </form>
-    </div>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          pt: '1rem',
+          gap: '1rem',
+        }}
+      >
+        {"Don't have an account?"} <br />
+        <Link to={RoutePaths.Register}>
+          <Button variant="contained">Register</Button>
+        </Link>
+      </Box>
+    </Box>
   );
-}
+};
+
+export { Login };
