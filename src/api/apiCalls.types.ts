@@ -31,7 +31,6 @@ export type WordDTO = {
   textExampleTranslate: string;
 };
 
-export type WordsDTO = Array<WordDTO>;
 //#endregion
 
 //#region Users
