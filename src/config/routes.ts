@@ -3,3 +3,4 @@ export enum RoutePaths {
 	Login = '/login',
 	Entry = '/',
 }
+
