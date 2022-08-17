@@ -6,8 +6,7 @@ import { signIn } from '../../api/apiCalls';
 import { RoutePaths } from '../../config/routes';
 import { useAuthContext } from '../../context/AuthContextProvider';
 
-import Box from '@mui/material/Box';
-import { Button, Stack, TextField, Typography } from '@mui/material';
+import { Button, Stack, Typography, FormControl, Input, InputLabel, Box } from '@mui/material';
 
 const Login = () => {
   const { setAuth } = useAuthContext();
@@ -39,22 +38,15 @@ const Login = () => {
       <Typography variant="h2">Login</Typography>
       <form onSubmit={handleSubmit}>
         <Stack>
-          <TextField
-            variant="filled"
-            label="Username"
-            type="email"
-            name="Name"
-            margin="normal"
-            sx={{ width: '310px' }}
-          />
-          <TextField
-            variant="filled"
-            label="Password"
-            type="password"
-            name="Name"
-            margin="normal"
-            sx={{ width: '310px' }}
-          />
+          <FormControl variant="standard">
+            <InputLabel htmlFor="email">Email</InputLabel>
+            <Input id="email" type="email" />
+          </FormControl>
+
+          <FormControl variant="standard">
+            <InputLabel htmlFor="password">Password</InputLabel>
+            <Input id="password" type="password" />
+          </FormControl>
           <Button variant="contained" type="submit" sx={{ mt: '1rem' }}>
             Login
           </Button>
