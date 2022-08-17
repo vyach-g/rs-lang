@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { SignUpCredentials } from './apiCalls.types';
+import { SignInBody } from './apiCalls.types';
 import { API_URL } from './apiUrl';
 
-export const signIn = (body: SignUpCredentials) => {
+export const signIn = (body: SignInBody) => {
   return axios.post(`${API_URL}/signin`, body);
 };
