@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import validator from 'validator';
 
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { signIn } from '../../api/apiCalls';
 import { RoutePaths } from '../../config/routes';
@@ -20,6 +21,8 @@ import {
 import { withAsync } from '../../api/helpers/withAsync';
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const { setAuth } = useAuthContext();
   const [errorMsg, setErrorMsg] = useState<string>('');
 
@@ -33,7 +36,10 @@ const Login = () => {
       email: target.email.value,
       password: target.password.value,
     };
-
+    if (!validator.isEmail(credentials.email)) {
+      setErrorMsg('Введите правильный email');
+      return;
+    }
     const { response, error } = await withAsync(() => signIn(credentials));
     if (error) {
       if (error instanceof Error) {
@@ -41,6 +47,7 @@ const Login = () => {
       }
     } else if (response) {
       setAuth(response?.data);
+      navigate('/');
     }
   };
 
@@ -59,12 +66,12 @@ const Login = () => {
         <Stack>
           <FormControl variant="standard">
             <InputLabel htmlFor="email">Email</InputLabel>
-            <Input id="email" type="email" />
+            <Input id="email" type="email" required />
           </FormControl>
 
           <FormControl variant="standard">
             <InputLabel htmlFor="password">Password</InputLabel>
-            <Input id="password" type="password" />
+            <Input id="password" type="password" required />
           </FormControl>
           <Button variant="contained" type="submit" sx={{ mt: '1rem' }}>
             Login
