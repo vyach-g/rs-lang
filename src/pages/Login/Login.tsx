@@ -55,16 +55,13 @@ const Login = () => {
       <Box
         sx={{
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
-          pt: '1rem',
+          mt: '2rem',
           gap: '1rem',
         }}
       >
         {"Don't have an account?"} <br />
-        <Link to={RoutePaths.Register}>
-          <Button variant="contained">Register</Button>
-        </Link>
+        <Link to={RoutePaths.Register}>Register</Link>
       </Box>
     </Box>
   );
