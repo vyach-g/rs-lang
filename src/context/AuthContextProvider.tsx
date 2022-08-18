@@ -1,23 +1,16 @@
 import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { contextFactory } from './helpers/contextFactory';
 import storage from '../storage/storage';
-
-export type AuthData = {
-  message: string;
-  token: string;
-  refreshToken: string;
-  userId: string;
-  name: string;
-};
+import { SignInDTO } from '../api/apiCalls.types';
 
 const [useAuthContext, AuthContext] = contextFactory<{
-  auth: AuthData | null;
-  setAuth: React.Dispatch<React.SetStateAction<AuthData | null>>;
+  auth: SignInDTO | null;
+  setAuth: React.Dispatch<React.SetStateAction<SignInDTO | null>>;
 }>();
 export { useAuthContext };
 
 export default function AuthContextProvider({ children }: PropsWithChildren) {
-  const [auth, setAuth] = useState(storage.getItem<AuthData>('auth'));
+  const [auth, setAuth] = useState(storage.getItem<SignInDTO>('auth'));
 
   const values = {
     auth,
