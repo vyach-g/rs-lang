@@ -29,8 +29,13 @@ export const signIn = (body: SignInBody) => {
 };
 
 //words
-export const getWords = () => {
-  return axios.get<Array<WordDTO>>(`${API_URL}/words`);
+export const getWords = (group?: number, page?: number) => {
+  return axios.get<Array<WordDTO>>(`${API_URL}/words`, {
+    params: {
+      group,
+      page,
+    },
+  });
 };
 
 export const getWordById = (id: string) => {
@@ -76,8 +81,19 @@ export const deleteUserWord = (id: string, wordId: string) => {
 };
 
 //users-aggregatedWords   TODO
-export const getUserAggregatedWords = (id: string) => {
-  return axios.get<Array<UserWordsDTO>>(`${API_URL}/users/${id}/aggregatedWords`);
+export const getUserAggregatedWords = (
+  id: string,
+  group?: number,
+  page?: number,
+  wordsPerPage?: number
+) => {
+  return axios.get<Array<UserWordsDTO>>(`${API_URL}/users/${id}/aggregatedWords`, {
+    params: {
+      group,
+      page,
+      wordsPerPage,
+    },
+  });
 };
 
 export const getUserAggregatedWordsById = (id: string, wordId: string) => {
