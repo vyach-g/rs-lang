@@ -33,6 +33,9 @@ const Entry = () => {
       >
         {greeting}
       </div>
+      <div>
+        <Link to="/games">Games</Link>
+      </div>
     </Default>
   );
 };
