@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useCountdown } from 'usehooks-ts';
 import { getWords } from '../../../api/apiCalls';
 import { WordDTO } from '../../../api/apiCalls.types';
@@ -32,16 +32,16 @@ const difficultyButtons = [
   },
 ];
 
-export default function SpringGame() {
-  const [words, setWords] = useState<Array<WordDTO>>([]);
+export default function SprintGame({ customWords = [] }: { customWords?: Array<WordDTO> }) {
+  const [words, setWords] = useState<Array<WordDTO>>(customWords);
   const [count, { startCountdown, resetCountdown }] = useCountdown({
-    countStart: 10,
+    countStart: 20,
     intervalMs: 1000,
   });
 
   const [level, setLevel] = useState<number | undefined>(undefined);
 
-  const [isGameStarted, setIsGameStarted] = useState(false);
+  const [isGameStarted, setIsGameStarted] = useState(customWords.length ? true : false);
 
   function selectDifficulty(level: number) {
     setLevel(level);
@@ -76,6 +76,7 @@ export default function SpringGame() {
       count={count}
       resetCountdown={resetCountdown}
       startCountdown={startCountdown}
+      setIsGameStarted={setIsGameStarted}
     />
   );
 }
