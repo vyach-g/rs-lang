@@ -1,5 +1,10 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { WordDTO } from '../../../api/apiCalls.types';
+import './SprintCard.css';
+
+function randomizer(wordIndex: number) {
+  return Math.random() - 0.6 < 0 ? wordIndex : Math.floor(Math.random() * 19);
+}
 
 export default function SprintCard({
   count,
@@ -11,7 +16,7 @@ export default function SprintCard({
   setIsLastWord: Dispatch<SetStateAction<boolean>>;
 }) {
   const [wordIndex, setWordIndex] = useState(0);
-
+  const [randomIndex, setRandomIndex] = useState(() => randomizer(wordIndex));
   useEffect(() => {
     if (wordIndex >= words.length) {
       setIsLastWord(true);
@@ -23,14 +28,28 @@ export default function SprintCard({
       <h3>{count}</h3>
 
       <div>
-        <audio controls key={wordIndex}>
+        <audio
+          controls
+          controlsList="nodownload noplaybackrate nofullscreen"
+          autoPlay
+          key={wordIndex}
+        >
           <source
             src={`https://rslang-project1.herokuapp.com/${words[wordIndex].audio}`}
             type="audio/mp3"
           />
         </audio>
-        <span>{words[wordIndex].word}</span> <span>{words[0].wordTranslate}</span>
-        <button onClick={() => setWordIndex((current) => current + 1)}>Correct</button>
+        <span>{words[wordIndex].word}</span> <span>{words[randomIndex].wordTranslate}</span>
+        <button
+          onClick={() => {
+            {
+              setWordIndex((current) => current + 1);
+              setRandomIndex(randomizer(wordIndex + 1));
+            }
+          }}
+        >
+          Correct
+        </button>
         <button>Wrong</button>
       </div>
     </div>
