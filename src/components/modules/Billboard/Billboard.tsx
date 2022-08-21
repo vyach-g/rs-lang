@@ -17,12 +17,15 @@ const BillboardCustom = styled('section')(({ theme }) => ({
 
 const BillboardContainer = styled('div')(({ theme }) => ({
   display: 'flex',
+  flexDirection: 'row-reverse',
   alignItems: 'center',
   justifyContent: 'center',
   rowGap: '1.4rem',
+  columnGap: '4rem',
   padding: '0 24px',
   [theme.breakpoints.down('md')]: {
     flexDirection: 'column-reverse',
+    columnGap: '0',
   },
 }));
 
@@ -69,7 +72,7 @@ const BillboardSubmit = styled(Button)(({ theme }) => ({
   borderWidth: '2px',
   borderColor: 'black',
   color: 'black',
-  padding: '.5rem 1.5rem',
+  padding: '.3rem 1.5rem',
   '&:hover': {
     borderColor: 'black',
     borderWidth: '2px',
@@ -86,7 +89,7 @@ const BillboardImage = styled('img')(({ theme }) => ({
   height: 'auto',
   opacity: '0.8',
   [theme.breakpoints.down('md')]: {
-    maxWidth: '300px',
+    maxWidth: '320px',
     marginTop: '0',
   },
   [theme.breakpoints.down('sm')]: {

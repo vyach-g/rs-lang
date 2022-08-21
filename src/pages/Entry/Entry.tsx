@@ -1,23 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import { Link } from 'react-router-dom';
 import { Default } from '../../components/layout';
+
+import { About, Billboard, Crew } from '../../components/modules';
 
 const Entry = () => {
   return (
     <Default>
-      <div
-        style={{
-          display: 'flex',
-          gap: '2rem',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '95vh',
-        }}
-      >
-        I am the entry page. <br />
-        <Link to="/login">You should login first</Link>
-      </div>
+      <Billboard />
+      <About />
+      <Crew />
     </Default>
   );
 };
