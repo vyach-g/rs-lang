@@ -17,11 +17,39 @@ export default function Sprint({
 }) {
   const [isLastWord, setIsLastWord] = useState(false);
 
+  const [wordResults, setWordResults] = useState<Array<WordDTO & { status: string }>>([]);
+
+  function onRightClick(wordIndex: number, randomIndex: number) {
+    const currentWord = words[wordIndex];
+    const translateWord = words[randomIndex];
+
+    if (currentWord.id === translateWord.id) {
+      setWordResults([...wordResults, { ...currentWord, status: 'correct' }]);
+    } else {
+      setWordResults([...wordResults, { ...currentWord, status: 'wrong' }]);
+    }
+  }
+
+  function onWrongClick(wordIndex: number, randomIndex: number) {
+    const currentWord = words[wordIndex];
+    const translateWord = words[randomIndex];
+
+    if (currentWord.id === translateWord.id) {
+      setWordResults([...wordResults, { ...currentWord, status: 'wrong' }]);
+    } else {
+      setWordResults([...wordResults, { ...currentWord, status: 'correct' }]);
+    }
+  }
+
   return (
     <div>
       {count === 0 || isLastWord ? (
         <h1>
-          modal{' '}
+          {wordResults.map((word) => (
+            <div key={word.id}>
+              {word.word} {word.status}
+            </div>
+          ))}
           <button
             onClick={() => {
               resetCountdown(), startCountdown(), setIsLastWord(false), setIsGameStarted(false);
@@ -31,7 +59,13 @@ export default function Sprint({
           </button>
         </h1>
       ) : (
-        <SprintCard setIsLastWord={setIsLastWord} words={words} count={count} />
+        <SprintCard
+          onRightClick={onRightClick}
+          onWrongClick={onWrongClick}
+          setIsLastWord={setIsLastWord}
+          words={words}
+          count={count}
+        />
       )}
     </div>
   );

@@ -10,10 +10,14 @@ export default function SprintCard({
   count,
   words,
   setIsLastWord,
+  onRightClick,
+  onWrongClick,
 }: {
   count: number;
   words: Array<WordDTO>;
   setIsLastWord: Dispatch<SetStateAction<boolean>>;
+  onRightClick(wordIndex: number, randomIndex: number): void;
+  onWrongClick(wordIndex: number, randomIndex: number): void;
 }) {
   const [wordIndex, setWordIndex] = useState(0);
   const [randomIndex, setRandomIndex] = useState(() => randomizer(wordIndex));
@@ -45,12 +49,23 @@ export default function SprintCard({
             {
               setWordIndex((current) => current + 1);
               setRandomIndex(randomizer(wordIndex + 1));
+              onRightClick(wordIndex, randomIndex);
             }
           }}
         >
           Correct
         </button>
-        <button>Wrong</button>
+        <button
+          onClick={() => {
+            {
+              setWordIndex((current) => current + 1);
+              setRandomIndex(randomizer(wordIndex + 1));
+              onWrongClick(wordIndex, randomIndex);
+            }
+          }}
+        >
+          Wrong
+        </button>
       </div>
     </div>
   ) : (
