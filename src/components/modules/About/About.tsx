@@ -105,9 +105,10 @@ const About = () => {
   return (
     <AboutCustom>
       <AboutContainer>
-        <AboutHeading>Learn About Your Capabilities</AboutHeading>
+        <AboutHeading>С чего Начать?</AboutHeading>
         <AboutDescription>
-          A brief introduction of website functionality <br /> Begin your journey straight away
+          Посмотри ознакомительное видео
+          <br /> Начни свой путь в изучении английского языка
         </AboutDescription>
         <PlayerRelativeWrapper>
           <PlayerWrapper onClick={handlePlayer} isPlaying={isPlaying}>

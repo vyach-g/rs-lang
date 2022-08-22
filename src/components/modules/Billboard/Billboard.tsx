@@ -72,7 +72,7 @@ const BillboardSubmit = styled(Button)(({ theme }) => ({
   borderWidth: '2px',
   borderColor: 'black',
   color: 'black',
-  padding: '.3rem 1.5rem',
+  padding: '.3rem 2rem',
   '&:hover': {
     borderColor: 'black',
     borderWidth: '2px',
@@ -104,15 +104,16 @@ const Billboard = () => {
       <BillboardContainer>
         <BillboardInfo>
           <BillboardHeading variant="h1">
-            Want to learn new English words?
+            Хочешь изучать английский?
             <br />
-            Our platform is the right choice for you
+            Наша платформа создана для тебя
           </BillboardHeading>
           <BillboardDescription>
-            An easy and accessable way of learning, only on our platform <br />
-            We grant you a way to grantly improve your vocabulary
+            Мы используем простые и крайне эффективные методы обучения
+            <br />
+            При пользовании ими, успех не заставит себя ждать
           </BillboardDescription>
-          <BillboardSubmit variant="outlined">Explore further</BillboardSubmit>
+          <BillboardSubmit variant="outlined">Узнать Больше</BillboardSubmit>
         </BillboardInfo>
         <BillboardImage src={BgImage} />
       </BillboardContainer>

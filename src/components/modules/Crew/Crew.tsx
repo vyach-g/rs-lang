@@ -29,7 +29,7 @@ const CrewHeading = styled(Typography)(({ theme }) => ({
   fontSize: '2rem',
   color: 'inherit',
   fontWeight: '600',
-  textAlign: 'left',
+  textAlign: 'center',
   [theme.breakpoints.down('md')]: {
     fontSize: '1.8rem',
   },
@@ -70,10 +70,13 @@ const Crew = () => {
   return (
     <CrewCustom>
       <CrewContainer>
-        <CrewHeading>Meet our team members</CrewHeading>
+        <CrewHeading>
+          Знакомься с Командой
+          <br /> Разрабочиков
+        </CrewHeading>
         <CrewDescription>
-          A team of enthusiasts gathered together from all around the world <br /> And made a great
-          product only for you to use
+          Группа энтузиастов из разных стран, собравшихся вместе
+          <br /> Чтобы сделать замечательный продукт исключительно для тебя
         </CrewDescription>
         <Grid
           container

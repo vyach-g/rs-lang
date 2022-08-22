@@ -59,22 +59,25 @@ const ListItemCustom = styled('li')(({ theme }) => ({
     color: 'inherit',
     textDecoration: 'none',
     alignText: 'right',
-  },
-  '&:hover': {
-    backgroundColor: 'white',
-  },
-  '&::after': {
-    content: '""',
     display: 'block',
-    marginTop: '0.5rem',
-    width: '0',
-    height: '2px',
-    background: 'black',
-    transition: 'width .25s',
+    height: '100%',
+    '&:hover': {
+      backgroundColor: 'white',
+    },
+    '&::after': {
+      content: '""',
+      display: 'block',
+      marginTop: '0.5rem',
+      width: '0',
+      height: '2px',
+      background: 'black',
+      transition: 'width .25s',
+    },
+    '&:hover::after': {
+      width: '100%',
+    },
   },
-  '&:hover::after': {
-    width: '100%',
-  },
+
   [theme.breakpoints.down('sm')]: {
     paddingRight: '0',
   },
@@ -87,23 +90,23 @@ const Footer = () => {
         <GridCustom>
           <GridItemCustom>
             <Typography>
-              <b>Menu</b>
+              <b>Меню</b>
             </Typography>
             <ListCustom>
               <ListItemCustom>
-                <Link to="/textbook">Textbook</Link>
+                <Link to="/textbook">Учебник</Link>
               </ListItemCustom>
               <ListItemCustom>
-                <Link to="/games">Games</Link>
+                <Link to="/games">Игры</Link>
               </ListItemCustom>
               <ListItemCustom>
-                <Link to="/statisticks">Statistics</Link>
+                <Link to="/statistics">Статистика</Link>
               </ListItemCustom>
             </ListCustom>
           </GridItemCustom>
           <GridItemCustom>
             <Typography>
-              <b>Socials</b>
+              <b>Свяжись с нами</b>
             </Typography>
             <ListCustom>
               <ListItemCustom>
@@ -124,7 +127,11 @@ const Footer = () => {
             </ListCustom>
           </GridItemCustom>
           <GridItemCustom>
-            <LinkOuter href="https://rs.school/" target="_blank">
+            <LinkOuter
+              href="https://rs.school/"
+              target="_blank"
+              sx={{ textDecoration: 'none', color: 'inherit' }}
+            >
               <svg
                 width="80"
                 height="33"
@@ -165,8 +172,8 @@ const Footer = () => {
                   </clipPath>
                 </defs>
               </svg>
+              <Typography sx={{ pt: '0.5rem' }}>RSSchool, 2022</Typography>
             </LinkOuter>
-            <Typography sx={{ pt: '0.5rem' }}>RSSchool, 2022</Typography>
           </GridItemCustom>
         </GridCustom>
       </FooterContainer>

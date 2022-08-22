@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import MuiAppBar from '@mui/material/AppBar';
-import { List, Typography, styled, ListItem, Drawer, IconButton } from '@mui/material';
+import { Typography, styled, Drawer, IconButton, Link as LinkOuter } from '@mui/material';
 
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
+
+import { useAuthContext } from '../../../context/AuthContextProvider';
+import { Navigation } from './Navigation.tsx/Navigation';
+import storage from '../../../storage/storage';
 
 const HeaderCustom = styled(MuiAppBar)({
   background: 'rgb(255,255,255)',
@@ -26,48 +30,7 @@ const HeaderContainer = styled('nav')({
   boxSizing: 'border-box',
 });
 
-const ListCustom = styled(List)(({ theme }) => ({
-  display: 'flex',
-  width: '100%',
-  justifyContent: 'flex-end',
-  [theme.breakpoints.down('sm')]: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    rowGap: '2rem',
-    paddingTop: '80px',
-    paddingBottom: '0',
-  },
-  position: 'relative',
-  zIndex: '1',
-}));
-
-const ListItemCustom = styled(ListItem)({
-  width: 'auto',
-  display: 'inline-block',
-  padding: '0.4rem 0.5rem 0 0.5rem',
-  marginInline: '0.5rem',
-  '& a': {
-    color: 'inherit',
-    textDecoration: 'none',
-  },
-  '&:hover': {
-    backgroundColor: 'white',
-  },
-  '&::after': {
-    content: '""',
-    display: 'block',
-    marginTop: '0.5rem',
-    width: '0',
-    height: '2px',
-    background: 'black',
-    transition: 'width .25s',
-  },
-  '&:hover::after': {
-    width: '100%',
-  },
-});
-
-const DrawerHeader = styled('div')({
+const HeaderGeneral = styled('div')({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
@@ -77,48 +40,39 @@ const DrawerHeader = styled('div')({
   zIndex: '1000',
 });
 
-const NavDefault = (
-  <>
-    <ListItemCustom>
-      <Link to="/">Main</Link>
-    </ListItemCustom>
-    <ListItemCustom>
-      <Link to="/textbook">Textbook</Link>
-    </ListItemCustom>
-    <ListItemCustom>
-      <Link to="/games">Games</Link>
-    </ListItemCustom>
-    <ListItemCustom>
-      <Link to="/statisticks">Statistics</Link>
-    </ListItemCustom>
-    <ListItemCustom>
-      <Link to="/login">Login</Link>
-    </ListItemCustom>
-  </>
-);
-
 const Header = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const { auth: isAuth, setAuth } = useAuthContext();
 
-  const handleDrawerToggle = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = (): void => {
+    setAuth(null);
+    storage.clear();
+    navigate('/');
+  };
+
+  const handleDrawerToggle = (): void => {
     setIsMobileOpen(!isMobileOpen);
   };
 
   return (
     <HeaderCustom position="sticky">
       <HeaderContainer>
-        <DrawerHeader>
+        <HeaderGeneral>
           <Typography variant="h6" component="div">
-            LOGO
+            <LinkOuter href="https://rs.school/" sx={{ textDecoration: 'none', color: 'inherit' }}>
+              RSLang
+            </LinkOuter>
           </Typography>
           <IconButton
-            sx={{ display: { xs: 'flex', sm: 'none' }, color: 'black' }}
+            sx={{ display: ['flex', 'none'], color: 'black' }}
             onClick={handleDrawerToggle}
           >
             {isMobileOpen ? <CloseIcon /> : <MenuIcon />}
           </IconButton>
-        </DrawerHeader>
-        <ListCustom sx={{ display: { xs: 'none', sm: 'flex' } }}>{NavDefault}</ListCustom>
+        </HeaderGeneral>
+        <Navigation isAuth={isAuth} callback={handleLogout} />
         <Drawer
           variant="temporary"
           open={isMobileOpen}
@@ -128,16 +82,19 @@ const Header = () => {
             keepMounted: true,
           }}
           sx={{
-            display: { xs: 'flex', sm: 'none' },
+            display: ['flex', 'none'],
             position: 'relative',
             zIndex: '10',
             '& .MuiDrawer-paper': { width: '100%', height: '100vh' },
             '& .css-1nvnyqx-MuiPaper-root-MuiDrawer-paper': {
               boxShadow: 'none !important',
             },
+            '& * .css-uc62by-MuiList-root': {
+              display: 'flex',
+            },
           }}
         >
-          <ListCustom>{NavDefault}</ListCustom>
+          <Navigation isAuth={isAuth} callback={handleLogout} />
         </Drawer>
       </HeaderContainer>
     </HeaderCustom>
