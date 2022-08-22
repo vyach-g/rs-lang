@@ -1,18 +1,34 @@
-import React from 'react';
+import React, { useState } from 'react';
+import validator from 'validator';
 
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { signIn } from '../../api/apiCalls';
 import { RoutePaths } from '../../config/routes';
 import { useAuthContext } from '../../context/AuthContextProvider';
 
-import Box from '@mui/material/Box';
-import { Button, Stack, TextField, Typography } from '@mui/material';
+import {
+  Button,
+  Alert,
+  Stack,
+  Typography,
+  FormControl,
+  Input,
+  InputLabel,
+  Box,
+  Snackbar,
+} from '@mui/material';
+import { withAsync } from '../../api/helpers/withAsync';
 
 const Login = () => {
+  const navigate = useNavigate();
+
+  const { state } = useLocation();
   const { setAuth } = useAuthContext();
+  const [errorMsg, setErrorMsg] = useState<string>('');
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    setErrorMsg('');
     event.preventDefault();
 
     const target = event.target as HTMLFormElement;
@@ -22,8 +38,21 @@ const Login = () => {
       password: target.password.value,
     };
 
-    const response = await signIn(credentials);
-    setAuth(response?.data);
+    if (!validator.isEmail(credentials.email)) {
+      setErrorMsg('Введите правильный email');
+      return;
+    }
+
+    const { response, error } = await withAsync(() => signIn(credentials));
+
+    if (error) {
+      if (error instanceof Error) {
+        setErrorMsg(error.response.data);
+      }
+    } else if (response) {
+      setAuth(response?.data);
+      navigate(state?.path || '/');
+    }
   };
 
   return (
@@ -39,22 +68,15 @@ const Login = () => {
       <Typography variant="h2">Login</Typography>
       <form onSubmit={handleSubmit}>
         <Stack>
-          <TextField
-            variant="filled"
-            label="Username"
-            type="email"
-            name="Name"
-            margin="normal"
-            sx={{ width: '310px' }}
-          />
-          <TextField
-            variant="filled"
-            label="Password"
-            type="password"
-            name="Name"
-            margin="normal"
-            sx={{ width: '310px' }}
-          />
+          <FormControl variant="standard">
+            <InputLabel htmlFor="email">Email</InputLabel>
+            <Input id="email" type="email" required />
+          </FormControl>
+
+          <FormControl variant="standard">
+            <InputLabel htmlFor="password">Password</InputLabel>
+            <Input id="password" type="password" required />
+          </FormControl>
           <Button variant="contained" type="submit" sx={{ mt: '1rem' }}>
             Login
           </Button>
@@ -63,17 +85,24 @@ const Login = () => {
       <Box
         sx={{
           display: 'flex',
-          flexDirection: 'column',
           alignItems: 'center',
-          pt: '1rem',
+          mt: '2rem',
           gap: '1rem',
         }}
       >
         {"Don't have an account?"} <br />
-        <Link to={RoutePaths.Register}>
-          <Button variant="contained">Register</Button>
-        </Link>
+        <Link to={RoutePaths.Register}>Register</Link>
       </Box>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={Boolean(errorMsg)}
+        autoHideDuration={4000}
+        onClose={() => setErrorMsg('')}
+      >
+        <Alert severity="error" sx={{ width: '100%' }}>
+          {errorMsg}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
