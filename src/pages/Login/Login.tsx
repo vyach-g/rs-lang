@@ -20,12 +20,21 @@ import {
 } from '@mui/material';
 import { withAsync } from '../../api/helpers/withAsync';
 
+type LocationProps = {
+  state: {
+    from: Location;
+    path: string;
+  };
+};
+
 const Login = () => {
   const navigate = useNavigate();
 
-  const { state } = useLocation();
+  const { state } = useLocation() as unknown as LocationProps;
   const { setAuth } = useAuthContext();
   const [errorMsg, setErrorMsg] = useState<string>('');
+
+  console.log(state);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     setErrorMsg('');
@@ -51,7 +60,7 @@ const Login = () => {
       }
     } else if (response) {
       setAuth(response?.data);
-      navigate(state?.path || '/');
+      navigate(state.path || '/');
     }
   };
 

@@ -9,11 +9,15 @@ import Games from '../../../pages/Games/Games';
 import AudioCallGame from '../../../pages/Games/AudioCallGame/AudioCallGame';
 import SprintGame from '../../../pages/Games/SprintGame/SprintGame';
 
-const ProtectedRoute = ({ children }: any) => {
+interface Props {
+  children: React.ReactNode;
+}
+
+const ProtectedRoute: React.FC<Props> = ({ children }) => {
   const { auth: isAuth } = useAuthContext();
   const { pathname } = useLocation();
 
-  return isAuth ? children : <Navigate to="/login" replace state={{ path: pathname }} />;
+  return isAuth ? <>{children}</> : <Navigate to="/login" replace state={{ path: pathname }} />;
 };
 
 const DefaultRoutes = () => {
