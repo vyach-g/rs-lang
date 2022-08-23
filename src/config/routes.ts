@@ -6,4 +6,5 @@ export enum RoutePaths {
   Games = '/games',
   SprintGame = 'sprint',
   AudioCallGame = 'audiocall',
+  SavannahGame = 'savannah',
 }
