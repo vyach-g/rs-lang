@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import validator from 'validator';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { signIn } from '../../api/apiCalls';
 import { RoutePaths } from '../../config/routes';
@@ -20,11 +20,21 @@ import {
 } from '@mui/material';
 import { withAsync } from '../../api/helpers/withAsync';
 
+type LocationProps = {
+  state: {
+    from: Location;
+    path: string;
+  };
+};
+
 const Login = () => {
   const navigate = useNavigate();
 
+  const { state } = useLocation() as unknown as LocationProps;
   const { setAuth } = useAuthContext();
   const [errorMsg, setErrorMsg] = useState<string>('');
+
+  console.log(state);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     setErrorMsg('');
@@ -36,18 +46,21 @@ const Login = () => {
       email: target.email.value,
       password: target.password.value,
     };
+
     if (!validator.isEmail(credentials.email)) {
       setErrorMsg('Введите правильный email');
       return;
     }
+
     const { response, error } = await withAsync(() => signIn(credentials));
+
     if (error) {
       if (error instanceof Error) {
         setErrorMsg(error.response.data);
       }
     } else if (response) {
       setAuth(response?.data);
-      navigate('/');
+      navigate(state.path || '/');
     }
   };
 

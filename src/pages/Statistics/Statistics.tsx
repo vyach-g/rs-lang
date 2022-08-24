@@ -1,10 +1,10 @@
 import React from 'react';
-import { Link, Outlet } from 'react-router-dom';
 
-import { Box } from '@mui/material';
 import { Default } from '../../components/layout';
 
-export default function Games() {
+import { Box, Typography } from '@mui/material';
+
+const Statistics = () => {
   return (
     <Default>
       <Box
@@ -16,10 +16,10 @@ export default function Games() {
           justifyContent: 'center',
         }}
       >
-        <Link to="sprint">sprint</Link>
-        <Link to="audiocall">audiocall</Link>
-        <Outlet />
+        <Typography variant="h2">Statistics Page</Typography>
       </Box>
     </Default>
   );
-}
+};
+
+export { Statistics };

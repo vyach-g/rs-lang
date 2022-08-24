@@ -21,6 +21,7 @@ export default function SprintCard({
 }) {
   const [wordIndex, setWordIndex] = useState(0);
   const [randomIndex, setRandomIndex] = useState(() => randomizer(wordIndex));
+
   useEffect(() => {
     if (wordIndex >= words.length) {
       setIsLastWord(true);
