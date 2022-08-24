@@ -35,7 +35,7 @@ const difficultyButtons = [
 export default function SprintGame({ customWords = [] }: { customWords?: Array<WordDTO> }) {
   const [words, setWords] = useState<Array<WordDTO>>(customWords);
   const [count, { startCountdown, resetCountdown }] = useCountdown({
-    countStart: 20,
+    countStart: 40,
     intervalMs: 1000,
   });
 

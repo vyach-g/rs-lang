@@ -1,6 +1,5 @@
 import { Box } from '@mui/material';
 import React, { useState } from 'react';
-import generateId from '../../../utils/randomIdGenerator';
 
 const Savannah = () => {
   const [isGameStarted, setGameIsStarted] = useState(false);

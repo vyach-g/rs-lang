@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { WordDTO } from '../../../api/apiCalls.types';
 import SprintCard from './SprintCard';
 
@@ -19,13 +19,31 @@ export default function Sprint({
 
   const [wordResults, setWordResults] = useState<Array<WordDTO & { status: string }>>([]);
 
+  const [sequence, setSequence] = useState<Array<string>>([]);
+
+  const [points, setPoints] = useState(10);
+
+  const [score, setScore] = useState(0);
+
+  useEffect(() => {
+    if (sequence.length === 3) {
+      setPoints((current) => current * 2);
+      setSequence([]);
+    }
+  }, [sequence]);
+
   function onRightClick(wordIndex: number, randomIndex: number) {
     const currentWord = words[wordIndex];
     const translateWord = words[randomIndex];
 
     if (currentWord.id === translateWord.id) {
+      setSequence([...sequence, 'correct']);
       setWordResults([...wordResults, { ...currentWord, status: 'correct' }]);
+      setScore((curr) => curr + points);
     } else {
+      setSequence([]);
+      setPoints(10);
+
       setWordResults([...wordResults, { ...currentWord, status: 'wrong' }]);
     }
   }
@@ -35,21 +53,27 @@ export default function Sprint({
     const translateWord = words[randomIndex];
 
     if (currentWord.id === translateWord.id) {
+      setSequence([]);
+      setPoints(10);
+
       setWordResults([...wordResults, { ...currentWord, status: 'wrong' }]);
     } else {
+      setSequence([...sequence, 'correct']);
       setWordResults([...wordResults, { ...currentWord, status: 'correct' }]);
+      setScore((curr) => curr + points);
     }
   }
 
   return (
     <div>
       {count === 0 || isLastWord ? (
-        <h1>
+        <div>
           {wordResults.map((word) => (
             <div key={word.id}>
               {word.word} {word.status}
             </div>
           ))}
+          <h2>{score}</h2>
           <button
             onClick={() => {
               resetCountdown(), startCountdown(), setIsLastWord(false), setIsGameStarted(false);
@@ -57,15 +81,21 @@ export default function Sprint({
           >
             играть еще
           </button>
-        </h1>
+        </div>
       ) : (
-        <SprintCard
-          onRightClick={onRightClick}
-          onWrongClick={onWrongClick}
-          setIsLastWord={setIsLastWord}
-          words={words}
-          count={count}
-        />
+        <>
+          {sequence.map((value, idx) => (
+            <p key={idx}>v</p>
+          ))}
+          <h2>{score}</h2>
+          <SprintCard
+            onRightClick={onRightClick}
+            onWrongClick={onWrongClick}
+            setIsLastWord={setIsLastWord}
+            words={words}
+            count={count}
+          />
+        </>
       )}
     </div>
   );
