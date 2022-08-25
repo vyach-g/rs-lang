@@ -17,6 +17,8 @@ import {
 } from './Sprint.styles';
 import SprintCard from './SprintCard';
 import icosound from '../../../assets/ico-sound.svg';
+import { useNavigate } from 'react-router-dom';
+import { RoutePaths } from '../../../config/routes';
 
 export default function Sprint({
   words,
@@ -31,6 +33,8 @@ export default function Sprint({
   startCountdown: () => void;
   setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const navigate = useNavigate();
+
   const [isLastWord, setIsLastWord] = useState(false);
 
   const [wordResults, setWordResults] = useState<Array<WordDTO & { status: string }>>([]);
@@ -144,7 +148,7 @@ export default function Sprint({
           >
             Продолжить тренировку
           </SubmitButton>
-          <BackButton>К списку тренировок</BackButton>
+          <BackButton onClick={() => navigate(RoutePaths.Games)}>К списку тренировок</BackButton>
         </ContentResults>
       ) : (
         <>
