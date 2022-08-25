@@ -1,6 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, createRef, LegacyRef } from 'react';
 import { WordDTO } from '../../../api/apiCalls.types';
+import {
+  AudioIcon,
+  BackButton,
+  BoldWord,
+  Content,
+  ContentHeader,
+  ContentResults,
+  OneWord,
+  ResultsHeader,
+  ResultsHeaderUL,
+  ResultsHeaderULCorrect,
+  ResultsHeaderULWrong,
+  ResultsWords,
+  SubmitButton,
+} from './Sprint.styles';
 import SprintCard from './SprintCard';
+import icosound from '../../../assets/ico-sound.svg';
 
 export default function Sprint({
   words,
@@ -64,24 +80,72 @@ export default function Sprint({
     }
   }
 
+  const wrongRefs = useRef(new Array(wordResults.filter((word) => word.status === 'wrong').length));
+
+  const correctRefs = useRef(
+    new Array(wordResults.filter((word) => word.status === 'correct').length)
+  );
   return (
     <div>
       {count === 0 || isLastWord ? (
-        <div>
-          {wordResults.map((word) => (
-            <div key={word.id}>
-              {word.word} {word.status}
-            </div>
-          ))}
-          <h2>{score}</h2>
-          <button
+        <ContentResults>
+          <ContentHeader>Твой результат: {score} очков</ContentHeader>
+          <ResultsWords>
+            <ResultsHeader>
+              Ошибок{' '}
+              <ResultsHeaderULWrong>
+                {wordResults.filter((word) => word.status === 'wrong').length}
+              </ResultsHeaderULWrong>
+            </ResultsHeader>
+            {wordResults
+              .filter((word) => word.status === 'wrong')
+              .map((word, idx) => (
+                <OneWord key={word.id}>
+                  <AudioIcon src={icosound} onClick={() => wrongRefs.current[idx].play()} />
+                  <audio ref={(el) => (wrongRefs.current[idx] = el)}>
+                    <source
+                      src={`https://rslang-project1.herokuapp.com/${word.audio}`}
+                      type="audio/mp3"
+                    />
+                  </audio>
+                  <span>
+                    <BoldWord>{word.word}</BoldWord> - {word.wordTranslate}
+                  </span>
+                </OneWord>
+              ))}{' '}
+            <ResultsHeader>
+              Знаю{' '}
+              <ResultsHeaderULCorrect>
+                {wordResults.filter((word) => word.status === 'correct').length}
+              </ResultsHeaderULCorrect>
+            </ResultsHeader>
+            {wordResults
+              .filter((word) => word.status === 'correct')
+              .map((word, idx) => (
+                <OneWord key={word.id}>
+                  <AudioIcon src={icosound} onClick={() => correctRefs.current[idx].play()} />
+                  <audio ref={(el) => (correctRefs.current[idx] = el)}>
+                    <source
+                      src={`https://rslang-project1.herokuapp.com/${word.audio}`}
+                      type="audio/mp3"
+                    />
+                  </audio>
+                  <span>
+                    <BoldWord>{word.word}</BoldWord> - {word.wordTranslate}
+                  </span>
+                </OneWord>
+              ))}
+          </ResultsWords>
+
+          <SubmitButton
             onClick={() => {
               resetCountdown(), startCountdown(), setIsLastWord(false), setIsGameStarted(false);
             }}
           >
-            играть еще
-          </button>
-        </div>
+            Продолжить тренировку
+          </SubmitButton>
+          <BackButton>К списку тренировок</BackButton>
+        </ContentResults>
       ) : (
         <>
           {sequence.map((value, idx) => (

@@ -1,6 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { WordDTO } from '../../../api/apiCalls.types';
-import './SprintCard.css';
 
 function randomizer(wordIndex: number) {
   return Math.random() - 0.6 < 0 ? wordIndex : Math.floor(Math.random() * 19);
