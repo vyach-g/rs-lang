@@ -1,6 +1,5 @@
 import { CircularProgress } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { useCountdown } from 'usehooks-ts';
 import { getWords } from '../../../api/apiCalls';
 import { WordDTO } from '../../../api/apiCalls.types';
 import { withAsync } from '../../../api/helpers/withAsync';
@@ -34,27 +33,6 @@ const difficultyButtons = [
   },
 ];
 
-function Counter(props: { handleFinish: () => void }) {
-  const [count, { startCountdown, resetCountdown }] = useCountdown({
-    countStart: 20,
-    intervalMs: 1000,
-  });
-
-  useEffect(() => {
-    startCountdown();
-
-    return () => {
-      resetCountdown();
-    };
-  }, []);
-
-  if (count === 0) {
-    props.handleFinish();
-  }
-
-  return <p>{count}</p>;
-}
-
 export default function SprintGame({ customWords = [] }: { customWords?: Array<WordDTO> }) {
   const [words, setWords] = useState<Array<WordDTO>>(customWords);
 
@@ -70,11 +48,6 @@ export default function SprintGame({ customWords = [] }: { customWords?: Array<W
     setLevel(level);
   }
 
-  const [isFinish, setIsFinish] = useState(false);
-  function handleFinish() {
-    setIsFinish(true);
-  }
-
   async function startGame() {
     const page = Math.floor(Math.random() * 30);
     setApiStatus('PENDING');
@@ -83,8 +56,6 @@ export default function SprintGame({ customWords = [] }: { customWords?: Array<W
       setWords(response.data);
       setIsGameStarted(true);
       setApiStatus('SUCCESS');
-
-      setIsFinish(false);
     } else if (error) {
       setApiStatus('ERROR');
     }
@@ -119,8 +90,7 @@ export default function SprintGame({ customWords = [] }: { customWords?: Array<W
         </Content>
       ) : (
         <>
-          {!isFinish && <Counter handleFinish={handleFinish} />}
-          <Sprint isFinish={isFinish} words={words} setIsGameStarted={setIsGameStarted} />
+          <Sprint words={words} setIsGameStarted={setIsGameStarted} />
         </>
       )}
     </Wrapper>

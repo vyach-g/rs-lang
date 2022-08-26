@@ -17,16 +17,30 @@ import SprintCard from './SprintCard';
 import icosound from '../../../assets/ico-sound.svg';
 import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../../../config/routes';
+import { useCountdown } from 'usehooks-ts';
+
+function Counter(props: { handleFinish: () => void }) {
+  const [count, { startCountdown, resetCountdown }] = useCountdown({
+    countStart: 20,
+    intervalMs: 1000,
+  });
+
+  useEffect(() => {
+    startCountdown();
+  }, []);
+
+  if (count === 0) {
+    props.handleFinish();
+  }
+
+  return <p>{count}</p>;
+}
 
 export default function Sprint({
-  isFinish,
   words,
-
   setIsGameStarted,
 }: {
-  isFinish: boolean;
   words: Array<WordDTO>;
-
   setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const navigate = useNavigate();
@@ -78,6 +92,11 @@ export default function Sprint({
       setWordResults([...wordResults, { ...currentWord, status: 'correct' }]);
       setScore((curr) => curr + points);
     }
+  }
+
+  const [isFinish, setIsFinish] = useState(false);
+  function handleFinish() {
+    setIsFinish(true);
   }
 
   const wrongRefs = useRef(new Array(wordResults.filter((word) => word.status === 'wrong').length));
@@ -148,6 +167,8 @@ export default function Sprint({
         </ContentResults>
       ) : (
         <>
+          <Counter handleFinish={handleFinish} />
+
           {sequence.map((value, idx) => (
             <p key={idx}>v</p>
           ))}
