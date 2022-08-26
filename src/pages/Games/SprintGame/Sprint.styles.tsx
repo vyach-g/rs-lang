@@ -55,6 +55,8 @@ export const SubmitButton = styled(LevelButton)`
   font-weight: 600;
   border-radius: 4px;
   border: none;
+  min-width: 250px;
+  height: 40px;
 `;
 
 export const BackButton = styled(SubmitButton)`

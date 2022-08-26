@@ -1,3 +1,4 @@
+import { CircularProgress } from '@mui/material';
 import React, { useState } from 'react';
 import { useCountdown } from 'usehooks-ts';
 import { getWords } from '../../../api/apiCalls';
@@ -46,17 +47,23 @@ export default function SprintGame({ customWords = [] }: { customWords?: Array<W
 
   const [activeButton, setActiveButton] = useState<number | null>(null);
 
+  const [apiStatus, setApiStatus] = useState('IDLE');
+
   function selectDifficulty(level: number) {
     setLevel(level);
   }
 
   async function startGame() {
     const page = Math.floor(Math.random() * 30);
+    setApiStatus('PENDING');
     const { response, error } = await withAsync(() => getWords(level, page));
     if (response) {
       setWords(response.data);
       setIsGameStarted(true);
       startCountdown();
+      setApiStatus('SUCCESS');
+    } else if (error) {
+      setApiStatus('ERROR');
     }
   }
 
@@ -82,7 +89,10 @@ export default function SprintGame({ customWords = [] }: { customWords?: Array<W
               );
             })}
           </Levels>
-          <SubmitButton onClick={startGame}>Начать тренировку</SubmitButton>
+          <SubmitButton onClick={startGame} disabled={apiStatus === 'PENDING'}>
+            {' '}
+            {apiStatus === 'PENDING' ? <CircularProgress size={20} /> : 'Начать тренировку'}
+          </SubmitButton>
         </Content>
       ) : (
         <Sprint
