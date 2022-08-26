@@ -4,12 +4,10 @@ import {
   AudioIcon,
   BackButton,
   BoldWord,
-  Content,
   ContentHeader,
   ContentResults,
   OneWord,
   ResultsHeader,
-  ResultsHeaderUL,
   ResultsHeaderULCorrect,
   ResultsHeaderULWrong,
   ResultsWords,
@@ -21,16 +19,14 @@ import { useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../../../config/routes';
 
 export default function Sprint({
+  isFinish,
   words,
-  count,
-  resetCountdown,
-  startCountdown,
+
   setIsGameStarted,
 }: {
+  isFinish: boolean;
   words: Array<WordDTO>;
-  count: number;
-  resetCountdown: () => void;
-  startCountdown: () => void;
+
   setIsGameStarted: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const navigate = useNavigate();
@@ -91,7 +87,7 @@ export default function Sprint({
   );
   return (
     <div>
-      {count === 0 || isLastWord ? (
+      {isFinish || isLastWord ? (
         <ContentResults>
           <ContentHeader>Твой результат: {score} очков</ContentHeader>
           <ResultsWords>
@@ -143,7 +139,7 @@ export default function Sprint({
 
           <SubmitButton
             onClick={() => {
-              resetCountdown(), startCountdown(), setIsLastWord(false), setIsGameStarted(false);
+              setIsLastWord(false), setIsGameStarted(false);
             }}
           >
             Продолжить тренировку
@@ -161,7 +157,6 @@ export default function Sprint({
             onWrongClick={onWrongClick}
             setIsLastWord={setIsLastWord}
             words={words}
-            count={count}
           />
         </>
       )}

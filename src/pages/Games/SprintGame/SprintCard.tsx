@@ -1,18 +1,18 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { WordDTO } from '../../../api/apiCalls.types';
+import { AudioIcon } from './Sprint.styles';
+import icosound from '../../../assets/ico-sound.svg';
 
 function randomizer(wordIndex: number) {
   return Math.random() - 0.6 < 0 ? wordIndex : Math.floor(Math.random() * 19);
 }
 
 export default function SprintCard({
-  count,
   words,
   setIsLastWord,
   onRightClick,
   onWrongClick,
 }: {
-  count: number;
   words: Array<WordDTO>;
   setIsLastWord: Dispatch<SetStateAction<boolean>>;
   onRightClick(wordIndex: number, randomIndex: number): void;
@@ -27,17 +27,13 @@ export default function SprintCard({
     }
   }, [wordIndex]);
 
+  const audioRefs = useRef(new Array(words.length));
+
   return wordIndex <= 19 ? (
     <div>
-      <h3>{count}</h3>
-
       <div>
-        <audio
-          controls
-          controlsList="nodownload noplaybackrate nofullscreen"
-          autoPlay
-          key={wordIndex}
-        >
+        <AudioIcon src={icosound} onClick={() => audioRefs.current[wordIndex].play()} />
+        <audio key={wordIndex} ref={(el) => (audioRefs.current[wordIndex] = el)}>
           <source
             src={`https://rslang-project1.herokuapp.com/${words[wordIndex].audio}`}
             type="audio/mp3"
