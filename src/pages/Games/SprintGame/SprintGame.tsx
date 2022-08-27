@@ -1,9 +1,20 @@
-import React, { useState } from 'react';
-import { useCountdown } from 'usehooks-ts';
+import { CircularProgress } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getWords } from '../../../api/apiCalls';
 import { WordDTO } from '../../../api/apiCalls.types';
 import { withAsync } from '../../../api/helpers/withAsync';
 import Sprint from './Sprint';
+import {
+  Content,
+  CounterContainer,
+  ExitLink,
+  LevelButton,
+  Levels,
+  SubmitButton,
+  Wrapper,
+} from './Sprint.styles';
+import exit from '../../../assets/exit.svg';
 
 const difficultyButtons = [
   {
@@ -34,14 +45,14 @@ const difficultyButtons = [
 
 export default function SprintGame({ customWords = [] }: { customWords?: Array<WordDTO> }) {
   const [words, setWords] = useState<Array<WordDTO>>(customWords);
-  const [count, { startCountdown, resetCountdown }] = useCountdown({
-    countStart: 20,
-    intervalMs: 1000,
-  });
 
   const [level, setLevel] = useState<number | undefined>(undefined);
 
   const [isGameStarted, setIsGameStarted] = useState(customWords.length ? true : false);
+
+  const [activeButton, setActiveButton] = useState<number | null>(null);
+
+  const [apiStatus, setApiStatus] = useState('IDLE');
 
   function selectDifficulty(level: number) {
     setLevel(level);
@@ -49,34 +60,59 @@ export default function SprintGame({ customWords = [] }: { customWords?: Array<W
 
   async function startGame() {
     const page = Math.floor(Math.random() * 30);
+    setApiStatus('PENDING');
     const { response, error } = await withAsync(() => getWords(level, page));
     if (response) {
       setWords(response.data);
       setIsGameStarted(true);
-      startCountdown();
+      setApiStatus('SUCCESS');
+    } else if (error) {
+      setApiStatus('ERROR');
     }
   }
 
-  return !isGameStarted ? (
-    <div>
-      <h1>SprintGame</h1>
-      <h2>Выберите сложность</h2>
-      {difficultyButtons.map((button) => {
-        return (
-          <button key={button.value} onClick={() => selectDifficulty(button.value)}>
-            {button.title}
-          </button>
-        );
-      })}
-      <button onClick={startGame}>Начать игру</button>
-    </div>
-  ) : (
-    <Sprint
-      words={words}
-      count={count}
-      resetCountdown={resetCountdown}
-      startCountdown={startCountdown}
-      setIsGameStarted={setIsGameStarted}
-    />
+  return (
+    <Wrapper>
+      {!isGameStarted ? (
+        <Content>
+          <CounterContainer>
+            <Link to="/games">
+              <ExitLink src={exit}></ExitLink>
+            </Link>
+          </CounterContainer>
+          <h1>Научись быстро переводить слова</h1>
+          <Levels>
+            {difficultyButtons.map((button) => {
+              return (
+                <LevelButton
+                  key={button.value}
+                  onClick={() => {
+                    selectDifficulty(button.value);
+                    setActiveButton(button.value);
+                  }}
+                  isActive={activeButton === button.value}
+                >
+                  {button.title}
+                </LevelButton>
+              );
+            })}
+          </Levels>
+          <SubmitButton onClick={startGame} disabled={apiStatus === 'PENDING' || !level}>
+            {' '}
+            {apiStatus === 'PENDING' ? (
+              <CircularProgress size={20} />
+            ) : typeof level === 'undefined' ? (
+              'Выбери сложность'
+            ) : (
+              'Начать тренировку'
+            )}
+          </SubmitButton>
+        </Content>
+      ) : (
+        <>
+          <Sprint words={words} setIsGameStarted={setIsGameStarted} />
+        </>
+      )}
+    </Wrapper>
   );
 }
