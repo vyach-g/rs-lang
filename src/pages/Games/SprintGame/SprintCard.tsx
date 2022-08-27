@@ -1,7 +1,15 @@
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { WordDTO } from '../../../api/apiCalls.types';
-import { AudioIcon } from './Sprint.styles';
+import {
+  AudioIcon,
+  Content,
+  GreenButton,
+  HeaderText,
+  RedButton,
+  TransparentText,
+} from './Sprint.styles';
 import icosound from '../../../assets/ico-sound.svg';
+import { Stack } from '@mui/material';
 
 function randomizer(wordIndex: number) {
   return Math.random() - 0.6 < 0 ? wordIndex : Math.floor(Math.random() * 19);
@@ -31,38 +39,43 @@ export default function SprintCard({
 
   return wordIndex <= 19 ? (
     <div>
-      <div>
-        <AudioIcon src={icosound} onClick={() => audioRefs.current[wordIndex].play()} />
-        <audio key={wordIndex} ref={(el) => (audioRefs.current[wordIndex] = el)}>
-          <source
-            src={`https://rslang-project1.herokuapp.com/${words[wordIndex].audio}`}
-            type="audio/mp3"
-          />
-        </audio>
-        <span>{words[wordIndex].word}</span> <span>{words[randomIndex].wordTranslate}</span>
-        <button
-          onClick={() => {
-            {
-              setWordIndex((current) => current + 1);
-              setRandomIndex(randomizer(wordIndex + 1));
-              onRightClick(wordIndex, randomIndex);
-            }
-          }}
-        >
-          Correct
-        </button>
-        <button
-          onClick={() => {
-            {
-              setWordIndex((current) => current + 1);
-              setRandomIndex(randomizer(wordIndex + 1));
-              onWrongClick(wordIndex, randomIndex);
-            }
-          }}
-        >
-          Wrong
-        </button>
-      </div>
+      <Content>
+        <Stack direction="row" spacing={2}>
+          <HeaderText>{words[wordIndex].word}</HeaderText>
+          <AudioIcon src={icosound} onClick={() => audioRefs.current[wordIndex].play()} />
+          <audio key={wordIndex} ref={(el) => (audioRefs.current[wordIndex] = el)}>
+            <source
+              src={`https://rslang-project1.herokuapp.com/${words[wordIndex].audio}`}
+              type="audio/mp3"
+            />
+          </audio>
+        </Stack>
+        <TransparentText>{words[randomIndex].wordTranslate}</TransparentText>
+        <Stack direction="row" spacing={2}>
+          <RedButton
+            onClick={() => {
+              {
+                setWordIndex((current) => current + 1);
+                setRandomIndex(randomizer(wordIndex + 1));
+                onWrongClick(wordIndex, randomIndex);
+              }
+            }}
+          >
+            ← Неверно
+          </RedButton>
+          <GreenButton
+            onClick={() => {
+              {
+                setWordIndex((current) => current + 1);
+                setRandomIndex(randomizer(wordIndex + 1));
+                onRightClick(wordIndex, randomIndex);
+              }
+            }}
+          >
+            Верно →
+          </GreenButton>
+        </Stack>
+      </Content>
     </div>
   ) : (
     <h2>words ended</h2>

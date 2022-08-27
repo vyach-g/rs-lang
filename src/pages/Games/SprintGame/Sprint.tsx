@@ -4,8 +4,15 @@ import {
   AudioIcon,
   BackButton,
   BoldWord,
+  Circle,
+  Content,
   ContentHeader,
   ContentResults,
+  CounterContainer,
+  ExitLink,
+  FilledCircle,
+  GameContainer,
+  HeaderText,
   OneWord,
   ResultsHeader,
   ResultsHeaderULCorrect,
@@ -15,9 +22,11 @@ import {
 } from './Sprint.styles';
 import SprintCard from './SprintCard';
 import icosound from '../../../assets/ico-sound.svg';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../../../config/routes';
 import { useCountdown } from 'usehooks-ts';
+import { Stack } from '@mui/material';
+import exit from '../../../assets/exit.svg';
 
 function Counter(props: { handleFinish: () => void }) {
   const [count, { startCountdown, resetCountdown }] = useCountdown({
@@ -33,7 +42,7 @@ function Counter(props: { handleFinish: () => void }) {
     props.handleFinish();
   }
 
-  return <p>{count}</p>;
+  return <p style={{ lineHeight: 0, margin: 0 }}>{count}</p>;
 }
 
 export default function Sprint({
@@ -166,20 +175,32 @@ export default function Sprint({
           <BackButton onClick={() => navigate(RoutePaths.Games)}>К списку тренировок</BackButton>
         </ContentResults>
       ) : (
-        <>
-          <Counter handleFinish={handleFinish} />
+        <Content>
+          <HeaderText>{score}</HeaderText>
+          <GameContainer>
+            <CounterContainer>
+              <Link to="/games">
+                <ExitLink src={exit}></ExitLink>
+              </Link>
+              <Counter handleFinish={handleFinish} />
+            </CounterContainer>
+            <div>+{points}</div>
+            <Stack justifyContent="center" direction="row" spacing={2}>
+              {sequence.length !== 0 ? (
+                sequence.map((value, idx) => <FilledCircle key={idx}></FilledCircle>)
+              ) : (
+                <Circle></Circle>
+              )}
+            </Stack>
 
-          {sequence.map((value, idx) => (
-            <p key={idx}>v</p>
-          ))}
-          <h2>{score}</h2>
-          <SprintCard
-            onRightClick={onRightClick}
-            onWrongClick={onWrongClick}
-            setIsLastWord={setIsLastWord}
-            words={words}
-          />
-        </>
+            <SprintCard
+              onRightClick={onRightClick}
+              onWrongClick={onWrongClick}
+              setIsLastWord={setIsLastWord}
+              words={words}
+            />
+          </GameContainer>
+        </Content>
       )}
     </div>
   );

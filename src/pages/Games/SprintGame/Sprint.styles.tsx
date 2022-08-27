@@ -2,7 +2,7 @@ import styled from 'styled-components/macro';
 import bgbottom from '../../../assets/bg-bottom.svg';
 import bgleft from '../../../assets/bg-left.svg';
 import bgright from '../../../assets/bg-right.svg';
-import icosound from '../../../assets/ico-sound.svg';
+import bullet from '../../../assets/circle-filled.svg';
 
 export const Wrapper = styled.div`
   background-color: #0d3848;
@@ -131,4 +131,68 @@ export const BoldWord = styled.b`
 
 export const AudioIcon = styled.img`
   cursor: pointer;
+`;
+export const GameContainer = styled.div`
+  background-color: hsla(0, 0%, 100%, 0.06);
+  border: 1px solid #fff;
+  border-radius: 8px;
+  margin: 60px auto 0;
+  max-width: 484px;
+  padding: 30px;
+`;
+
+export const Button = styled.button`
+  padding: 10px 40px;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  min-width: 200px;
+  border: none;
+  transition: all 0.3s;
+  border-radius: 4px;
+  &:hover {
+    box-shadow: 2px 2px 5px rgba(37, 130, 231, 0.3);
+  }
+`;
+
+export const RedButton = styled(Button)`
+  background-color: #ed593b;
+`;
+export const GreenButton = styled(Button)`
+  background-color: #28c38a;
+`;
+
+export const HeaderText = styled.h2`
+  font-size: 36px;
+`;
+export const TransparentText = styled.span`
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 26px;
+  margin-bottom: 64px;
+`;
+export const CounterContainer = styled.div`
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  padding: 50px;
+  font-size: 36px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const Circle = styled.div`
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+`;
+
+export const FilledCircle = styled(Circle)`
+  background-image: url(${bullet});
+`;
+
+export const ExitLink = styled.img`
+  width: 20px;
+  height: 20px;
 `;

@@ -1,10 +1,20 @@
 import { CircularProgress } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { getWords } from '../../../api/apiCalls';
 import { WordDTO } from '../../../api/apiCalls.types';
 import { withAsync } from '../../../api/helpers/withAsync';
 import Sprint from './Sprint';
-import { Content, LevelButton, Levels, SubmitButton, Wrapper } from './Sprint.styles';
+import {
+  Content,
+  CounterContainer,
+  ExitLink,
+  LevelButton,
+  Levels,
+  SubmitButton,
+  Wrapper,
+} from './Sprint.styles';
+import exit from '../../../assets/exit.svg';
 
 const difficultyButtons = [
   {
@@ -65,8 +75,12 @@ export default function SprintGame({ customWords = [] }: { customWords?: Array<W
     <Wrapper>
       {!isGameStarted ? (
         <Content>
+          <CounterContainer>
+            <Link to="/games">
+              <ExitLink src={exit}></ExitLink>
+            </Link>
+          </CounterContainer>
           <h1>Научись быстро переводить слова</h1>
-          <h2>Выбери сложность</h2>
           <Levels>
             {difficultyButtons.map((button) => {
               return (
@@ -83,9 +97,15 @@ export default function SprintGame({ customWords = [] }: { customWords?: Array<W
               );
             })}
           </Levels>
-          <SubmitButton onClick={startGame} disabled={apiStatus === 'PENDING'}>
+          <SubmitButton onClick={startGame} disabled={apiStatus === 'PENDING' || !level}>
             {' '}
-            {apiStatus === 'PENDING' ? <CircularProgress size={20} /> : 'Начать тренировку'}
+            {apiStatus === 'PENDING' ? (
+              <CircularProgress size={20} />
+            ) : typeof level === 'undefined' ? (
+              'Выбери сложность'
+            ) : (
+              'Начать тренировку'
+            )}
           </SubmitButton>
         </Content>
       ) : (
