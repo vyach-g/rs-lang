@@ -1,0 +1,3 @@
+const WordList = () => {};
+
+export { WordList };

@@ -1,3 +1,3 @@
-import { MemberCard } from "./MemberCard/MemberCard";
+import { MemberCard } from './MemberCard/MemberCard';
 
-export { MemberCard }
+export { MemberCard };

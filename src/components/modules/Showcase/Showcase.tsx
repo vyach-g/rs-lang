@@ -1,0 +1,3 @@
+const Showcase = () => {};
+
+export { Showcase };

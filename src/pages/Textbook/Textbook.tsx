@@ -1,0 +1,3 @@
+const Textbook = () => {};
+
+export { Textbook };

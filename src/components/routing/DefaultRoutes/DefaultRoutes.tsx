@@ -8,6 +8,7 @@ import { Entry, Login, Statistics, Registration } from '../../../pages';
 import Games from '../../../pages/Games/Games';
 import AudioCallGame from '../../../pages/Games/AudioCallGame/AudioCallGame';
 import SprintGame from '../../../pages/Games/SprintGame/SprintGame';
+import { Textbook } from '../../../pages/Textbook/Textbook';
 
 interface Props {
   children: React.ReactNode;
@@ -39,6 +40,7 @@ const DefaultRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route path={RoutePaths.Textbook} element={<Textbook />} />
     </Routes>
   );
 };

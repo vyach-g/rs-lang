@@ -1,0 +1,3 @@
+const WordCard = () => {};
+
+export { WordCard };
