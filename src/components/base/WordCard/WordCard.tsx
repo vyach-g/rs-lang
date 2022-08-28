@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useAuthContext } from '../../../context/AuthContextProvider';
 
 import {
@@ -12,31 +12,57 @@ import {
   Button,
 } from '@mui/material';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import { WordDTO } from '../../../api/apiCalls.types';
+import { WordDTO, UserAggregatedWord } from '../../../api/apiCalls.types';
 import { API_URL } from '../../../api/apiUrl';
+import { createUserWord, updateUserWord, deleteUserWord } from '../../../api/apiCalls';
 
-const WordCard: React.FC<WordDTO> = ({
+const WordCard: React.FC<WordDTO | UserAggregatedWord> = ({
+  // @ts-expect-error
+  _id,
+  // @ts-expect-error
+  id,
   word,
   image,
   textMeaning,
+  textMeaningTranslate,
   textExample,
+  textExampleTranslate,
   transcription,
   audio,
   audioMeaning,
   audioExample,
+  wordTranslate,
+  // @ts-expect-error
+  userWord,
 }) => {
   const { auth } = useAuthContext();
-  // const player = new Audio(`https://rslang-project1.herokuapp.com/${audio}`);
-  // const playAllAudio = () => {
-  console.log('audio', audio);
-
-  // };
-  // player.play();
-  // audioPlayer.current?.src = `https://rslang-project1.herokuapp.com/${audio}`;
+  const [difficulty, setDifficulty] = useState(userWord?.difficulty);
+  console.log(difficulty);
   const audioRef = useRef<HTMLAudioElement>(null);
   const audioList = [audio, audioMeaning, audioExample];
   let audioPointer = 0;
   let isAudioPlaying = false;
+
+  const handleDifficult = (newDifficulty: 'hard' | 'easy') => {
+    if (auth) {
+      if (difficulty) {
+        if (difficulty === newDifficulty) {
+          deleteUserWord(auth?.userId, id || _id);
+          setDifficulty(undefined);
+        } else {
+          updateUserWord(auth?.userId, id || _id, {
+            difficulty: newDifficulty,
+          });
+          setDifficulty(newDifficulty);
+        }
+      } else {
+        createUserWord(auth?.userId, id || _id, {
+          difficulty: newDifficulty,
+        });
+        setDifficulty(newDifficulty);
+      }
+    }
+  };
 
   const playAudio = () => {
     if (audioRef.current) {
@@ -86,54 +112,92 @@ const WordCard: React.FC<WordDTO> = ({
               justifyContent: 'space-between',
             }}
           >
-            <Box
-              sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap' }}
-            >
-              <Typography variant="h5" component="span">
-                {word}
-              </Typography>
-              <IconButton
-                onClick={() => {
-                  isAudioPlaying ? stopAudio() : playAudio();
+            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  marginBottom: -1,
                 }}
               >
-                <VolumeUpIcon />
-              </IconButton>
-              <Typography component="span" variant="body1" sx={{ color: 'text.secondary' }}>
-                {transcription}
-              </Typography>
-            </Box>
-            {!auth && (
+                <Typography variant="h5" component="span">
+                  {word}
+                </Typography>
+                <IconButton
+                  sx={{ width: 32, height: 32 }}
+                  onClick={() => {
+                    isAudioPlaying ? stopAudio() : playAudio();
+                  }}
+                >
+                  <VolumeUpIcon />
+                </IconButton>
+                <Typography component="span" variant="body1" sx={{ color: 'text.secondary' }}>
+                  {transcription}
+                </Typography>
+              </Box>
               <Box>
-                <Button variant="contained" size="small">
+                <Typography variant="h6" component="span">
+                  {wordTranslate}
+                </Typography>
+              </Box>
+            </Box>
+            {auth && (
+              <Box>
+                <Button
+                  variant={difficulty === 'easy' ? 'outlined' : 'contained'}
+                  size="small"
+                  onClick={() => {
+                    handleDifficult('easy');
+                  }}
+                >
                   Знаю
                 </Button>
-                <Button variant="contained" color="error" size="small">
+                <Button
+                  variant={difficulty === 'hard' ? 'outlined' : 'contained'}
+                  // variant="contained"
+                  color="error"
+                  size="small"
+                  onClick={() => {
+                    handleDifficult('hard');
+                  }}
+                >
                   Сложна
                 </Button>
               </Box>
             )}
           </Box>
 
-          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-            {textMeaning.split(/<\/?i>/).map((value, id) => {
-              return (
-                <Box component="span" key={id} sx={id === 1 ? { fontStyle: 'italic' } : {}}>
-                  {value}
-                </Box>
-              );
-            })}
-          </Typography>
+          <Box sx={{ marginBottom: 1 }}>
+            <Typography variant="body1" sx={{ color: 'text.primary' }}>
+              {textMeaning.split(/<\/?i>/).map((value, index) => {
+                return (
+                  <Box component="span" key={index} sx={index === 1 ? { fontStyle: 'italic' } : {}}>
+                    {value}
+                  </Box>
+                );
+              })}
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              {textMeaningTranslate}
+            </Typography>
+          </Box>
 
-          <Typography variant="body1" sx={{ color: 'text.secondary' }}>
-            {textExample.split(/<\/?b>/).map((value, id) => {
-              return (
-                <Box component="span" key={id} sx={id === 1 ? { fontWeight: 'bold' } : {}}>
-                  {value}
-                </Box>
-              );
-            })}
-          </Typography>
+          <Box>
+            <Typography variant="body1" sx={{ color: 'text.primary' }}>
+              {textExample.split(/<\/?b>/).map((value, index) => {
+                return (
+                  <Box component="span" key={index} sx={index === 1 ? { fontWeight: 'bold' } : {}}>
+                    {value}
+                  </Box>
+                );
+              })}
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              {textExampleTranslate}
+            </Typography>
+          </Box>
         </CardContent>
         <audio ref={audioRef} src={`${API_URL}/${audioList[audioPointer]}`} />
       </Card>
