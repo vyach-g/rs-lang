@@ -43,7 +43,7 @@ const WordCard: React.FC<WordDTO | UserAggregatedWord> = ({
   let audioPointer = 0;
   let isAudioPlaying = false;
 
-  const handleDifficult = (newDifficulty: 'hard' | 'easy') => {
+  const handleDifficulty = (newDifficulty: 'hard' | 'easy') => {
     if (auth) {
       if (difficulty) {
         if (difficulty === newDifficulty) {
@@ -63,6 +63,11 @@ const WordCard: React.FC<WordDTO | UserAggregatedWord> = ({
       }
     }
   };
+
+  let cardBorderColor = 'gray';
+  if (difficulty) {
+    cardBorderColor = difficulty === 'hard' ? 'red' : 'green';
+  }
 
   const playAudio = () => {
     if (audioRef.current) {
@@ -96,7 +101,10 @@ const WordCard: React.FC<WordDTO | UserAggregatedWord> = ({
 
   return (
     <Container>
-      <Card variant="outlined" sx={{ marginBottom: '30px', display: { sm: 'flex' } }}>
+      <Card
+        variant="outlined"
+        sx={{ marginBottom: '30px', display: { sm: 'flex' }, borderColor: cardBorderColor }}
+      >
         <CardMedia
           sx={{ width: { sm: 200 }, minHeight: 150 }}
           component="img"
@@ -147,9 +155,10 @@ const WordCard: React.FC<WordDTO | UserAggregatedWord> = ({
               <Box>
                 <Button
                   variant={difficulty === 'easy' ? 'outlined' : 'contained'}
+                  color="success"
                   size="small"
                   onClick={() => {
-                    handleDifficult('easy');
+                    handleDifficulty('easy');
                   }}
                 >
                   Знаю
@@ -160,7 +169,7 @@ const WordCard: React.FC<WordDTO | UserAggregatedWord> = ({
                   color="error"
                   size="small"
                   onClick={() => {
-                    handleDifficult('hard');
+                    handleDifficulty('hard');
                   }}
                 >
                   Сложна
