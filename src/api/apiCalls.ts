@@ -3,6 +3,7 @@ import storage from '../storage/storage';
 import {
   SignInBody,
   SignInDTO,
+  UserAggregatedWords,
   UsersBody,
   UsersDTO,
   UserSettingsBody,
@@ -85,13 +86,15 @@ export const getUserAggregatedWords = (
   id: string,
   group?: number,
   page?: number,
-  wordsPerPage?: number
+  wordsPerPage?: number,
+  filter?: string
 ) => {
-  return axios.get<Array<UserWordsDTO>>(`${API_URL}/users/${id}/aggregatedWords`, {
+  return axios.get<UserAggregatedWords>(`${API_URL}/users/${id}/aggregatedWords`, {
     params: {
       group,
       page,
       wordsPerPage,
+      filter,
     },
   });
 };
