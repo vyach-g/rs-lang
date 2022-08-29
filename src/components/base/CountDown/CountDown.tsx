@@ -1,24 +1,18 @@
+import { Box } from '@mui/material';
 import React, { useState, useEffect, useRef } from 'react';
 import { WordDTO } from '../../../api/apiCalls.types';
 
-const STATUS = {
-  STARTED: 'STARTED',
-  STOPPED: 'STOPPED',
-};
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
-const INITIAL_COUNT = 10;
+const INITIAL_COUNT = 120;
 
 interface Props {
-  triggerReset: WordDTO | undefined;
   onCountZero: () => void;
 }
 
-const CountDown: React.FC<Props> = ({ triggerReset, onCountZero }) => {
+const CountDown: React.FC<Props> = ({ onCountZero }) => {
   const [currCount, setCurrCount] = useState(INITIAL_COUNT);
-  const [status, setStatus] = useState(STATUS.STARTED);
-  ~useEffect(() => {
-    setCurrCount(INITIAL_COUNT);
-  }, [triggerReset]);
+  const [isRunning, setIsRunning] = useState(true);
 
   useInterval(
     () => {
@@ -29,13 +23,29 @@ const CountDown: React.FC<Props> = ({ triggerReset, onCountZero }) => {
         setCurrCount(INITIAL_COUNT);
       }
     },
-    status === STATUS.STARTED ? 1000 : null
+    isRunning ? 1000 : null
   );
 
+  const toggleTimer = () => {
+    setIsRunning(!isRunning);
+  };
+
   return (
-    <div className="App">
-      <div style={{ padding: 20 }}>{currCount}</div>
-    </div>
+    <Box
+      sx={{
+        position: 'absolute',
+        color: 'rgba(250,211,207,1)',
+        right: '2rem',
+        top: '2rem',
+        fontSize: '2rem',
+        cursor: 'pointer',
+        '& :hover': {
+          color: '#C6B4CE',
+        },
+      }}
+    >
+      <div>{currCount}</div>
+    </Box>
   );
 };
 
@@ -61,5 +71,3 @@ const useInterval = (callback: () => void, delay: number | null) => {
 };
 
 export { CountDown };
-
-// const twoDigits = (num) => String(num).padStart(2, '0');
