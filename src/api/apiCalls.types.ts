@@ -81,3 +81,35 @@ export type UserSettingsDTO = {
   wordsPerDay: number;
 };
 //#endregion
+
+//#region AggregatedWords
+export type UserAggregatedWord = {
+  _id: string;
+  audio: string;
+  audioExample: string;
+  audioMeaning: string;
+  group: number;
+  image: string;
+  page: number;
+  textExample: string;
+  textExampleTranslate: string;
+  textMeaning: string;
+  textMeaningTranslate: string;
+  transcription: string;
+  word: string;
+  wordTranslate: string;
+  userWord?: {
+    difficulty: 'easy' | 'hard';
+  };
+};
+export type UserAggregatedWords = [
+  {
+    paginatedResults: Array<UserAggregatedWord>;
+    totalCount: [
+      {
+        count: number;
+      }
+    ];
+  }
+];
+//#endregion
