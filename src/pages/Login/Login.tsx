@@ -34,8 +34,6 @@ const Login = () => {
   const { setAuth } = useAuthContext();
   const [errorMsg, setErrorMsg] = useState<string>('');
 
-  console.log(state);
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     setErrorMsg('');
     event.preventDefault();
@@ -60,7 +58,7 @@ const Login = () => {
       }
     } else if (response) {
       setAuth(response?.data);
-      navigate(state.path || '/');
+      navigate(state?.path || '/');
     }
   };
 

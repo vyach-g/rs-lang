@@ -8,7 +8,7 @@ import { Entry, Login, Statistics, Registration } from '../../../pages';
 import Games from '../../../pages/Games/Games';
 import AudioCallGame from '../../../pages/Games/AudioCallGame/AudioCallGame';
 import SprintGame from '../../../pages/Games/SprintGame/SprintGame';
-import { Savannah } from '../../../pages/Games/Savannah/Savannah';
+import SavannahGame from '../../../pages/Games/SavannahGame/SavannahGame';
 
 interface Props {
   children: React.ReactNode;
@@ -31,7 +31,7 @@ const DefaultRoutes = () => {
         <Route index element={<Games />} />
         <Route path={RoutePaths.SprintGame} element={<SprintGame />} />
         <Route path={RoutePaths.AudioCallGame} element={<AudioCallGame />} />
-        <Route path={RoutePaths.SavannahGame} element={<Savannah />} />
+        <Route path={RoutePaths.SavannahGame} element={<SavannahGame />} />
       </Route>
       <Route
         path={RoutePaths.Statistics}

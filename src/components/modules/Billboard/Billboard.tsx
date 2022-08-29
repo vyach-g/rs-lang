@@ -76,7 +76,7 @@ const BillboardSubmit = styled(Button)(({ theme }) => ({
   '&:hover': {
     borderColor: 'black',
     borderWidth: '2px',
-    backgroundColor: '#E4F1FF',
+    backgroundColor: '#ff4d4d',
   },
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.8rem',
