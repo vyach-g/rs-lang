@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
-import { Box, Button, CircularProgress, Typography } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
 
 import generateId, { randomInBetween } from '../../../utils/randomIdGenerator';
-import { getWordById } from '../../../api/apiCalls';
+import { getWords } from '../../../api/apiCalls';
 
 import { styled } from '@mui/material/styles';
 
@@ -11,18 +11,36 @@ import { IAnswer } from './types';
 import { WordDTO } from '../../../api/apiCalls.types';
 import { CountDown } from '../../../components/base';
 
-const ButtonCustom = styled(Button)(({ theme }) => ({
-  display: 'inline-flex',
-  fontWeight: '600',
+import FavoriteIcon from '@mui/icons-material/Favorite';
+
+const ButtonCustom = styled('button')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
   borderRadius: '3px',
-  borderWidth: '2px',
-  borderColor: 'black',
-  color: 'black',
-  padding: '.3rem 3rem',
-  '&:hover': {
-    borderColor: 'black',
-    borderWidth: '2px',
-    backgroundColor: '#ff4d4d',
+  border: 'none',
+  backgroundColor: 'transparent',
+  color: 'rgba(250,211,207,1)',
+  fontWeight: '600',
+  fontSize: '0.9rem',
+  letterSpacing: '0.1rem',
+  textTransform: 'uppercase',
+  cursor: 'pointer',
+  marginTop: '1rem',
+  '&::first-letter': {
+    color: 'red',
+  },
+  '&::after': {
+    content: '""',
+    display: 'block',
+    marginTop: '0.5rem',
+    width: '0.7rem',
+    height: '2.5px',
+    background: '#C6B4CE',
+    transition: 'width .25s',
+  },
+  '&:hover::after': {
+    width: '100%',
+    background: 'rgba(250,211,207,1)',
   },
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.8rem',
@@ -41,9 +59,10 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd, onError }) => {
   const [currWord, setCurrWord] = useState<WordDTO>();
   const [answers, setAnswers] = useState<IAnswer[]>([]);
   const [data, setData] = useState<WordDTO[] | null>(null);
+  const [asnwerOptions, setAsnwerOptions] = useState<(WordDTO | undefined)[]>([]);
 
   useEffect(() => {
-    setUpWords();
+    setupData();
   }, []);
 
   const handleAnswer = (event: React.MouseEvent) => {
@@ -63,42 +82,60 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd, onError }) => {
     }
 
     if (newHP === 0) {
-      onGameEnd(answers);
+      showResults();
       return;
     }
 
     setAnswers([...answers, answer]);
 
-    setUpWords();
+    setupWords();
+
+    (event.currentTarget as HTMLButtonElement).disabled = false;
   };
 
-  const setUpWords = async () => {
-    const randID = randomInBetween(0, 3);
-    const words = [];
-    let nextWord;
+  const setupData = async () => {
+    const randPageID = randomInBetween(0, 29);
+    const words = await getWords(+difficulty, randPageID).then((responce) => responce.data);
 
-    for (let i = 0; i < 4; i++) {
-      try {
-        nextWord = await getWord();
-        words.push(nextWord);
-      } catch {
-        onError();
-        return;
+    setData(words);
+    setupWords(words);
+  };
+
+  const setupWords = (words?: WordDTO[]) => {
+    const answerID = randomInBetween(0, 19);
+
+    let randIDs: Array<number> = [answerID];
+    let randID;
+
+    while (randIDs.length !== 4) {
+      randID = randomInBetween(0, 19);
+      if (!randIDs.includes(randID)) {
+        randIDs.push(randID);
       }
     }
 
-    if (words.length === 5) {
-      setUpWords();
-      return;
+    randIDs = randIDs
+      .map((value) => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value);
+
+    let randomizedWordList;
+
+    if (data) {
+      randomizedWordList = randIDs.map((id) => data[id]);
+      setCurrWord(data[answerID]);
+    } else if (words) {
+      randomizedWordList = randIDs.map((id) => words[id]);
+      setCurrWord(words[answerID]);
     }
 
-    setData(words);
-    setCurrWord(words[randID]);
+    if (!randomizedWordList) return;
+
+    setAsnwerOptions(randomizedWordList);
   };
 
-  const getWord = async () => {
-    const randId = generateId(difficulty);
-    return getWordById(randId).then((responce) => responce.data);
+  const showResults = () => {
+    onGameEnd(answers);
   };
 
   return (
@@ -113,13 +150,58 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd, onError }) => {
     >
       {data ? (
         <>
-          <CountDown triggerReset={currWord} onCountZero={setUpWords} />
-          <Box sx={{ textTransform: 'uppercase', fontWeight: '600' }}>Жизни - {currHP}</Box>
-          <Box sx={{ textTransform: 'uppercase', fontWeight: '600' }}>Слово - {currWord?.word}</Box>
+          <CountDown onCountZero={showResults} />
+          <Box sx={{ display: 'flex', columnGap: '0.5rem', position: 'absolute', top: '2.6rem' }}>
+            <FavoriteIcon
+              sx={{
+                fill: `${currHP > 0 ? 'rgba(250,211,207,1)' : '#C6B4CE'}`,
+                fontSize: '1.6rem',
+                cursor: 'pointer',
+              }}
+            />
+            <FavoriteIcon
+              sx={{
+                fill: `${currHP > 1 ? 'rgba(250,211,207,1)' : '#C6B4CE'}`,
+                fontSize: '1.6rem',
+                cursor: 'pointer',
+              }}
+            />
+            <FavoriteIcon
+              sx={{
+                fill: `${currHP > 2 ? 'rgba(250,211,207,1)' : '#C6B4CE'}`,
+                fontSize: '1.6rem',
+                cursor: 'pointer',
+              }}
+            />
+            <FavoriteIcon
+              sx={{
+                fill: `${currHP > 3 ? 'rgba(250,211,207,1)' : '#C6B4CE'}`,
+                fontSize: '1.6rem',
+                cursor: 'pointer',
+              }}
+            />
+            <FavoriteIcon
+              sx={{
+                fill: `${currHP > 4 ? 'rgba(250,211,207,1)' : '#C6B4CE'}`,
+                fontSize: '1.6rem',
+                cursor: 'pointer',
+              }}
+            />
+          </Box>
+          <Box
+            sx={{
+              color: 'rgba(250,211,207, 1)',
+              textTransform: 'uppercase',
+              fontSize: '1.4rem',
+              fontWeight: '600',
+            }}
+          >
+            Слово <span style={{ color: '#C6B4CE' }}>- {currWord?.word}</span>
+          </Box>
           <Box sx={{ display: 'flex', flexDirection: 'row', columnGap: '1rem', flexWrap: 'wrap' }}>
-            {data.map((word) => (
-              <ButtonCustom variant="outlined" key={word.word} onClick={handleAnswer}>
-                {word.wordTranslate}
+            {asnwerOptions.map((word) => (
+              <ButtonCustom key={word?.id} onClick={handleAnswer}>
+                {word?.wordTranslate}
               </ButtonCustom>
             ))}
           </Box>
@@ -133,10 +215,19 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd, onError }) => {
             alignItems: 'center',
           }}
         >
-          <Typography variant="h5" sx={{ color: '#9C9C9C' }}>
+          <Typography
+            variant="h5"
+            sx={{
+              color: '#C6B4CE',
+              textTransform: 'uppercase',
+              fontSize: '1.2rem',
+              letterSpacing: '0.05rem',
+              fontWeight: '600',
+            }}
+          >
             Готовим слова
           </Typography>
-          <CircularProgress sx={{ color: '#9C9C9C' }} />
+          <CircularProgress sx={{ color: '#C6B4CE', marginTop: '0.5rem' }} />
         </Box>
       )}
     </Box>
