@@ -1,17 +1,59 @@
 import React, { useState } from 'react';
 
-import { Box, Typography } from '@mui/material';
+import { Box } from '@mui/material';
 import { Game } from './Game';
 import { Settings } from './Settings';
 import { Result } from './Result';
 
+import { styled } from '@mui/material/styles';
+
+import BgImg from '../../../assets/savannah-bg.svg';
+import CloseIcon from '@mui/icons-material/Close';
 import { IAnswer } from './types';
+import { useNavigate } from 'react-router-dom';
+
+const GameContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  rowGap: '1.4rem',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundImage: `url(${BgImg})`,
+  backgroundSize: 'cover',
+  width: '100vw',
+  height: '100vh',
+});
+
+const CloseButton = styled('button')({
+  display: 'flex',
+  alignItems: 'center',
+  jusrifyContent: 'center',
+  position: 'absolute',
+  left: '2rem',
+  top: '2rem',
+  backgroundColor: 'transparent',
+  margin: '0',
+  padding: '0',
+  border: 'none',
+  cursor: 'pointer',
+  color: 'rgba(250,211,207,1)',
+  '& svg': {
+    fontSize: '1.8rem',
+  },
+  '&:hover': {
+    '& svg ': {
+      fill: '#C6B4CE',
+    },
+  },
+});
 
 const SavannahGame = () => {
   const [status, setStatus] = useState('TO_BE_STARTED');
 
   const [difficulty, setDifficulty] = useState('0');
   const [answers, setAnswers] = useState<IAnswer[]>([]);
+
+  const navigate = useNavigate();
 
   const onGameStart = (newDifficulty: string) => {
     setDifficulty(newDifficulty);
@@ -31,16 +73,12 @@ const SavannahGame = () => {
     setStatus('SERVER_ERROR');
   };
 
+  const onGameClose = () => {
+    navigate('/games');
+  };
+
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        marginInline: 'auto',
-      }}
-    >
+    <GameContainer>
       <Box
         sx={{
           display: 'flex',
@@ -52,16 +90,25 @@ const SavannahGame = () => {
           borderRadius: '1rem',
         }}
       >
-        <Typography variant="h2">Savannah</Typography>
         {status === 'TO_BE_STARTED' ? (
-          <Settings onGameStart={onGameStart} />
+          <>
+            <CloseButton onClick={onGameClose}>
+              <CloseIcon />
+            </CloseButton>
+            <Settings onGameStart={onGameStart} />
+          </>
         ) : status === 'STARTED' ? (
-          <Game newDifficulty={difficulty} onGameEnd={onGameEnd} onError={onError} />
+          <>
+            <CloseButton onClick={onGameClose}>
+              <CloseIcon />
+            </CloseButton>
+            <Game newDifficulty={difficulty} onGameEnd={onGameEnd} onError={onError} />
+          </>
         ) : (
           <Result onNextGame={onNextGame} currAnswers={answers} gameStatus={status} />
         )}
       </Box>
-    </Box>
+    </GameContainer>
   );
 };
 
