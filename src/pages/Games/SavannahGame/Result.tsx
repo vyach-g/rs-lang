@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 
 import { Box, Button, Typography } from '@mui/material';
 
@@ -7,12 +7,27 @@ import { GameWordCard } from '../../../components/base';
 import { useNavigate } from 'react-router-dom';
 import { IAnswer } from './types';
 
+import CloseIcon from '@mui/icons-material/Close';
+
 import { styled } from '@mui/material/styles';
 
 const ResultsCustom = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
+  position: 'relative',
+  backgroundColor: 'white',
+  padding: '4rem 3rem 3rem 3rem',
+  borderRadius: '0.5rem',
+  rowGap: '1.5rem',
+});
+
+const ResultsMain = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  backgroundColor: 'white',
+  width: '14rem',
   rowGap: '1.5rem',
   '& ::-webkit-scrollbar': {
     width: '8px',
@@ -28,20 +43,21 @@ const ResultsCustom = styled('div')({
   },
 });
 
-const AnswersCustom = styled('div')(({ theme }) => ({
+const AnswersCustom = styled('div')({
   display: 'flex',
   flexDirection: 'column',
+  position: 'relative',
   maxHeight: '12rem',
   overflowY: 'scroll',
   padding: '0 2rem',
   width: '100%',
   marginLeft: '-3rem',
-}));
+});
 
 const AnswersList = styled('ul')({
   display: 'flex',
   flexDirection: 'column',
-  rowGap: '0.5rem',
+  rowGap: '0.3rem',
   margin: '0',
   padding: '0',
 });
@@ -50,21 +66,37 @@ const ButtonCustom = styled(Button)(({ theme }) => ({
   display: 'inline-flex',
   fontWeight: '600',
   borderRadius: '3px',
-  borderWidth: '2px',
-  borderColor: 'black',
+  border: '2px solid black',
   color: 'black',
-  padding: '.3rem 2rem',
+  padding: '.2rem 2rem',
   maxWidth: '15rem',
   width: '100%',
   '&:hover': {
-    borderColor: 'black',
-    borderWidth: '2px',
-    backgroundColor: '#ff4d4d',
+    border: '2px solid black',
+    backgroundColor: '#9B8791',
   },
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.8rem',
   },
 }));
+
+const CloseButton = styled('button')({
+  display: 'flex',
+  alignItems: 'center',
+  jusrifyContent: 'center',
+  backgroundColor: 'transparent',
+  position: 'absolute',
+  top: '1.2rem',
+  right: '0.7rem',
+  margin: '0',
+  padding: '0',
+  border: 'none',
+  cursor: 'pointer',
+  color: 'black',
+  '& svg': {
+    fontSize: '1.8rem',
+  },
+});
 
 interface Props {
   onNextGame: () => void;
@@ -92,7 +124,7 @@ const Result: React.FC<Props> = ({ onNextGame, currAnswers, gameStatus }) => {
 
   const GameResults =
     gameStatus === 'SERVER_ERROR' ? (
-      <Box sx={{ color: '#cc0000', textAlign: 'center', fontSize: '1.1rem' }}>
+      <Box sx={{ color: '#A24C43', textAlign: 'center', fontSize: '1.1rem' }}>
         An error occured on the server, please, try starting a new game
       </Box>
     ) : (
@@ -102,7 +134,7 @@ const Result: React.FC<Props> = ({ onNextGame, currAnswers, gameStatus }) => {
             <GameWordCard key={index} answer={answer} />
           ))}
         </AnswersList>
-        <AnswersList sx={{ color: '#cc0000' }}>
+        <AnswersList sx={{ color: '#A24C43' }}>
           {wrongAnswers.map((answer, index) => (
             <GameWordCard key={index} answer={answer} />
           ))}
@@ -113,7 +145,10 @@ const Result: React.FC<Props> = ({ onNextGame, currAnswers, gameStatus }) => {
   return (
     <ResultsCustom>
       <Typography variant="h4">Отчет по игре</Typography>
-      {GameResults}
+      <CloseButton onClick={handleExit}>
+        <CloseIcon />
+      </CloseButton>
+      <ResultsMain>{GameResults}</ResultsMain>
       <ButtonCustom variant="outlined" onClick={handleNewGame}>
         Сыграть ещё
       </ButtonCustom>
