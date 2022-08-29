@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { AxiosResponse } from 'axios';
 import { useAuthContext } from '../../../context/AuthContextProvider';
 import storage from '../../../storage/storage';
-import { getWords, getUserWords, getUserAggregatedWords } from '../../../api/apiCalls';
+import { getWords, getUserAggregatedWords } from '../../../api/apiCalls';
+import { UserAggregatedWord, UserAggregatedWords } from '../../../api/apiCalls.types';
+import { PAGE_PER_GROUP, TextbookTab, WORDS_TOTAL, WORD_PER_PAGE } from './wordListConsts';
+
+import { WordCard } from '../../base';
 import {
   Container,
   Pagination,
@@ -10,64 +15,83 @@ import {
   Grid,
   Tab,
   Tabs,
-  Box,
-  PaginationItem,
 } from '@mui/material';
-import { WordCard } from '../../base';
-import { WordDTO, UserAggregatedWord, UserAggregatedWords } from '../../../api/apiCalls.types';
-import { PAGE_PER_GROUP, WORD_PER_PAGE } from './wordListConsts';
-import { AxiosResponse } from 'axios';
 
 const WordList: React.FC = () => {
   const { auth } = useAuthContext();
-  const [wordList, setWordList] = useState<WordDTO[] | UserAggregatedWord[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [wordList, setWordList] = useState<UserAggregatedWord[]>([]);
   const [group, setGroup] = useState(storage.getItem('textbookGroup') || 1);
   const [page, setPage] = useState(storage.getItem('textbookPage') || 1);
   const [learnedPages, setLearnedPages] = useState(new Array(PAGE_PER_GROUP));
   const [learnedWords, setLearnedWords] = useState(new Array(WORD_PER_PAGE));
 
   useEffect(() => {
+    setIsLoading(true);
     if (!auth) {
       getWords(group - 1, page - 1)
         .then((response) => {
-          setWordList(response.data);
+          const words = response.data.map((word) => {
+            const formattedWords = Object.assign(word);
+            formattedWords._id = formattedWords.id;
+            formattedWords.userWord = null;
+            return formattedWords;
+          });
+          setWordList(words);
+          setIsLoading(false);
+        })
+        .then(() => {
           storage.setItem('textbookGroup', group);
           storage.setItem('textbookPage', page);
-          console.log('unauthWords', response.data);
         })
         .catch((err) => {
           console.log(err);
         });
     } else {
-      if (group !== 7) {
-        getUserAggregatedWords(auth.userId, group - 1, page - 1, WORD_PER_PAGE).then((res) => {
-          const words = res.data[0].paginatedResults;
-          const learned = words.map((word) => !!word?.userWord?.difficulty);
-          setWordList(words);
-          setLearnedWords(learned);
-          storage.setItem('textbookGroup', group);
-          storage.setItem('textbookPage', page);
-        });
+      if (group !== TextbookTab.Hard) {
+        getUserAggregatedWords(auth.userId, group - 1, page - 1, WORD_PER_PAGE)
+          .then((res) => {
+            const words = res.data[0].paginatedResults;
+            const learned = words.map((word) => !!word?.userWord?.difficulty);
+            setLearnedWords(learned);
+            setWordList(words);
+            setIsLoading(false);
+          })
+          .then(() => {
+            storage.setItem('textbookGroup', group);
+            storage.setItem('textbookPage', page);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       } else {
         getUserAggregatedWords(
           auth.userId,
           undefined,
           undefined,
-          4000,
+          WORDS_TOTAL,
           JSON.stringify({ 'userWord.difficulty': 'hard' })
-        ).then((res) => {
-          const words = res.data[0].paginatedResults;
-          console.log('group', group);
-          console.log('hardWords', words);
-          setWordList(words);
-          storage.setItem('textbookGroup', group);
-        });
+        )
+          .then((res) => {
+            const words = res.data[0].paginatedResults;
+            setWordList(words);
+            storage.setItem('textbookGroup', group);
+            setIsLoading(false);
+          })
+          .then(() => {
+            storage.setItem('textbookGroup', group);
+            storage.setItem('textbookPage', page);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
       }
     }
   }, [group, page]);
 
+  //unrealized functionality of learned pages, TODO
   useEffect(() => {
-    if (auth && page !== 7) {
+    if (auth && page !== TextbookTab.Hard) {
       const pagesPromises: Promise<AxiosResponse<UserAggregatedWords>>[] = [];
       for (let i = 0; i < PAGE_PER_GROUP; i++) {
         pagesPromises.push(getUserAggregatedWords(auth.userId, group - 1, i, WORD_PER_PAGE));
@@ -83,67 +107,65 @@ const WordList: React.FC = () => {
       });
     }
   }, [group]);
+  //
 
   return (
     <Container sx={{ mb: 2 }}>
       <Grid container spacing={0} direction="column" alignItems="center" justifyContent="center">
-        <Box>
+        <Container sx={{ display: 'flex' }}>
           <Tabs
-            sx={{ mb: 2, px: 3 }}
+            sx={{ mb: 2, mx: 'auto' }}
             centered
+            variant="scrollable"
             value={group}
             onChange={(event: React.SyntheticEvent, value: number) => {
               setGroup(value);
               setPage(1);
+              setWordList([]);
             }}
           >
-            <Tab label="A1" value={1} />
-            <Tab label="A2" value={2} />
-            <Tab label="B1" value={3} />
-            <Tab label="B2" value={4} />
-            <Tab label="C1" value={5} />
-            <Tab label="C2" value={6} />
-            {auth && <Tab label="Сложные слова" value={7} />}
+            <Tab disabled={isLoading ? true : false} label="A1" value={TextbookTab.A1} />
+            <Tab disabled={isLoading ? true : false} label="A2" value={TextbookTab.A2} />
+            <Tab disabled={isLoading ? true : false} label="B1" value={TextbookTab.B1} />
+            <Tab disabled={isLoading ? true : false} label="B2" value={TextbookTab.B2} />
+            <Tab disabled={isLoading ? true : false} label="C1" value={TextbookTab.C1} />
+            <Tab disabled={isLoading ? true : false} label="C2" value={TextbookTab.C2} />
+            {auth && (
+              <Tab
+                disabled={isLoading ? true : false}
+                label="Сложные слова"
+                value={TextbookTab.Hard}
+              />
+            )}
           </Tabs>
-        </Box>
-        {group !== 7 && (
+        </Container>
+        {group !== TextbookTab.Hard && (
           <Pagination
+            disabled={isLoading ? true : false}
             count={PAGE_PER_GROUP}
             page={page}
             onChange={(event, num) => {
+              setWordList([]);
               setPage(num);
             }}
             siblingCount={1}
             color="primary"
-            // renderItem={(item) => {
-            //   console.log('item', item);
-            //   const isLearned = learnedPages[page - 1];
-            //   console.log('isLearned', isLearned);
-            //   return (
-            //     <PaginationItem
-            //       {...item}
-            //       color="primary"
-            //       size={isLearned ? 'medium' : 'large'}
-            //       sx={{ backgroundColor: isLearned ? 'red' : null }}
-            //     />
-            //   );
-            // }}
+            sx={{ mb: 2 }}
           />
         )}
-        {learnedWords.reduce((prev, curr) => prev && !!curr, true) && (
+        {auth && learnedWords.reduce((prev, curr) => prev && !!curr, true) && (
           <Typography variant="h5" align="center">
             На данной странице изучены все слова
           </Typography>
         )}
-        {!!wordList.length && (
+        {
           <>
             {wordList.map((word) => {
-              // @ts-expect-error
-              return <WordCard key={word.id || word._id} {...word}></WordCard>;
+              return <WordCard key={word._id} {...word}></WordCard>;
             })}
           </>
-        )}
-        {!wordList.length && <CircularProgress color="primary" />}
+        }
+        {isLoading && <CircularProgress color="primary" />}
       </Grid>
     </Container>
   );

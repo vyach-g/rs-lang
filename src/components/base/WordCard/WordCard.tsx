@@ -1,6 +1,8 @@
 import React, { useRef, useState } from 'react';
 import { useAuthContext } from '../../../context/AuthContextProvider';
-
+import { createUserWord, updateUserWord, deleteUserWord } from '../../../api/apiCalls';
+import { UserAggregatedWord } from '../../../api/apiCalls.types';
+import { API_URL } from '../../../api/apiUrl';
 import {
   Card,
   CardMedia,
@@ -9,19 +11,16 @@ import {
   CardContent,
   IconButton,
   Container,
-  Button,
 } from '@mui/material';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
-import { WordDTO, UserAggregatedWord } from '../../../api/apiCalls.types';
-import { API_URL } from '../../../api/apiUrl';
-import { createUserWord, updateUserWord, deleteUserWord } from '../../../api/apiCalls';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
+import { green, grey, red } from '@mui/material/colors';
 
-const WordCard: React.FC<WordDTO | UserAggregatedWord> = ({
-  // @ts-expect-error
+const WordCard: React.FC<UserAggregatedWord> = ({
   _id,
-  // @ts-expect-error
-  id,
   word,
+  group,
   image,
   textMeaning,
   textMeaningTranslate,
@@ -32,12 +31,10 @@ const WordCard: React.FC<WordDTO | UserAggregatedWord> = ({
   audioMeaning,
   audioExample,
   wordTranslate,
-  // @ts-expect-error
   userWord,
 }) => {
   const { auth } = useAuthContext();
   const [difficulty, setDifficulty] = useState(userWord?.difficulty);
-  console.log(difficulty);
   const audioRef = useRef<HTMLAudioElement>(null);
   const audioList = [audio, audioMeaning, audioExample];
   let audioPointer = 0;
@@ -47,27 +44,22 @@ const WordCard: React.FC<WordDTO | UserAggregatedWord> = ({
     if (auth) {
       if (difficulty) {
         if (difficulty === newDifficulty) {
-          deleteUserWord(auth?.userId, id || _id);
+          deleteUserWord(auth?.userId, _id);
           setDifficulty(undefined);
         } else {
-          updateUserWord(auth?.userId, id || _id, {
+          updateUserWord(auth?.userId, _id, {
             difficulty: newDifficulty,
           });
           setDifficulty(newDifficulty);
         }
       } else {
-        createUserWord(auth?.userId, id || _id, {
+        createUserWord(auth?.userId, _id, {
           difficulty: newDifficulty,
         });
         setDifficulty(newDifficulty);
       }
     }
   };
-
-  let cardBorderColor = 'gray';
-  if (difficulty) {
-    cardBorderColor = difficulty === 'hard' ? 'red' : 'green';
-  }
 
   const playAudio = () => {
     if (audioRef.current) {
@@ -100,10 +92,19 @@ const WordCard: React.FC<WordDTO | UserAggregatedWord> = ({
   };
 
   return (
-    <Container>
+    <Container maxWidth="md">
       <Card
         variant="outlined"
-        sx={{ marginBottom: '30px', display: { sm: 'flex' }, borderColor: cardBorderColor }}
+        sx={{
+          marginBottom: '30px',
+          display: { sm: 'flex' },
+          boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
+          borderRadius: 3,
+          borderRight: `12px solid ${
+            difficulty ? (difficulty === 'hard' ? red[400] : green[400]) : grey[300]
+          }`,
+          transition: 'all 0.3s',
+        }}
       >
         <CardMedia
           sx={{ width: { sm: 200 }, minHeight: 150 }}
@@ -133,6 +134,7 @@ const WordCard: React.FC<WordDTO | UserAggregatedWord> = ({
                 <Typography variant="h5" component="span">
                   {word}
                 </Typography>
+
                 <IconButton
                   sx={{ width: 32, height: 32 }}
                   onClick={() => {
@@ -141,6 +143,7 @@ const WordCard: React.FC<WordDTO | UserAggregatedWord> = ({
                 >
                   <VolumeUpIcon />
                 </IconButton>
+
                 <Typography component="span" variant="body1" sx={{ color: 'text.secondary' }}>
                   {transcription}
                 </Typography>
@@ -153,27 +156,26 @@ const WordCard: React.FC<WordDTO | UserAggregatedWord> = ({
             </Box>
             {auth && (
               <Box>
-                <Button
-                  variant={difficulty === 'easy' ? 'outlined' : 'contained'}
-                  color="success"
-                  size="small"
+                <IconButton
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    color: difficulty === 'easy' ? green[100] : green[400],
+                  }}
                   onClick={() => {
                     handleDifficulty('easy');
                   }}
                 >
-                  Знаю
-                </Button>
-                <Button
-                  variant={difficulty === 'hard' ? 'outlined' : 'contained'}
-                  // variant="contained"
-                  color="error"
-                  size="small"
+                  <CheckCircleIcon />
+                </IconButton>
+                <IconButton
+                  sx={{ width: 32, height: 32, color: difficulty === 'hard' ? red[100] : red[400] }}
                   onClick={() => {
                     handleDifficulty('hard');
                   }}
                 >
-                  Сложна
-                </Button>
+                  <DoDisturbOnIcon />
+                </IconButton>
               </Box>
             )}
           </Box>
