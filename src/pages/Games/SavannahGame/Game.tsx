@@ -12,6 +12,7 @@ import { WordDTO } from '../../../api/apiCalls.types';
 import { CountDown } from '../../../components/base';
 
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import { withAsync } from '../../../api/helpers/withAsync';
 
 const ButtonCustom = styled('button')(({ theme }) => ({
   display: 'flex',
@@ -95,10 +96,12 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd, onError }) => {
 
   const setupData = async () => {
     const randPageID = randomInBetween(0, 29);
-    const words = await getWords(+difficulty, randPageID).then((responce) => responce.data);
 
-    setData(words);
-    setupWords(words);
+    const { response } = await withAsync(() => getWords(+difficulty, randPageID));
+    if (response) {
+      setData(response.data);
+      setupWords(response.data);
+    }
   };
 
   const setupWords = (words?: WordDTO[]) => {
