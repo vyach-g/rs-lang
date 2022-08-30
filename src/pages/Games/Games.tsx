@@ -14,10 +14,12 @@ export default function Games() {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
+          gap: '1rem',
         }}
       >
         <Link to="sprint">sprint</Link>
         <Link to="audiocall">audiocall</Link>
+        <Link to="savannah">savannah</Link>
         <Outlet />
       </Box>
     </Default>

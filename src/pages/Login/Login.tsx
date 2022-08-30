@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import validator from 'validator';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { signIn } from '../../api/apiCalls';
 import { RoutePaths } from '../../config/routes';
@@ -20,9 +20,17 @@ import {
 } from '@mui/material';
 import { withAsync } from '../../api/helpers/withAsync';
 
+type LocationProps = {
+  state: {
+    from: Location;
+    path: string;
+  };
+};
+
 const Login = () => {
   const navigate = useNavigate();
 
+  const { state } = useLocation() as unknown as LocationProps;
   const { setAuth } = useAuthContext();
   const [errorMsg, setErrorMsg] = useState<string>('');
 
@@ -50,7 +58,7 @@ const Login = () => {
       }
     } else if (response) {
       setAuth(response?.data);
-      navigate('/');
+      navigate(state?.path || '/');
     }
   };
 

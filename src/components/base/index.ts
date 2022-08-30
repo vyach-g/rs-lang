@@ -1,4 +1,6 @@
-import { MemberCard } from './MemberCard/MemberCard';
-import { WordCard } from './WordCard/WordCard';
+import { MemberCard } from "./MemberCard/MemberCard";
+import { GameWordCard } from './GameWordCard/GameWordCard';
+import { CountDown } from "./CountDown/CountDown";
+import { WordCard } from "./WordCard/WordCard";
 
-export { MemberCard, WordCard };
+export { CountDown, MemberCard, GameWordCard, WordCard }
