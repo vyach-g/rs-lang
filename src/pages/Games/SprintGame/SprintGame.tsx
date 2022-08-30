@@ -19,27 +19,27 @@ import { ShowcaseProps } from '../../../components/modules/Showcase/Showcase';
 
 const difficultyButtons = [
   {
-    title: 'Легкий-1',
+    title: 'A1',
     value: 0,
   },
   {
-    title: 'Легкий-2',
+    title: 'A2',
     value: 1,
   },
   {
-    title: 'Средний-1',
+    title: 'B1',
     value: 2,
   },
   {
-    title: 'Средний-2',
+    title: 'B2',
     value: 3,
   },
   {
-    title: 'Сложный-1',
+    title: 'C1',
     value: 4,
   },
   {
-    title: 'Сложный-2',
+    title: 'C2',
     value: 5,
   },
 ];
@@ -112,7 +112,10 @@ export default function SprintGame({ customWords = [] }: { customWords?: Array<W
               );
             })}
           </Levels>
-          <SubmitButton onClick={() => startGame()} disabled={apiStatus === 'PENDING' || !level}>
+          <SubmitButton
+            onClick={() => startGame()}
+            disabled={apiStatus === 'PENDING' || typeof level === 'undefined'}
+          >
             {' '}
             {apiStatus === 'PENDING' ? (
               <CircularProgress size={20} />
