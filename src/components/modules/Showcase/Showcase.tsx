@@ -1,15 +1,29 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { RoutePaths } from '../../../config/routes';
 import { Box, Container, Typography } from '@mui/material';
 
-const Showcase: React.FC = () => {
+export type ShowcaseProps = {
+  group: number;
+  page: number;
+};
+
+const Showcase: React.FC<ShowcaseProps> = (props) => {
+  const navigate = useNavigate();
+  const { group, page } = props;
+
   return (
     <Container>
       <Typography variant="h4" align="center">
         Закрепите знания в играх
         <Box>
-          <Link to={RoutePaths.SprintGame}>Спринт</Link>
+          <button
+            onClick={() =>
+              navigate(`../games/${RoutePaths.SprintGame}`, { state: { group, page } })
+            }
+          >
+            Спринт
+          </button>
           <Link to={RoutePaths.AudioCallGame}>Аудиовызов</Link>
         </Box>
       </Typography>
