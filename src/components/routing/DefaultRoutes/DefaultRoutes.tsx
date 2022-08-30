@@ -8,6 +8,7 @@ import { Entry, Login, Statistics, Registration } from '../../../pages';
 import Games from '../../../pages/Games/Games';
 import AudioCallGame from '../../../pages/Games/AudioCallGame/AudioCallGame';
 import SprintGame from '../../../pages/Games/SprintGame/SprintGame';
+import SavannahGame from '../../../pages/Games/SavannahGame/SavannahGame';
 import { Textbook } from '../../../pages/Textbook/Textbook';
 
 interface Props {
@@ -31,6 +32,7 @@ const DefaultRoutes = () => {
         <Route index element={<Games />} />
         <Route path={RoutePaths.SprintGame} element={<SprintGame />} />
         <Route path={RoutePaths.AudioCallGame} element={<AudioCallGame />} />
+        <Route path={RoutePaths.SavannahGame} element={<SavannahGame />} />
       </Route>
       <Route
         path={RoutePaths.Statistics}
