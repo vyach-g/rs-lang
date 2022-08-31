@@ -17,15 +17,22 @@ import {
   Tabs,
 } from '@mui/material';
 
-const WordList: React.FC = () => {
+type WordListProps = {
+  group: number;
+  setGroup: React.Dispatch<React.SetStateAction<number>>;
+  page: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
+};
+
+const WordList: React.FC<WordListProps> = (props) => {
   const { auth } = useAuthContext();
   const [isLoading, setIsLoading] = useState(true);
   const [wordList, setWordList] = useState<UserAggregatedWord[]>([]);
-  const [group, setGroup] = useState(storage.getItem('textbookGroup') || 1);
-  const [page, setPage] = useState(storage.getItem('textbookPage') || 1);
+
   const [learnedPages, setLearnedPages] = useState(new Array(PAGE_PER_GROUP));
   const [learnedWords, setLearnedWords] = useState(new Array(WORD_PER_PAGE));
 
+  const { group, setGroup, page, setPage } = props;
   useEffect(() => {
     setIsLoading(true);
     if (!auth) {

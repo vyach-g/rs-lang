@@ -1,6 +1,6 @@
 import { CircularProgress } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { getWords } from '../../../api/apiCalls';
 import { WordDTO } from '../../../api/apiCalls.types';
 import { withAsync } from '../../../api/helpers/withAsync';
@@ -15,30 +15,31 @@ import {
   Wrapper,
 } from './Sprint.styles';
 import exit from '../../../assets/exit.svg';
+import { ShowcaseProps } from '../../../components/modules/Showcase/Showcase';
 
 const difficultyButtons = [
   {
-    title: 'Легкий-1',
+    title: 'A1',
     value: 0,
   },
   {
-    title: 'Легкий-2',
+    title: 'A2',
     value: 1,
   },
   {
-    title: 'Средний-1',
+    title: 'B1',
     value: 2,
   },
   {
-    title: 'Средний-2',
+    title: 'B2',
     value: 3,
   },
   {
-    title: 'Сложный-1',
+    title: 'C1',
     value: 4,
   },
   {
-    title: 'Сложный-2',
+    title: 'C2',
     value: 5,
   },
 ];
@@ -58,10 +59,24 @@ export default function SprintGame({ customWords = [] }: { customWords?: Array<W
     setLevel(level);
   }
 
-  async function startGame() {
-    const page = Math.floor(Math.random() * 30);
+  const { state } = useLocation();
+
+  useEffect(() => {
+    if (state) {
+      const { group, page } = state as ShowcaseProps;
+
+      startGame(page, group);
+    }
+  }, []);
+
+  async function startGame(page?: number, group?: number) {
+    const defaultPage = Math.floor(Math.random() * 30);
+
+    const requestPage = page ? page : defaultPage;
+    const requestLevel = group ? group : level;
+
     setApiStatus('PENDING');
-    const { response, error } = await withAsync(() => getWords(level, page));
+    const { response, error } = await withAsync(() => getWords(requestLevel, requestPage));
     if (response) {
       setWords(response.data);
       setIsGameStarted(true);
@@ -97,7 +112,10 @@ export default function SprintGame({ customWords = [] }: { customWords?: Array<W
               );
             })}
           </Levels>
-          <SubmitButton onClick={startGame} disabled={apiStatus === 'PENDING' || !level}>
+          <SubmitButton
+            onClick={() => startGame()}
+            disabled={apiStatus === 'PENDING' || typeof level === 'undefined'}
+          >
             {' '}
             {apiStatus === 'PENDING' ? (
               <CircularProgress size={20} />

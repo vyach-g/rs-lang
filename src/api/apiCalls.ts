@@ -24,6 +24,20 @@ axios.interceptors.request.use((request) => {
   return request;
 });
 
+axios.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    if (error.response.status == 401) {
+      storage.clear();
+      // refresh the page for them
+      return Promise.reject({ message: 'Please re-authenticate.' });
+    }
+    return Promise.reject(error);
+  }
+);
+
 //sign in
 export const signIn = (body: SignInBody) => {
   return axios.post<SignInDTO>(`${API_URL}/signin`, body);
