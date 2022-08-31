@@ -15,12 +15,8 @@ import {
 import { WordCard } from '../../base';
 import {
   Container,
-  Pagination,
   Typography,
-  CircularProgress,
   Grid,
-  Tab,
-  Tabs,
   Box,
   Card,
   CardMedia,
@@ -37,11 +33,10 @@ const WordList: React.FC<WordListProps> = (props) => {
   const { auth } = useAuthContext();
   const [isLoading, setIsLoading] = useState(true);
   const [wordList, setWordList] = useState<UserAggregatedWord[]>([]);
-
   const [learnedPages, setLearnedPages] = useState(new Array(PAGE_PER_GROUP));
-  const [learnedWords, setLearnedWords] = useState(new Array(WORD_PER_PAGE));
 
   const { group, setGroup, page, setPage } = props;
+
   useEffect(() => {
     setIsLoading(true);
     if (!auth) {
@@ -69,7 +64,6 @@ const WordList: React.FC<WordListProps> = (props) => {
           .then((res) => {
             const words = res.data[0].paginatedResults;
             const learned = words.map((word) => !!word?.userWord?.difficulty);
-            setLearnedWords(learned);
             setWordList(words);
             setIsLoading(false);
           })
@@ -131,67 +125,68 @@ const WordList: React.FC<WordListProps> = (props) => {
   return (
     <Container sx={{ py: 2 }}>
       <Grid container spacing={0} direction="column" alignItems="center" justifyContent="center">
-        <Container sx={{ display: 'flex' }}>
-          <Tabs
-            sx={{ mb: 2, mx: 'auto', width: '850px', gap: '10px' }}
-            variant="fullWidth"
-            value={group}
-            onChange={(event: React.SyntheticEvent, value: number) => {
-              if (group !== value) {
-                setIsLoading(true);
-                setLearnedPages([]);
-                setWordList([]);
-                setGroup(value);
-                setPage(1);
-              }
-            }}
-          >
-            <Tab
-              disabled={isLoading ? true : false}
-              label="A1"
-              value={TextbookTab.A1}
-              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.A1].light }}
-            />
-            <Tab
-              disabled={isLoading ? true : false}
-              label="A2"
-              value={TextbookTab.A2}
-              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.A2].light }}
-            />
-            <Tab
-              disabled={isLoading ? true : false}
-              label="B1"
-              value={TextbookTab.B1}
-              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.B1].light }}
-            />
-            <Tab
-              disabled={isLoading ? true : false}
-              label="B2"
-              value={TextbookTab.B2}
-              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.B2].light }}
-            />
-            <Tab
-              disabled={isLoading ? true : false}
-              label="C1"
-              value={TextbookTab.C1}
-              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.C1].light }}
-            />
-            <Tab
-              disabled={isLoading ? true : false}
-              label="C2"
-              value={TextbookTab.C2}
-              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.C2].light }}
-            />
-            {auth && (
-              <Tab
-                disabled={isLoading ? true : false}
-                label="Сложные слова"
-                value={TextbookTab.Hard}
-                sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.Hard].light }}
-              />
-            )}
-          </Tabs>
-        </Container>
+        <Typography variant="h4" align="center" gutterBottom={true}>
+          Учебник
+        </Typography>
+        <Typography variant="h6">Выберите группу и страницу учебника</Typography>
+
+        <Box
+          sx={{
+            width: '100%',
+            maxWidth: '850px',
+            overflowX: { xs: 'scroll', md: 'hidden' },
+          }}
+        >
+          <Box sx={{ width: '850px', py: 1, display: 'flex', justifyContent: 'space-between' }}>
+            {['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Сложные слова'].map((value, index) => {
+              return (
+                <Box
+                  component="div"
+                  key={index}
+                  sx={{
+                    width: '100%',
+                    px: '4px',
+                    height: '56px',
+                    display: 'flex',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      height: '52px',
+                      width: '100%',
+                      display: 'flex',
+                      textAlign: 'center',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      borderRadius: '5px',
+                      transition: 'all 0.3s',
+                      cursor: isLoading ? 'inherit' : 'pointer',
+                      boxSizing: 'border-box',
+                      backgroundColor: isLoading ? '#E3E3E3' : GROUP_COLORS[index].light,
+                      border: index === group ? '5px solid rgba(255, 255, 255, .5)' : '',
+                      fontWeight: 'bold',
+                      color: '#ffffff',
+                      '&:hover': {
+                        transform: 'translate(0px, -5px)',
+                      },
+                    }}
+                    onClick={() => {
+                      if (group !== index) {
+                        setIsLoading(true);
+                        setLearnedPages([]);
+                        setWordList([]);
+                        setGroup(index);
+                        setPage(1);
+                      }
+                    }}
+                  >
+                    {value}
+                  </Box>
+                </Box>
+              );
+            })}
+          </Box>
+        </Box>
         {group !== TextbookTab.Hard && (
           <Box
             sx={{
@@ -215,8 +210,6 @@ const WordList: React.FC<WordListProps> = (props) => {
                         display: 'inline-flex',
                         justifyContent: 'center',
                         alignItems: 'center',
-
-                        // minWidth: '20px',
                       }}
                     >
                       <Box
@@ -238,11 +231,8 @@ const WordList: React.FC<WordListProps> = (props) => {
                           border: index === page ? '5px solid rgba(255, 255, 255, .5)' : '',
                           fontWeight: 'bold',
                           color: '#ffffff',
-                          // index === page ? '#ffffff' : '#000000',
                           '&:hover': {
-                            // backgroundColor: isLoading ? 'E3E3E3' : '#ffffff',
                             transform: 'translate(0px, -5px)',
-                            // color: '#000000',
                           },
                         }}
                         onClick={() => {
@@ -261,14 +251,6 @@ const WordList: React.FC<WordListProps> = (props) => {
             </Box>
           </Box>
         )}
-        {/* {auth &&
-          learnedWords.reduce((prev, curr) => prev && !!curr, true) &&
-          group === TextbookTab.Hard &&
-          !isLoading && (
-            <Typography variant="h5" align="center">
-              На данной странице изучены все слова
-            </Typography>
-          )} */}
         {
           <>
             {wordList.map((word, index) => {
@@ -294,7 +276,6 @@ const WordList: React.FC<WordListProps> = (props) => {
                     <Card
                       sx={{
                         display: { sm: 'flex' },
-                        // width: '852px',
                         height: { xs: '510px', sm: '186px' },
                         backgroundColor: '#F3F3F3',
                         borderRadius: 3,
@@ -311,7 +292,6 @@ const WordList: React.FC<WordListProps> = (props) => {
                 );
               })
 
-          // <CircularProgress color="primary" />
         }
         {auth && !isLoading && group === TextbookTab.Hard && wordList.length === 0 && (
           <>

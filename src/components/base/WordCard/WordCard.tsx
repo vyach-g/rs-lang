@@ -110,14 +110,13 @@ const WordCard: React.FC<IWordCard> = ({
   return (
     <Container maxWidth="md">
       <Card
-        // variant="outlined"
         sx={{
           marginBottom: '30px',
           display: { sm: 'flex' },
           boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
           borderRadius: 3,
           borderRight: `12px solid ${
-            difficulty ? (difficulty === 'hard' ? red[400] : green[400]) : grey[300]
+            difficulty ? (difficulty === 'hard' ? red[500] : green[500]) : grey[300]
           }`,
           transition: 'all 0.3s',
         }}
@@ -126,7 +125,6 @@ const WordCard: React.FC<IWordCard> = ({
           sx={{ width: { sm: 200 }, minHeight: 150, p: 1, borderRadius: '15px' }}
           component="img"
           image={`${API_URL}/${image}`}
-          // width={200}
           alt={word}
         />
         <CardContent sx={{ width: '100%' }}>
@@ -193,7 +191,7 @@ const WordCard: React.FC<IWordCard> = ({
                   sx={{
                     width: 32,
                     height: 32,
-                    color: difficulty === 'easy' ? green[100] : green[400],
+                    color: difficulty === 'easy' ? green[100] : green[500],
                   }}
                   onClick={() => {
                     handleDifficulty('easy');
@@ -202,7 +200,7 @@ const WordCard: React.FC<IWordCard> = ({
                   <CheckCircleIcon />
                 </IconButton>
                 <IconButton
-                  sx={{ width: 32, height: 32, color: difficulty === 'hard' ? red[100] : red[400] }}
+                  sx={{ width: 32, height: 32, color: difficulty === 'hard' ? red[100] : red[500] }}
                   onClick={() => {
                     handleDifficulty('hard');
                   }}
