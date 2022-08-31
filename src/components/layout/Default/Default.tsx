@@ -11,7 +11,17 @@ const Default: React.FC<Props> = ({ children }) => {
   return (
     <>
       <Header />
-      <main style={{ minHeight: 'calc(100vh - 206px)' }}>{children}</main>
+      <main
+        style={{
+          minHeight: 'calc(100vh - 203px)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {children}
+      </main>
       <Divider />
       <Footer />
     </>

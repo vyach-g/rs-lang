@@ -19,6 +19,9 @@ import {
   Snackbar,
 } from '@mui/material';
 import { withAsync } from '../../api/helpers/withAsync';
+import { Wrapper } from '../Games/Games.styles';
+import exit from '../../assets/exit.svg';
+import { CounterContainer, ExitLink } from '../Games/SprintGame/Sprint.styles';
 
 type LocationProps = {
   state: {
@@ -63,54 +66,61 @@ const Login = () => {
   };
 
   return (
-    <Box
-      sx={{
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Typography variant="h2">Login</Typography>
-      <form onSubmit={handleSubmit}>
-        <Stack>
-          <FormControl variant="standard">
-            <InputLabel htmlFor="email">Email</InputLabel>
-            <Input id="email" type="email" required />
-          </FormControl>
-
-          <FormControl variant="standard">
-            <InputLabel htmlFor="password">Password</InputLabel>
-            <Input id="password" type="password" required />
-          </FormControl>
-          <Button variant="contained" type="submit" sx={{ mt: '1rem' }}>
-            Login
-          </Button>
-        </Stack>
-      </form>
+    <Wrapper>
+      <CounterContainer>
+        <Link to="/games">
+          <ExitLink src={exit}></ExitLink>
+        </Link>
+      </CounterContainer>
       <Box
         sx={{
+          height: '100vh',
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
-          mt: '2rem',
-          gap: '1rem',
+          justifyContent: 'center',
         }}
       >
-        {"Don't have an account?"} <br />
-        <Link to={RoutePaths.Register}>Register</Link>
+        <Typography variant="h2">Войти</Typography>
+        <form onSubmit={handleSubmit}>
+          <Stack>
+            <FormControl variant="standard">
+              <InputLabel htmlFor="email">Email</InputLabel>
+              <Input id="email" type="email" required />
+            </FormControl>
+
+            <FormControl variant="standard">
+              <InputLabel htmlFor="password">Пароль</InputLabel>
+              <Input id="password" type="password" required />
+            </FormControl>
+            <Button variant="contained" type="submit" sx={{ mt: '1rem' }}>
+              Войти
+            </Button>
+          </Stack>
+        </form>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            mt: '2rem',
+            gap: '1rem',
+          }}
+        >
+          {'Нет аккаунта?'} <br />
+          <Link to={RoutePaths.Register}>Регистрация</Link>
+        </Box>
+        <Snackbar
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          open={Boolean(errorMsg)}
+          autoHideDuration={4000}
+          onClose={() => setErrorMsg('')}
+        >
+          <Alert severity="error" sx={{ width: '100%' }}>
+            {errorMsg}
+          </Alert>
+        </Snackbar>
       </Box>
-      <Snackbar
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        open={Boolean(errorMsg)}
-        autoHideDuration={4000}
-        onClose={() => setErrorMsg('')}
-      >
-        <Alert severity="error" sx={{ width: '100%' }}>
-          {errorMsg}
-        </Alert>
-      </Snackbar>
-    </Box>
+    </Wrapper>
   );
 };
 
