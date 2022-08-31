@@ -17,6 +17,9 @@ import {
 import { createUser } from '../../api/apiCalls';
 import { withAsync } from '../../api/helpers/withAsync';
 import validator from 'validator';
+import { Wrapper } from '../Games/Games.styles';
+import { CounterContainer, ExitLink } from '../Games/SprintGame/Sprint.styles';
+import exit from '../../assets/exit.svg';
 
 const Registration = () => {
   const navigate = useNavigate();
@@ -92,49 +95,56 @@ const Registration = () => {
   }
 
   return (
-    <Box
-      sx={{
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Typography variant="h2">Registration</Typography>
-      <form onSubmit={handleSubmit}>
-        <Stack>
-          <FormControl variant="standard">
-            <InputLabel htmlFor="username">Name</InputLabel>
-            <Input id="username" type="text" required />
-          </FormControl>
-          <FormControl variant="standard">
-            <InputLabel htmlFor="email">Email</InputLabel>
-            <Input id="email" type="email" required />
-          </FormControl>
-
-          <FormControl variant="standard">
-            <InputLabel htmlFor="password">Password</InputLabel>
-            <Input id="password" type="password" required />
-          </FormControl>
-          <Button variant="contained" type="submit" sx={{ mt: '1rem' }}>
-            Register
-          </Button>
-        </Stack>
-      </form>
+    <Wrapper>
+      <CounterContainer>
+        <Link to="/games">
+          <ExitLink src={exit}></ExitLink>
+        </Link>
+      </CounterContainer>
       <Box
         sx={{
+          height: '100vh',
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
-          mt: '2rem',
-          gap: '1rem',
+          justifyContent: 'center',
         }}
       >
-        Already have an account? <br />
-        <Link to={RoutePaths.Login}>Login</Link>
+        <Typography variant="h2">Регистрация</Typography>
+        <form onSubmit={handleSubmit}>
+          <Stack>
+            <FormControl variant="standard">
+              <InputLabel htmlFor="username">Имя</InputLabel>
+              <Input id="username" type="text" required />
+            </FormControl>
+            <FormControl variant="standard">
+              <InputLabel htmlFor="email">Email</InputLabel>
+              <Input id="email" type="email" required />
+            </FormControl>
+
+            <FormControl variant="standard">
+              <InputLabel htmlFor="password">Пароль</InputLabel>
+              <Input id="password" type="password" required />
+            </FormControl>
+            <Button variant="contained" type="submit" sx={{ mt: '1rem' }}>
+              Зарегистрироваться
+            </Button>
+          </Stack>
+        </form>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            mt: '2rem',
+            gap: '1rem',
+          }}
+        >
+          Есть аккаунт? <br />
+          <Link to={RoutePaths.Login}>Войти</Link>
+        </Box>
+        {snackbar}
       </Box>
-      {snackbar}
-    </Box>
+    </Wrapper>
   );
 };
 

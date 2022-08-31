@@ -50,19 +50,19 @@ const CrewDescription = styled(Typography)(({ theme }) => ({
 
 const CrewMembers = [
   {
-    name: '	Vyacheslav',
+    name: 'Вячеслав - г.Петропавловск, Казахстан',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Malesuada fames ac turpis egestas. In egestas erat imperdiet sed euismod nisi porta lorem mollis.',
+      'Тим-лид проекта. Координировал работу команды. Отвечал за создание электронного учебника, за навигацию по разделам, страницам учебника. ',
   },
   {
-    name: 'Inna',
+    name: 'Инна - г.Астана, Казахстан',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Malesuada fames ac turpis egestas. In egestas erat imperdiet sed euismod nisi porta lorem mollis.',
+      'Разработчик. Настроила регистрацию и авторизацию пользователя. Автор игры "Спринт".',
   },
   {
-    name: 'Ivan',
+    name: 'Иван - г.??',
     description:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Malesuada fames ac turpis egestas. In egestas erat imperdiet sed euismod nisi porta lorem mollis.',
+      'Разработчик. Отвечал за архитектуру приложения. Создатель главной страницы приложения, страницы статистики. Автор игры "Аудиовызов".',
   },
 ];
 

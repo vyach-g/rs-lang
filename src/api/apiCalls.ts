@@ -32,6 +32,7 @@ axios.interceptors.response.use(
     if (error.response.status == 401) {
       storage.clear();
       // refresh the page for them
+      location.reload();
       return Promise.reject({ message: 'Please re-authenticate.' });
     }
     return Promise.reject(error);

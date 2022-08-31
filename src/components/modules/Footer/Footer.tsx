@@ -8,6 +8,10 @@ const FooterCustom = styled('footer')(({ theme }) => ({
   display: 'block',
   minHeight: '70px',
   padding: '1.5rem 0',
+  background: 'rgba(255,255,255, 0.8)',
+  color: 'black',
+  boxShadow: 'none',
+  width: '100%',
 }));
 
 const FooterContainer = styled('div')({
@@ -61,9 +65,7 @@ const ListItemCustom = styled('li')(({ theme }) => ({
     alignText: 'right',
     display: 'block',
     height: '100%',
-    '&:hover': {
-      backgroundColor: 'white',
-    },
+    '&:hover': {},
     '&::after': {
       content: '""',
       display: 'block',
