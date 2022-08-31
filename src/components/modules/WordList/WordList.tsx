@@ -45,7 +45,7 @@ const WordList: React.FC<WordListProps> = (props) => {
   useEffect(() => {
     setIsLoading(true);
     if (!auth) {
-      getWords(group - 1, page - 1)
+      getWords(group, page)
         .then((response) => {
           const words = response.data.map((word) => {
             const formattedWords = Object.assign(word);
@@ -65,7 +65,7 @@ const WordList: React.FC<WordListProps> = (props) => {
         });
     } else {
       if (group !== TextbookTab.Hard) {
-        getUserAggregatedWords(auth.userId, group - 1, page - 1, WORD_PER_PAGE)
+        getUserAggregatedWords(auth.userId, group, page, WORD_PER_PAGE)
           .then((res) => {
             const words = res.data[0].paginatedResults;
             const learned = words.map((word) => !!word?.userWord?.difficulty);
@@ -115,7 +115,7 @@ const WordList: React.FC<WordListProps> = (props) => {
     if (auth && page !== TextbookTab.Hard) {
       const pagesPromises: Promise<AxiosResponse<UserAggregatedWords>>[] = [];
       for (let i = 0; i < PAGE_PER_GROUP; i++) {
-        pagesPromises.push(getUserAggregatedWords(auth.userId, group - 1, i, WORD_PER_PAGE));
+        pagesPromises.push(getUserAggregatedWords(auth.userId, group, i, WORD_PER_PAGE));
       }
       Promise.all(pagesPromises).then((promises) => {
         const learned = promises.map((promise) => {
@@ -152,44 +152,44 @@ const WordList: React.FC<WordListProps> = (props) => {
               disabled={isLoading ? true : false}
               label="A1"
               value={TextbookTab.A1}
-              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.A1 - 1].light }}
+              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.A1].light }}
             />
             <Tab
               disabled={isLoading ? true : false}
               label="A2"
               value={TextbookTab.A2}
-              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.A2 - 1].light }}
+              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.A2].light }}
             />
             <Tab
               disabled={isLoading ? true : false}
               label="B1"
               value={TextbookTab.B1}
-              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.B1 - 1].light }}
+              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.B1].light }}
             />
             <Tab
               disabled={isLoading ? true : false}
               label="B2"
               value={TextbookTab.B2}
-              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.B2 - 1].light }}
+              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.B2].light }}
             />
             <Tab
               disabled={isLoading ? true : false}
               label="C1"
               value={TextbookTab.C1}
-              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.C1 - 1].light }}
+              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.C1].light }}
             />
             <Tab
               disabled={isLoading ? true : false}
               label="C2"
               value={TextbookTab.C2}
-              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.C2 - 1].light }}
+              sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.C2].light }}
             />
             {auth && (
               <Tab
                 disabled={isLoading ? true : false}
                 label="Сложные слова"
                 value={TextbookTab.Hard}
-                sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.Hard - 1].light }}
+                sx={{ borderRadius: 3, backgroundColor: GROUP_COLORS[TextbookTab.Hard].light }}
               />
             )}
           </Tabs>
@@ -276,25 +276,25 @@ const WordList: React.FC<WordListProps> = (props) => {
                           boxSizing: 'border-box',
                           backgroundColor: isLoading
                             ? '#E3E3E3'
-                            : index === page - 1
-                            ? GROUP_COLORS[group - 1].dark
-                            : GROUP_COLORS[group - 1].light,
+                            : index === page
+                            ? GROUP_COLORS[group].dark
+                            : GROUP_COLORS[group].light,
                           border:
-                            learnedPages[index] || index === page - 1
+                            learnedPages[index] || index === page
                               ? '4px solid rgba(0, 0, 0, .5)'
                               : '',
                           fontWeight: 'bold',
-                          color: index === page - 1 ? '#ffffff' : '#000000',
+                          color: index === page ? '#ffffff' : '#000000',
                           '&:hover': {
                             backgroundColor: isLoading ? 'E3E3E3' : '#ffffff',
                             color: '#000000',
                           },
                         }}
                         onClick={() => {
-                          if (page - 1 !== index && !isLoading) {
+                          if (page !== index && !isLoading) {
                             setIsLoading(true);
                             setWordList([]);
-                            setPage(index + 1);
+                            setPage(index);
                           }
                         }}
                       >
