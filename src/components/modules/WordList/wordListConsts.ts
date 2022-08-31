@@ -16,11 +16,11 @@ export enum TextbookTab {
 }
 
 export const GROUP_COLORS = [
-  { dark: blue[700], light: blue[100] },
-  { dark: lightBlue[700], light: lightBlue[100] },
-  { dark: lightGreen[700], light: lightGreen[100] },
-  { dark: lime[700], light: lime[100] },
-  { dark: yellow[700], light: yellow[100] },
-  { dark: orange[700], light: orange[100] },
-  { dark: red[700], light: red[100] },
+  { dark: blue[800], light: blue[400] },
+  { dark: lightBlue[800], light: lightBlue[400] },
+  { dark: lightGreen[800], light: lightGreen[400] },
+  { dark: lime[800], light: lime[500] },
+  { dark: yellow[800], light: yellow[600] },
+  { dark: orange[800], light: orange[400] },
+  { dark: red[800], light: red[400] },
 ];

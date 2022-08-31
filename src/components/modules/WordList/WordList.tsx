@@ -192,58 +192,16 @@ const WordList: React.FC<WordListProps> = (props) => {
             )}
           </Tabs>
         </Container>
-        {/* {group !== TextbookTab.Hard && (
-          <Pagination
-            disabled={isLoading ? true : false}
-            count={PAGE_PER_GROUP}
-            page={page}
-            onChange={(event, num) => {
-              setWordList([]);
-              setPage(num);
-            }}
-            siblingCount={1}
-            color="primary"
-            sx={{ mb: 2 }}
-          />
-        )} */}
-        {/* <Tabs
-          value={page}
-          sx={{ mb: 2 }}
-          variant="scrollable"
-          onChange={(event, num) => {
-
-          }}
-        >
-          {Array(30)
-            .fill('')
-            .map((elem, index) => {
-              return (
-                <Tab
-                  value={index}
-                  label={index + 1}
-                  key={index}
-                  sx={{
-                    width: '20px',
-                    minWidth: '20px',
-                    backgroundColor: GROUP_COLORS[group].light,
-                  }}
-                ></Tab>
-              );
-            })}
-        </Tabs> */}
-
         {group !== TextbookTab.Hard && (
           <Box
             sx={{
               width: '100%',
               maxWidth: '850px',
               overflowX: { xs: 'scroll', md: 'hidden' },
-              // overflowX: 'hidden',
-
               mb: 2,
             }}
           >
-            <Box sx={{ width: '850px' }}>
+            <Box sx={{ width: '850px', py: 1 }}>
               {Array(30)
                 .fill('')
                 .map((elem, index) => {
@@ -274,18 +232,17 @@ const WordList: React.FC<WordListProps> = (props) => {
                           boxSizing: 'border-box',
                           backgroundColor: isLoading
                             ? '#E3E3E3'
-                            : index === page
+                            : learnedPages[index]
                             ? GROUP_COLORS[group].dark
                             : GROUP_COLORS[group].light,
-                          border:
-                            learnedPages[index] || index === page
-                              ? '4px solid rgba(0, 0, 0, .5)'
-                              : '',
+                          border: index === page ? '5px solid rgba(255, 255, 255, .5)' : '',
                           fontWeight: 'bold',
-                          color: index === page ? '#ffffff' : '#000000',
+                          color: '#ffffff',
+                          // index === page ? '#ffffff' : '#000000',
                           '&:hover': {
-                            backgroundColor: isLoading ? 'E3E3E3' : '#ffffff',
-                            color: '#000000',
+                            // backgroundColor: isLoading ? 'E3E3E3' : '#ffffff',
+                            transform: 'translate(0px, -5px)',
+                            // color: '#000000',
                           },
                         }}
                         onClick={() => {
@@ -356,6 +313,16 @@ const WordList: React.FC<WordListProps> = (props) => {
 
           // <CircularProgress color="primary" />
         }
+        {auth && !isLoading && group === TextbookTab.Hard && wordList.length === 0 && (
+          <>
+            <Typography variant="h4" align="center" gutterBottom={true}>
+              Отличная работа!
+            </Typography>
+            <Typography variant="h5" align="center" gutterBottom={true}>
+              Все сложные слова выучены
+            </Typography>
+          </>
+        )}
       </Grid>
     </Container>
   );
