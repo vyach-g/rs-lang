@@ -31,6 +31,12 @@ const ButtonSubmit = styled('button')(({ theme }) => ({
     background: 'rgba(250,211,207,1)',
   },
   [theme.breakpoints.down('sm')]: {
+    fontSize: '0.9rem',
+    '&::after': {
+      marginTop: '0.3rem',
+    },
+  },
+  [theme.breakpoints.down('xs')]: {
     fontSize: '0.8rem',
   },
 }));
@@ -52,15 +58,26 @@ const ButtonCustom = styled('button')(({ theme }) => ({
     backgroundColor: 'rgba(250,211,207, 1)',
   },
   [theme.breakpoints.down('sm')]: {
+    fontSize: '0.9rem',
+  },
+  [theme.breakpoints.down('sm')]: {
     fontSize: '0.8rem',
   },
 }));
 
-const ButtonsGroup = styled('div')({
+const ButtonsGroup = styled('div')(({ theme }) => ({
   display: 'flex',
   flexWrap: 'wrap',
   gap: '1rem',
-});
+  [theme.breakpoints.down('md')]: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(4, 1fr)',
+  },
+  [theme.breakpoints.down('sm')]: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+  },
+}));
 
 const Aliases: { [key: string]: string } = {
   A1: '0',
@@ -94,12 +111,17 @@ const Settings: React.FC<Props> = ({ onGameStart }) => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        rowGap: '1rem',
+        rowGap: '1.4rem',
       }}
     >
       <Typography
         variant="h4"
-        sx={{ color: 'rgba(250,211,207, 1)', textTransform: 'uppercase', fontSize: '1.8rem' }}
+        sx={{
+          color: 'rgba(250,211,207, 1)',
+          textTransform: 'uppercase',
+          fontSize: ['1.5rem', '1.5rem', '1.8rem'],
+          textAlign: 'center',
+        }}
       >
         Выбери cложность <span style={{ color: '#C6B4CE' }}>игры</span>
       </Typography>

@@ -36,7 +36,7 @@ const CountDown: React.FC<Props> = ({ onCountZero }) => {
         position: 'absolute',
         color: 'rgba(250,211,207,1)',
         right: '2rem',
-        top: '2rem',
+        top: '1.6rem',
         fontSize: '2rem',
         cursor: 'pointer',
         '& :hover': {

@@ -11,7 +11,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import { styled } from '@mui/material/styles';
 
-const ResultsCustom = styled('div')({
+const ResultsCustom = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -20,7 +20,7 @@ const ResultsCustom = styled('div')({
   padding: '4rem 3rem 3rem 3rem',
   borderRadius: '0.5rem',
   rowGap: '1.5rem',
-});
+}));
 
 const ResultsMain = styled('div')({
   display: 'flex',
@@ -73,14 +73,14 @@ const ButtonCustom = styled(Button)(({ theme }) => ({
   width: '100%',
   '&:hover': {
     border: '2px solid black',
-    backgroundColor: '#9B8791',
+    backgroundColor: 'rgb(200, 182, 226)',
   },
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.8rem',
   },
 }));
 
-const CloseButton = styled('button')({
+const CloseButton = styled('button')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   jusrifyContent: 'center',
@@ -96,7 +96,12 @@ const CloseButton = styled('button')({
   '& svg': {
     fontSize: '1.8rem',
   },
-});
+  [theme.breakpoints.down('sm')]: {
+    right: '50%',
+    top: '1rem',
+    transform: 'translate(50%, 0)',
+  },
+}));
 
 interface Props {
   onNextGame: () => void;
@@ -123,7 +128,7 @@ const Result: React.FC<Props> = ({ onNextGame, currAnswers, gameStatus }) => {
   };
 
   const GameResults =
-    gameStatus === 'SERVER_ERROR' ? (
+    gameStatus === 'SERVER_ERROR' || (correctAnswers.length === 0 && wrongAnswers.length === 0) ? (
       <Box sx={{ color: '#A24C43', textAlign: 'center', fontSize: '1.1rem' }}>
         An error occured on the server, please, try starting a new game
       </Box>
@@ -144,7 +149,9 @@ const Result: React.FC<Props> = ({ onNextGame, currAnswers, gameStatus }) => {
 
   return (
     <ResultsCustom>
-      <Typography variant="h4">Отчет по игре</Typography>
+      <Typography variant="h4" sx={{ fontSize: ['2rem', '3rem'] }}>
+        Отчет по игре
+      </Typography>
       <CloseButton onClick={handleExit}>
         <CloseIcon />
       </CloseButton>

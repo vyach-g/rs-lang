@@ -16,12 +16,11 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 const ButtonCustom = styled('button')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
-  borderRadius: '3px',
   border: 'none',
   backgroundColor: 'transparent',
   color: 'rgba(250,211,207,1)',
   fontWeight: '600',
-  fontSize: '0.9rem',
+  fontSize: '1rem',
   letterSpacing: '0.1rem',
   textTransform: 'uppercase',
   cursor: 'pointer',
@@ -36,13 +35,13 @@ const ButtonCustom = styled('button')(({ theme }) => ({
     width: '0.7rem',
     height: '2.5px',
     background: '#C6B4CE',
-    transition: 'width .25s',
+    transition: 'width .25s ',
   },
   '&:hover::after': {
     width: '100%',
     background: 'rgba(250,211,207,1)',
   },
-  [theme.breakpoints.down('sm')]: {
+  [theme.breakpoints.down('xs')]: {
     fontSize: '0.8rem',
   },
 }));
@@ -143,7 +142,7 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd, onError }) => {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        rowGap: '1.4rem',
+        rowGap: '2rem',
         alignItems: 'center',
         justifyContent: 'center',
       }}
@@ -151,7 +150,15 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd, onError }) => {
       {data ? (
         <>
           <CountDown onCountZero={showResults} />
-          <Box sx={{ display: 'flex', columnGap: '0.5rem', position: 'absolute', top: '2.6rem' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              columnGap: '0.5rem',
+              position: 'absolute',
+              top: ['none', '2.6rem'],
+              bottom: ['2.6rem', 0, 0],
+            }}
+          >
             <FavoriteIcon
               sx={{
                 fill: `${currHP > 0 ? 'rgba(250,211,207,1)' : '#C6B4CE'}`,
@@ -192,13 +199,22 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd, onError }) => {
             sx={{
               color: 'rgba(250,211,207, 1)',
               textTransform: 'uppercase',
-              fontSize: '1.4rem',
+              fontSize: ['1.2rem', '1.4rem'],
               fontWeight: '600',
             }}
           >
             Слово <span style={{ color: '#C6B4CE' }}>- {currWord?.word}</span>
           </Box>
-          <Box sx={{ display: 'flex', flexDirection: 'row', columnGap: '1rem', flexWrap: 'wrap' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: ['column', 'row'],
+              columnGap: '1rem',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             {asnwerOptions.map((word) => (
               <ButtonCustom key={word?.id} onClick={handleAnswer}>
                 {word?.wordTranslate}
