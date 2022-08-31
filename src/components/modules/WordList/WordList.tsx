@@ -110,7 +110,6 @@ const WordList: React.FC<WordListProps> = (props) => {
     setWordList(newHardWordList);
   };
 
-  //unrealized functionality of learned pages, TODO
   useEffect(() => {
     if (auth && page !== TextbookTab.Hard) {
       const pagesPromises: Promise<AxiosResponse<UserAggregatedWords>>[] = [];
@@ -128,7 +127,6 @@ const WordList: React.FC<WordListProps> = (props) => {
       });
     }
   }, [group, page]);
-  //
 
   return (
     <Container sx={{ py: 2 }}>
@@ -141,10 +139,10 @@ const WordList: React.FC<WordListProps> = (props) => {
             onChange={(event: React.SyntheticEvent, value: number) => {
               if (group !== value) {
                 setIsLoading(true);
+                setLearnedPages([]);
                 setWordList([]);
                 setGroup(value);
                 setPage(1);
-                setLearnedPages([]);
               }
             }}
           >
