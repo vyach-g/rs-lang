@@ -50,17 +50,20 @@ const CrewDescription = styled(Typography)(({ theme }) => ({
 
 const CrewMembers = [
   {
-    name: 'Вячеслав - г.Петропавловск, Казахстан',
+    name: 'Вячеслав',
+    location: 'г. Петропавловск, Казахстан',
     description:
       'Тим-лид проекта. Координировал работу команды. Отвечал за создание электронного учебника, за навигацию по разделам, страницам учебника. ',
   },
   {
-    name: 'Инна - г.Астана, Казахстан',
+    name: 'Инна',
+    location: 'г. Астана, Казахстан',
     description:
       'Разработчик. Настроила регистрацию и авторизацию пользователя. Автор игры "Спринт".',
   },
   {
-    name: 'Иван - г.??',
+    name: 'Иван',
+    location: 'г. Архангельск, Россия',
     description:
       'Разработчик. Отвечал за архитектуру приложения. Создатель главной страницы приложения, страницы статистики. Автор игры "Аудиовызов".',
   },
@@ -89,7 +92,12 @@ const Crew = () => {
         >
           {CrewMembers.map((member, index) => (
             <Grid key={member.name} item>
-              <MemberCard name={member.name} description={member.description} side={index % 2} />
+              <MemberCard
+                name={member.name}
+                description={member.description}
+                location={member.location}
+                side={index % 2}
+              />
             </Grid>
           ))}
         </Grid>

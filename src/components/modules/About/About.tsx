@@ -9,6 +9,7 @@ import CoverImage from '../../../assets/test6.jpg';
 const AboutCustom = styled('section')(({ theme }) => ({
   display: 'block',
   padding: '3rem 0',
+  width: '100%',
   [theme.breakpoints.down('md')]: {
     padding: '1.5rem 0',
   },

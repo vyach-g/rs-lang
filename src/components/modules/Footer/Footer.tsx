@@ -4,15 +4,15 @@ import { styled } from '@mui/material/styles';
 import { Typography, Link as LinkOuter } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-const FooterCustom = styled('footer')(({ theme }) => ({
+const FooterCustom = styled('footer')({
   display: 'block',
   minHeight: '70px',
   padding: '1.5rem 0',
-  background: 'rgba(255,255,255, 0.8)',
+  background: 'rgba(255,255,255, 1)',
   color: 'black',
   boxShadow: 'none',
   width: '100%',
-}));
+});
 
 const FooterContainer = styled('div')({
   paddingInline: '24px',
