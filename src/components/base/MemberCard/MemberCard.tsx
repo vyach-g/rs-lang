@@ -13,6 +13,7 @@ interface CardCustomProps {
 const CardCustom = styled(Card)<CardCustomProps>(({ theme, side }) => ({
   maxWidth: '300px',
   width: '100%',
+  height: '100%',
   display: 'flex',
   flexDirection: 'column',
   cursor: 'pointer',
@@ -41,10 +42,11 @@ const CardCustom = styled(Card)<CardCustomProps>(({ theme, side }) => ({
 interface Props {
   name: string;
   description: string;
+  location: string;
   side: number;
 }
 
-const MemberCard: React.FC<Props> = ({ name, description, side }) => {
+const MemberCard: React.FC<Props> = ({ name, description, location, side }) => {
   return (
     <CardCustom side={side ? 'rl' : 'lr'}>
       <CardMedia
@@ -53,8 +55,20 @@ const MemberCard: React.FC<Props> = ({ name, description, side }) => {
         alt="Member"
       />
       <CardContent>
-        <Typography gutterBottom variant="h6" component="div">
+        <Typography
+          gutterBottom
+          variant="h6"
+          component="div"
+          sx={{ fontWeight: '600', fontSize: '1.5rem' }}
+        >
           {name}
+        </Typography>
+        <Typography
+          gutterBottom
+          component="div"
+          sx={{ fontWeight: '500', fontSize: '1.1rem', marginTop: '-0.4rem' }}
+        >
+          {location}
         </Typography>
         <Typography color="text.secondary">{description}</Typography>
       </CardContent>

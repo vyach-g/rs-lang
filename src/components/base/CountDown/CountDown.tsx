@@ -1,10 +1,7 @@
 import { Box } from '@mui/material';
 import React, { useState, useEffect, useRef } from 'react';
-import { WordDTO } from '../../../api/apiCalls.types';
 
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-
-const INITIAL_COUNT = 120;
+const INITIAL_COUNT = 15;
 
 interface Props {
   onCountZero: () => void;
@@ -36,7 +33,7 @@ const CountDown: React.FC<Props> = ({ onCountZero }) => {
         position: 'absolute',
         color: 'rgba(250,211,207,1)',
         right: '2rem',
-        top: '1.6rem',
+        top: '1.5rem',
         fontSize: '2rem',
         cursor: 'pointer',
         '& :hover': {
