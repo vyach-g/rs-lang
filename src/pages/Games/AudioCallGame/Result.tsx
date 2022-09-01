@@ -7,8 +7,6 @@ import { GameWordCard } from '../../../components/base';
 import { useNavigate } from 'react-router-dom';
 import { IAnswer } from './types';
 
-import CloseIcon from '@mui/icons-material/Close';
-
 import { styled } from '@mui/material/styles';
 
 const ResultsCustom = styled('div')(({ theme }) => ({
@@ -17,12 +15,12 @@ const ResultsCustom = styled('div')(({ theme }) => ({
   alignItems: 'center',
   position: 'relative',
   backgroundColor: 'white',
-  padding: '4rem 3rem 3rem 3rem',
+  padding: '3rem',
   borderRadius: '0.5rem',
   rowGap: '1.5rem',
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.9rem',
-    padding: '3rem 2rem 2rem 2rem',
+    padding: '2rem',
   },
 }));
 
@@ -85,29 +83,6 @@ const ButtonCustom = styled(Button)(({ theme }) => ({
   },
 }));
 
-const CloseButton = styled('button')(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  jusrifyContent: 'center',
-  backgroundColor: 'transparent',
-  position: 'absolute',
-  top: '1.2rem',
-  right: '0.7rem',
-  margin: '0',
-  padding: '0',
-  border: 'none',
-  cursor: 'pointer',
-  color: 'black',
-  '& svg': {
-    fontSize: '1.8rem',
-  },
-  [theme.breakpoints.down('sm')]: {
-    right: '50%',
-    top: '1rem',
-    transform: 'translate(50%, 0)',
-  },
-}));
-
 interface Props {
   onNextGame: () => void;
   currAnswers: IAnswer[] | [];
@@ -157,9 +132,6 @@ const Result: React.FC<Props> = ({ onNextGame, currAnswers, gameStatus }) => {
       <Typography variant="h4" sx={{ fontSize: ['2rem', '3rem'] }}>
         Отчет по игре
       </Typography>
-      <CloseButton onClick={handleExit}>
-        <CloseIcon />
-      </CloseButton>
       <ResultsMain>{GameResults}</ResultsMain>
       <ButtonCustom variant="outlined" onClick={handleNewGame}>
         Сыграть ещё

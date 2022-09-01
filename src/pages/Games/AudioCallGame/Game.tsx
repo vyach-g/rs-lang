@@ -8,8 +8,13 @@ import { getWords } from '../../../api/apiCalls';
 import { styled } from '@mui/material/styles';
 
 import { IAnswer } from './types';
+import { withAsync } from '../../../api/helpers/withAsync';
 import { WordDTO } from '../../../api/apiCalls.types';
 import { API_URL } from '../../../api/apiUrl';
+import { useLocation } from 'react-router-dom';
+import { ShowcaseProps } from '../../../components/modules/Showcase/Showcase';
+
+import shuffleArray from '../../../utils/shuffleArray';
 
 const ButtonCustom = styled('button')(({ theme }) => ({
   display: 'flex',
@@ -92,7 +97,7 @@ const ButtonInfo = styled('button')(({ theme }) => ({
   },
 }));
 
-const ButtonWord = styled('button')(({ theme }) => ({
+const ButtonWord = styled('button')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -109,9 +114,9 @@ const ButtonWord = styled('button')(({ theme }) => ({
   '&:hover svg': {
     fill: 'rgba(250,211,207, 1)',
   },
-}));
+});
 
-const WordImage = styled('div')(({ theme }) => ({
+const WordImage = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -124,26 +129,31 @@ const WordImage = styled('div')(({ theme }) => ({
     height: '100%',
     objectFit: 'cover',
     borderRadius: '2rem 0 2rem 0',
-    boxShadow: '0 0 10px black',
+    boxShadow: '0 0 5px black',
+    transition: '0.25s ease',
+    ':hover': {
+      boxShadow: '0 0 8px black',
+    },
   },
-}));
+});
 
 interface Props {
-  newDifficulty: string;
+  newDifficulty: number;
   onGameEnd: (arg: IAnswer[]) => void;
-  onError: () => void;
 }
 
-const Game: React.FC<Props> = ({ newDifficulty, onGameEnd, onError }) => {
+const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
   const difficulty = newDifficulty;
-  const [attemptsLeft, setAttemptsLeft] = useState(5);
   const [data, setData] = useState<WordDTO[] | null>(null);
 
-  const [currWord, setCurrWord] = useState<WordDTO>();
+  const [answer, setAnswer] = useState<WordDTO>();
+  const [answerID, setAnswerID] = useState<number>(0);
   const [answers, setAnswers] = useState<IAnswer[]>([]);
   const [asnwerOptions, setAsnwerOptions] = useState<(WordDTO | undefined)[]>([]);
 
-  const [isAnswerRevealed, setIsAnswerRevealed] = useState(false);
+  const [answerRevealed, setAnswerRevealed] = useState(false);
+
+  const { state } = useLocation();
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
@@ -151,61 +161,29 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd, onError }) => {
     setupData();
   }, []);
 
-  const handleAudio = (event: React.MouseEvent) => {
-    audioRef.current?.play();
-  };
-
-  const handleAnswer = (event: React.MouseEvent) => {
-    let answer = {
-      word: currWord,
+  const handleGameProcess = (event: React.MouseEvent) => {
+    const userAnswer = {
+      word: answer,
       isCorrect: true,
     };
 
-    event.preventDefault();
-    (event.currentTarget as HTMLButtonElement).disabled = true;
+    const buttonEl = event.currentTarget as HTMLButtonElement;
 
-    if (currWord?.wordTranslate !== (event.target as HTMLButtonElement).textContent) {
-      setAttemptsLeft(attemptsLeft - 1);
-      answer.isCorrect = false;
-
-      setAnswers([...answers, answer]);
-      revealAnswer();
+    if (buttonEl.textContent === 'Узнать ответ') {
+      setAnswerRevealed(true);
       return;
     }
 
-    setAnswers([...answers, answer]);
-
-    setupWords();
-
-    (event.currentTarget as HTMLButtonElement).disabled = false;
-  };
-
-  const revealAnswer = () => {
-    if (!isAnswerRevealed) {
-      setIsAnswerRevealed(!isAnswerRevealed);
-      return;
+    if (answer?.wordTranslate !== buttonEl.textContent || buttonEl.textContent === 'Продолжить') {
+      userAnswer.isCorrect = false;
+      setAnswerRevealed(!answerRevealed);
     }
 
-    if (attemptsLeft === 0) {
-      onGameEnd(answers);
-      return;
-    }
-
-    setupWords();
-    setIsAnswerRevealed(!isAnswerRevealed);
+    setAnswers([...answers, userAnswer]);
+    setupOptions();
   };
 
-  const setupData = async () => {
-    const randPageID = randomInBetween(0, 29);
-    const words = await getWords(+difficulty, randPageID).then((responce) => responce.data);
-
-    setData(words);
-    setupWords(words);
-  };
-
-  const setupWords = (words?: WordDTO[]) => {
-    const answerID = randomInBetween(0, 19);
-
+  const setupOptions = (words?: WordDTO[]) => {
     let randIDs: Array<number> = [answerID];
     let randID;
 
@@ -225,15 +203,41 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd, onError }) => {
 
     if (data) {
       randomizedWordList = randIDs.map((id) => data[id]);
-      setCurrWord(data[answerID]);
+      setAnswer(data[answerID]);
     } else if (words) {
       randomizedWordList = randIDs.map((id) => words[id]);
-      setCurrWord(words[answerID]);
+      setAnswer(words[answerID]);
     }
 
     if (!randomizedWordList) return;
 
+    if (answerID === 20) {
+      onGameEnd(answers);
+      return;
+    }
+
     setAsnwerOptions(randomizedWordList);
+    setAnswerID(answerID + 1);
+  };
+
+  const setupData = async () => {
+    let randPageID = randomInBetween(0, 29);
+
+    if (state) {
+      const { page } = state as ShowcaseProps;
+      randPageID = page;
+    }
+
+    const { response } = await withAsync(() => getWords(difficulty, randPageID));
+
+    if (response) {
+      setData(shuffleArray(response.data));
+      setupOptions(response.data);
+    }
+  };
+
+  const handleAudio = () => {
+    audioRef.current?.play();
   };
 
   return (
@@ -248,7 +252,7 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd, onError }) => {
     >
       {data ? (
         <>
-          {isAnswerRevealed ? (
+          {answerRevealed ? (
             <>
               <Box
                 sx={{
@@ -272,7 +276,7 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd, onError }) => {
                   Верный ответ
                 </Typography>
                 <WordImage>
-                  <img src={`${API_URL}/${currWord?.image}`} />
+                  <img src={`${API_URL}/${answer?.image}`} />
                 </WordImage>
                 <ButtonWord onClick={handleAudio}>
                   <svg
@@ -297,11 +301,11 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd, onError }) => {
                     textTransform: 'uppercase',
                   }}
                 >
-                  {currWord?.word}
-                  <span style={{ color: '#d5c3d6' }}> - {currWord?.wordTranslate}</span>
+                  {answer?.word}
+                  <span style={{ color: '#d5c3d6' }}> - {answer?.wordTranslate}</span>
                 </Typography>
               </Box>
-              <ButtonInfo onClick={revealAnswer}>Продолжить</ButtonInfo>
+              <ButtonInfo onClick={handleGameProcess}>Продолжить</ButtonInfo>
             </>
           ) : (
             <>
@@ -345,17 +349,18 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd, onError }) => {
                 }}
               >
                 {asnwerOptions.map((word) => (
-                  <ButtonCustom key={word?.id} onClick={handleAnswer}>
+                  <ButtonCustom key={word?.id} onClick={handleGameProcess}>
                     {word?.wordTranslate}
                   </ButtonCustom>
                 ))}
               </Box>
-              <ButtonInfo onClick={revealAnswer}>Узнать ответ</ButtonInfo>
+              {/* Небезопасный код строчкой ниже */}
+              <ButtonInfo onClick={handleGameProcess}>Узнать ответ</ButtonInfo>
             </>
           )}
           <audio
             ref={audioRef}
-            src={`https://rslang-project1.herokuapp.com/${currWord?.audio}`}
+            src={`https://rslang-project1.herokuapp.com/${answer?.audio}`}
             autoPlay
           />
         </>
