@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { FormControl, Typography } from '@mui/material';
 
 import { styled } from '@mui/material/styles';
+import { useLocation } from 'react-router-dom';
+import { ShowcaseProps } from '../../../components/modules/Showcase/Showcase';
 
 const ButtonSubmit = styled('button')(({ theme }) => ({
   display: 'flex',
@@ -79,29 +81,36 @@ const ButtonsGroup = styled('div')(({ theme }) => ({
   },
 }));
 
-const Aliases: { [key: string]: string } = {
-  A1: '0',
-  A2: '1',
-  B1: '2',
-  B2: '3',
-  C1: '4',
-  C2: '5',
+const Aliases: { [key: string]: number } = {
+  A1: 0,
+  A2: 1,
+  B1: 2,
+  B2: 3,
+  C1: 4,
+  C2: 5,
 };
 
 interface Props {
-  onGameStart: (arg: string) => void;
+  onGameStart: (arg: number) => void;
 }
 
 const Settings: React.FC<Props> = ({ onGameStart }) => {
-  const [difficulty, setDifficulty] = useState('0');
+  const [difficulty, setDifficulty] = useState(0);
+  const { state } = useLocation();
+
+  useEffect(() => {
+    if (state) {
+      const { group } = state as ShowcaseProps;
+      onGameStart(Aliases[group]);
+    }
+  }, []);
 
   const onSettingChange = (event: React.MouseEvent) => {
-    const langLevel = (event.target as HTMLButtonElement).innerText;
-    setDifficulty(Aliases[langLevel]);
+    const targetedEl = event.target as HTMLButtonElement;
+    setDifficulty(Aliases[targetedEl.innerText]);
   };
 
   const onSettingsSubmit = (event: React.MouseEvent) => {
-    event.preventDefault();
     onGameStart(difficulty);
   };
 
@@ -128,37 +137,37 @@ const Settings: React.FC<Props> = ({ onGameStart }) => {
       <ButtonsGroup>
         <ButtonCustom
           onClick={onSettingChange}
-          style={difficulty === '0' ? { background: '#C6B4CE', color: 'black' } : {}}
+          style={difficulty === 0 ? { background: '#C6B4CE', color: 'black' } : {}}
         >
           A1
         </ButtonCustom>
         <ButtonCustom
           onClick={onSettingChange}
-          style={difficulty === '1' ? { background: '#C6B4CE', color: 'black' } : {}}
+          style={difficulty === 1 ? { background: '#C6B4CE', color: 'black' } : {}}
         >
           A2
         </ButtonCustom>
         <ButtonCustom
           onClick={onSettingChange}
-          style={difficulty === '2' ? { background: '#C6B4CE', color: 'black' } : {}}
+          style={difficulty === 2 ? { background: '#C6B4CE', color: 'black' } : {}}
         >
           B1
         </ButtonCustom>
         <ButtonCustom
           onClick={onSettingChange}
-          style={difficulty === '3' ? { background: '#C6B4CE', color: 'black' } : {}}
+          style={difficulty === 3 ? { background: '#C6B4CE', color: 'black' } : {}}
         >
           B2
         </ButtonCustom>
         <ButtonCustom
           onClick={onSettingChange}
-          style={difficulty === '4' ? { background: '#C6B4CE', color: 'black' } : {}}
+          style={difficulty === 4 ? { background: '#C6B4CE', color: 'black' } : {}}
         >
           C1
         </ButtonCustom>
         <ButtonCustom
           onClick={onSettingChange}
-          style={difficulty === '5' ? { background: '#C6B4CE', color: 'black' } : {}}
+          style={difficulty === 5 ? { background: '#C6B4CE', color: 'black' } : {}}
         >
           C2
         </ButtonCustom>

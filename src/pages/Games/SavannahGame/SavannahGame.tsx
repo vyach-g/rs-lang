@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import { Box } from '@mui/material';
 import { Game } from './Game';
 import { Settings } from './Settings';
 import { Result } from './Result';
@@ -54,12 +53,12 @@ const CloseButton = styled('button')({
 const SavannahGame = () => {
   const [status, setStatus] = useState('TO_BE_STARTED');
 
-  const [difficulty, setDifficulty] = useState('0');
+  const [difficulty, setDifficulty] = useState(0);
   const [answers, setAnswers] = useState<IAnswer[]>([]);
 
   const navigate = useNavigate();
 
-  const onGameStart = (newDifficulty: string) => {
+  const onGameStart = (newDifficulty: number) => {
     setDifficulty(newDifficulty);
     setStatus('STARTED');
   };
@@ -71,10 +70,6 @@ const SavannahGame = () => {
 
   const onNextGame = () => {
     setStatus('TO_BE_STARTED');
-  };
-
-  const onError = () => {
-    setStatus('SERVER_ERROR');
   };
 
   const onGameClose = () => {
@@ -95,7 +90,7 @@ const SavannahGame = () => {
           <CloseButton onClick={onGameClose}>
             <CloseIcon />
           </CloseButton>
-          <Game newDifficulty={difficulty} onGameEnd={onGameEnd} onError={onError} />
+          <Game newDifficulty={difficulty} onGameEnd={onGameEnd} />
         </>
       ) : (
         <Result onNextGame={onNextGame} currAnswers={answers} gameStatus={status} />
