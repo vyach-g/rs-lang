@@ -6,8 +6,8 @@ import { Showcase } from '../../components/modules';
 import storage from '../../storage/storage';
 
 const Textbook = () => {
-  const [group, setGroup] = useState(storage.getItem('textbookGroup') || 1);
-  const [page, setPage] = useState(storage.getItem('textbookPage') || 1);
+  const [group, setGroup] = useState(storage.getItem('textbookGroup') || 0);
+  const [page, setPage] = useState(storage.getItem('textbookPage') || 0);
 
   return (
     <Default>
