@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import { Box } from '@mui/material';
 import { Game } from './Game';
 import { Settings } from './Settings';
 import { Result } from './Result';
@@ -12,7 +11,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { IAnswer } from './types';
 import { useNavigate } from 'react-router-dom';
 
-const GameContainer = styled('div')({
+const GameContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   rowGap: '1.4rem',
@@ -22,7 +21,11 @@ const GameContainer = styled('div')({
   backgroundSize: 'cover',
   width: '100vw',
   height: '100vh',
-});
+
+  [theme.breakpoints.down('xs')]: {
+    fontSize: '0.8rem',
+  },
+}));
 
 const CloseButton = styled('button')({
   display: 'flex',
@@ -50,12 +53,12 @@ const CloseButton = styled('button')({
 const SavannahGame = () => {
   const [status, setStatus] = useState('TO_BE_STARTED');
 
-  const [difficulty, setDifficulty] = useState('0');
+  const [difficulty, setDifficulty] = useState(0);
   const [answers, setAnswers] = useState<IAnswer[]>([]);
 
   const navigate = useNavigate();
 
-  const onGameStart = (newDifficulty: string) => {
+  const onGameStart = (newDifficulty: number) => {
     setDifficulty(newDifficulty);
     setStatus('STARTED');
   };
@@ -69,45 +72,29 @@ const SavannahGame = () => {
     setStatus('TO_BE_STARTED');
   };
 
-  const onError = () => {
-    setStatus('SERVER_ERROR');
-  };
-
   const onGameClose = () => {
     navigate('/games');
   };
 
   return (
     <GameContainer>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          rowGap: '1.4rem',
-          padding: '2rem 1rem',
-          borderRadius: '1rem',
-        }}
-      >
-        {status === 'TO_BE_STARTED' ? (
-          <>
-            <CloseButton onClick={onGameClose}>
-              <CloseIcon />
-            </CloseButton>
-            <Settings onGameStart={onGameStart} />
-          </>
-        ) : status === 'STARTED' ? (
-          <>
-            <CloseButton onClick={onGameClose}>
-              <CloseIcon />
-            </CloseButton>
-            <Game newDifficulty={difficulty} onGameEnd={onGameEnd} onError={onError} />
-          </>
-        ) : (
-          <Result onNextGame={onNextGame} currAnswers={answers} gameStatus={status} />
-        )}
-      </Box>
+      {status === 'TO_BE_STARTED' ? (
+        <>
+          <CloseButton onClick={onGameClose}>
+            <CloseIcon />
+          </CloseButton>
+          <Settings onGameStart={onGameStart} />
+        </>
+      ) : status === 'STARTED' ? (
+        <>
+          <CloseButton onClick={onGameClose}>
+            <CloseIcon />
+          </CloseButton>
+          <Game newDifficulty={difficulty} onGameEnd={onGameEnd} />
+        </>
+      ) : (
+        <Result onNextGame={onNextGame} currAnswers={answers} gameStatus={status} />
+      )}
     </GameContainer>
   );
 };

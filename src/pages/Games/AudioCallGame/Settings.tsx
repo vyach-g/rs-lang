@@ -12,7 +12,7 @@ const ButtonSubmit = styled('button')(({ theme }) => ({
   borderRadius: '3px',
   border: 'none',
   backgroundColor: 'transparent',
-  color: 'rgba(250,211,207,1)',
+  color: 'rgb(255, 222, 222)',
   fontWeight: '600',
   fontSize: '1.2rem',
   letterSpacing: '0.1rem',
@@ -24,13 +24,13 @@ const ButtonSubmit = styled('button')(({ theme }) => ({
     display: 'block',
     marginTop: '0.5rem',
     width: '0.8rem',
-    height: '2px',
-    background: '#C6B4CE',
+    height: '2.5px',
+    background: '#d5c3d6',
     transition: 'width .25s',
   },
   '&:hover::after': {
     width: '100%',
-    background: 'rgba(250,211,207,1)',
+    background: 'rgb(255, 222, 222)',
   },
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.9rem',
@@ -47,17 +47,17 @@ const ButtonCustom = styled('button')(({ theme }) => ({
   display: 'inline-flex',
   justifyContent: 'center',
   borderRadius: '3px',
-  border: '2px solid rgba(250,211,207,0.2)',
+  border: '2px solid rgba(245, 232, 199, 0.15);',
   backgroundColor: 'transparent',
-  color: 'rgba(250,211,207,1)',
+  color: 'rgb(255, 222, 222)',
   padding: '.5rem 2.5rem',
   fontWeight: '600',
   cursor: 'pointer',
   transition: '0.25s ease',
   '&:hover': {
     borderWidth: '2px',
-    color: 'black',
-    backgroundColor: 'rgba(250,211,207, 1)',
+    color: 'rgb(194, 16, 16)',
+    backgroundColor: 'rgb(255, 222, 222)',
   },
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.9rem',
@@ -110,7 +110,7 @@ const Settings: React.FC<Props> = ({ onGameStart }) => {
     setDifficulty(Aliases[targetedEl.innerText]);
   };
 
-  const onSettingsSubmit = (event: React.MouseEvent) => {
+  const onSettingsSubmit = () => {
     onGameStart(difficulty);
   };
 
@@ -120,54 +120,54 @@ const Settings: React.FC<Props> = ({ onGameStart }) => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        rowGap: '1.4rem',
+        rowGap: '1rem',
       }}
     >
       <Typography
         variant="h4"
         sx={{
-          color: 'rgba(250,211,207, 1)',
+          color: 'rgb(255, 222, 222)',
           textTransform: 'uppercase',
-          fontSize: ['1.5rem', '1.5rem', '1.8rem'],
+          fontSize: ['1.3rem', '1.5rem', '1.8rem'],
           textAlign: 'center',
         }}
       >
-        Выбери cложность <span style={{ color: '#C6B4CE' }}>игры</span>
+        Выбери cложность <span style={{ color: '#d5c3d6' }}>игры</span>
       </Typography>
       <ButtonsGroup>
         <ButtonCustom
           onClick={onSettingChange}
-          style={difficulty === 0 ? { background: '#C6B4CE', color: 'black' } : {}}
+          style={difficulty === 0 ? { background: '#d5c3d6', color: 'rgb(194, 16, 16)' } : {}}
         >
           A1
         </ButtonCustom>
         <ButtonCustom
           onClick={onSettingChange}
-          style={difficulty === 1 ? { background: '#C6B4CE', color: 'black' } : {}}
+          style={difficulty === 1 ? { background: '#d5c3d6', color: 'rgb(194, 16, 16)' } : {}}
         >
           A2
         </ButtonCustom>
         <ButtonCustom
           onClick={onSettingChange}
-          style={difficulty === 2 ? { background: '#C6B4CE', color: 'black' } : {}}
+          style={difficulty === 2 ? { background: '#d5c3d6', color: 'rgb(194, 16, 16)' } : {}}
         >
           B1
         </ButtonCustom>
         <ButtonCustom
           onClick={onSettingChange}
-          style={difficulty === 3 ? { background: '#C6B4CE', color: 'black' } : {}}
+          style={difficulty === 3 ? { background: '#d5c3d6', color: 'rgb(194, 16, 16)' } : {}}
         >
           B2
         </ButtonCustom>
         <ButtonCustom
           onClick={onSettingChange}
-          style={difficulty === 4 ? { background: '#C6B4CE', color: 'black' } : {}}
+          style={difficulty === 4 ? { background: '#d5c3d6', color: 'rgb(194, 16, 16)' } : {}}
         >
           C1
         </ButtonCustom>
         <ButtonCustom
           onClick={onSettingChange}
-          style={difficulty === 5 ? { background: '#C6B4CE', color: 'black' } : {}}
+          style={difficulty === 5 ? { background: '#d5c3d6', color: 'rgb(194, 16, 16)' } : {}}
         >
           C2
         </ButtonCustom>

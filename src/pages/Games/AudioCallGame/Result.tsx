@@ -29,7 +29,8 @@ const ResultsMain = styled('div')({
   flexDirection: 'column',
   alignItems: 'center',
   backgroundColor: 'white',
-  width: '14rem',
+  maxWidth: '14rem',
+  width: '100%',
   rowGap: '1.5rem',
   '& ::-webkit-scrollbar': {
     width: '8px',
@@ -75,7 +76,7 @@ const ButtonCustom = styled(Button)(({ theme }) => ({
   width: '100%',
   '&:hover': {
     border: '2px solid black',
-    backgroundColor: 'rgb(200, 182, 226)',
+    backgroundColor: 'rgb(243, 120, 120)',
   },
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.8rem',
@@ -107,7 +108,7 @@ const Result: React.FC<Props> = ({ onNextGame, currAnswers, gameStatus }) => {
   };
 
   const GameResults =
-    gameStatus === 'SERVER_ERROR' || (correctAnswers.length === 0 && wrongAnswers.length === 0) ? (
+    gameStatus === 'SERVER_ERROR' ? (
       <Box sx={{ color: '#A24C43', textAlign: 'center', fontSize: '1.1rem' }}>
         An error occured on the server, please, try starting a new game
       </Box>

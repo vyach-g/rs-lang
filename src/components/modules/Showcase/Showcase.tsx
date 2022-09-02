@@ -7,6 +7,7 @@ import {
   GameName,
   GameAction,
   GameButtonAudiocall,
+  GameButtonSavannah,
 } from '../../../pages/Games/Games.styles';
 
 export type ShowcaseProps = {
@@ -42,9 +43,9 @@ const Showcase: React.FC<ShowcaseProps> = (props) => {
             <GameName>Спринт</GameName>
             <GameAction>Учит быстро переводить на ваш родной язык</GameAction>
           </GameButtonSprint>
-
           <Outlet />
         </Box>
+
         <Box
           sx={{
             height: '240px',
@@ -63,6 +64,27 @@ const Showcase: React.FC<ShowcaseProps> = (props) => {
             <GameName>Аудиовызов</GameName>
             <GameAction>Улучшает восприятие речи на слух</GameAction>
           </GameButtonAudiocall>
+          <Outlet />
+        </Box>
+
+        <Box
+          sx={{
+            height: '240px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '1rem',
+          }}
+        >
+          <GameButtonSavannah
+            onClick={() =>
+              navigate(`../games/${RoutePaths.SavannahGame}`, { state: { group, page } })
+            }
+          >
+            <GameName>Саванна</GameName>
+            <GameAction>Развивает словарный запас.</GameAction>
+          </GameButtonSavannah>
           <Outlet />
         </Box>
       </Stack>

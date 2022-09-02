@@ -7,6 +7,7 @@ import {
   GameAction,
   GameButtonAudiocall,
   GameButtonSprint,
+  GameButtonSavannah,
   GameName,
   Wrapper,
 } from './Games.styles';
@@ -50,6 +51,25 @@ export default function Games() {
                 <GameName>Аудиовызов</GameName>
                 <GameAction>Улучшает восприятие речи на слух</GameAction>
               </GameButtonAudiocall>
+            </Link>
+
+            <Outlet />
+          </Box>
+          <Box
+            sx={{
+              height: '240px',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '1rem',
+            }}
+          >
+            <Link to="savannah" style={{ textDecoration: 'none' }}>
+              <GameButtonSavannah>
+                <GameName>Саванна</GameName>
+                <GameAction>Развивает словарный запас.</GameAction>
+              </GameButtonSavannah>
             </Link>
 
             <Outlet />

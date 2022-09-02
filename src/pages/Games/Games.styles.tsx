@@ -2,6 +2,7 @@ import styled from 'styled-components/macro';
 import bottomLeft from '../../assets/bottom-left.png';
 import topRight from '../../assets/top-right.png';
 import audiocall from '../../assets/audition-plus.svg';
+import savannah from '../../assets/savannah-card-bg.svg';
 import sprint from '../../assets/leo-sprint.svg';
 
 export const Wrapper = styled.div`
@@ -35,6 +36,11 @@ export const GameButtonSprint = styled(GameButton)`
 export const GameButtonAudiocall = styled(GameButton)`
   background-color: rgb(112, 217, 178);
   background-image: url(${audiocall});
+`;
+
+export const GameButtonSavannah = styled(GameButton)`
+  background-color: #2582e7;
+  background-image: url(${savannah});
 `;
 
 export const GameName = styled.p`
