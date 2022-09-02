@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, createRef, LegacyRef } from 'react';
-import { WordDTO } from '../../../api/apiCalls.types';
+import { SignInDTO, WordDTO } from '../../../api/apiCalls.types';
 import {
   AudioIcon,
   BackButton,
@@ -27,10 +27,13 @@ import { RoutePaths } from '../../../config/routes';
 import { useCountdown } from 'usehooks-ts';
 import { Stack } from '@mui/material';
 import exit from '../../../assets/exit.svg';
+import { addWordStat } from '../../../api/apiCalls';
+import storage from '../../../storage/storage';
+import { withAsync } from '../../../api/helpers/withAsync';
 
 function Counter(props: { handleFinish: () => void }) {
   const [count, { startCountdown, resetCountdown }] = useCountdown({
-    countStart: 20,
+    countStart: 60,
     intervalMs: 1000,
   });
 
@@ -71,19 +74,20 @@ export default function Sprint({
     }
   }, [sequence]);
 
-  function onRightClick(wordIndex: number, randomIndex: number) {
+  async function onRightClick(wordIndex: number, randomIndex: number) {
     const currentWord = words[wordIndex];
     const translateWord = words[randomIndex];
 
     if (currentWord.id === translateWord.id) {
+      addWordStat(currentWord, true, 'sprint');
       setSequence([...sequence, 'correct']);
       setWordResults([...wordResults, { ...currentWord, status: 'correct' }]);
       setScore((curr) => curr + points);
     } else {
       setSequence([]);
       setPoints(10);
-
       setWordResults([...wordResults, { ...currentWord, status: 'wrong' }]);
+      addWordStat(currentWord, false, 'sprint');
     }
   }
 
@@ -94,12 +98,13 @@ export default function Sprint({
     if (currentWord.id === translateWord.id) {
       setSequence([]);
       setPoints(10);
-
       setWordResults([...wordResults, { ...currentWord, status: 'wrong' }]);
+      addWordStat(currentWord, false, 'sprint');
     } else {
       setSequence([...sequence, 'correct']);
       setWordResults([...wordResults, { ...currentWord, status: 'correct' }]);
       setScore((curr) => curr + points);
+      addWordStat(currentWord, true, 'sprint');
     }
   }
 

@@ -50,13 +50,25 @@ export type UsersDTO = {
 
 //#region UserWords
 export type UserWordsBody = {
-  difficulty: string;
+  difficulty: 'easy' | 'hard';
+  optional?: {
+    [key: string]: {
+      game: 'sprint' | 'audiocall' | 'savannah' | 'textbook';
+      learned: boolean;
+    };
+  };
 };
 
 export type UserWordsDTO = {
   id: string;
-  difficulty: string;
+  difficulty: 'easy' | 'hard';
   wordId: string;
+  optional?: {
+    [key: string]: {
+      game: 'sprint' | 'audiocall' | 'savannah' | 'textbook';
+      learned: boolean;
+    };
+  };
 };
 //#endregion
 

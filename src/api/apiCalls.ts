@@ -14,6 +14,7 @@ import {
   WordDTO,
 } from './apiCalls.types';
 import { API_URL } from './apiUrl';
+import { withAsync } from './helpers/withAsync';
 
 axios.interceptors.request.use((request) => {
   const auth = storage.getItem<SignInDTO>('auth');
@@ -133,3 +134,42 @@ export const getUserSettings = (id: string) => {
 export const updateUserSettings = (id: string, body: UserSettingsBody) => {
   return axios.put<UserSettingsDTO>(`${API_URL}/users/${id}/settings`, body);
 };
+
+export async function addWordStat(
+  currentWord: WordDTO,
+  isCorrect: boolean,
+  gameName: 'sprint' | 'audiocall' | 'savannah' | 'textbook'
+) {
+  const auth = storage.getItem<SignInDTO>('auth');
+
+  if (auth) {
+    const { response, error } = await withAsync(() => getUserWordById(auth.userId, currentWord.id));
+
+    const timeStamp = Date.now();
+    if (error) {
+      await createUserWord(auth.userId, currentWord.id, {
+        difficulty: isCorrect ? 'easy' : 'hard',
+        optional: {
+          [timeStamp]: {
+            game: gameName,
+            learned: isCorrect ? true : false,
+          },
+        },
+      });
+    } else if (response && response.status == 200) {
+      const { data } = response;
+      const { id, wordId, ...rest } = data;
+
+      await updateUserWord(auth.userId, currentWord.id, {
+        difficulty: isCorrect ? 'easy' : 'hard',
+        optional: {
+          ...rest.optional,
+          [timeStamp]: {
+            game: gameName,
+            learned: isCorrect ? true : false,
+          },
+        },
+      });
+    }
+  }
+}
