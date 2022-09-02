@@ -27,13 +27,13 @@ import { RoutePaths } from '../../../config/routes';
 import { useCountdown } from 'usehooks-ts';
 import { Stack } from '@mui/material';
 import exit from '../../../assets/exit.svg';
-import { addWordStat } from '../../../api/apiCalls';
+import { addWordStat, getUserStatistics, updateUserStatistics } from '../../../api/apiCalls';
 import storage from '../../../storage/storage';
 import { withAsync } from '../../../api/helpers/withAsync';
 
 function Counter(props: { handleFinish: () => void }) {
-  const [count, { startCountdown, resetCountdown }] = useCountdown({
-    countStart: 60,
+  const [count, { startCountdown }] = useCountdown({
+    countStart: 20,
     intervalMs: 1000,
   });
 
@@ -63,6 +63,11 @@ export default function Sprint({
 
   const [sequence, setSequence] = useState<Array<string>>([]);
 
+  const [longestSeries, setLongestSeries] = useState<{ current: number; previous: number }>({
+    current: 0,
+    previous: 0,
+  });
+
   const [points, setPoints] = useState(10);
 
   const [score, setScore] = useState(0);
@@ -83,11 +88,24 @@ export default function Sprint({
       setSequence([...sequence, 'correct']);
       setWordResults([...wordResults, { ...currentWord, status: 'correct' }]);
       setScore((curr) => curr + points);
+
+      setLongestSeries((state) => ({ ...state, current: state.current + 1 }));
     } else {
       setSequence([]);
       setPoints(10);
       setWordResults([...wordResults, { ...currentWord, status: 'wrong' }]);
       addWordStat(currentWord, false, 'sprint');
+
+      setLongestSeries((state) => {
+        if (state.current > state.previous) {
+          return {
+            current: 0,
+            previous: state.current,
+          };
+        }
+
+        return { ...state, current: 0 };
+      });
     }
   }
 
@@ -100,11 +118,22 @@ export default function Sprint({
       setPoints(10);
       setWordResults([...wordResults, { ...currentWord, status: 'wrong' }]);
       addWordStat(currentWord, false, 'sprint');
+      setLongestSeries((state) => {
+        if (state.current > state.previous) {
+          return {
+            current: 0,
+            previous: state.current,
+          };
+        }
+
+        return { ...state, current: 0 };
+      });
     } else {
       setSequence([...sequence, 'correct']);
       setWordResults([...wordResults, { ...currentWord, status: 'correct' }]);
       setScore((curr) => curr + points);
       addWordStat(currentWord, true, 'sprint');
+      setLongestSeries((state) => ({ ...state, current: state.current + 1 }));
     }
   }
 
@@ -118,6 +147,55 @@ export default function Sprint({
   const correctRefs = useRef(
     new Array(wordResults.filter((word) => word.status === 'correct').length)
   );
+
+  async function addGameStat() {
+    const auth = storage.getItem<SignInDTO>('auth');
+
+    if (auth) {
+      const { response, error } = await withAsync(() => getUserStatistics(auth.userId));
+
+      const timeStamp = Date.now();
+
+      if (error) {
+        await updateUserStatistics(auth.userId, {
+          learnedWords: score,
+          optional: {
+            [timeStamp]: {
+              sprint: {
+                totalWords: wordResults.length,
+                correctAnswers: wordResults.filter((word) => word.status === 'correct').length,
+                wrongAnswers: wordResults.filter((word) => word.status === 'wrong').length,
+                longestSeries: longestSeries.previous,
+              },
+            },
+          },
+        });
+      } else if (response && response.status == 200) {
+        const { data } = response;
+        const { learnedWords, ...rest } = data;
+
+        await updateUserStatistics(auth.userId, {
+          learnedWords: score + learnedWords,
+          optional: {
+            ...rest.optional,
+            [timeStamp]: {
+              sprint: {
+                totalWords: wordResults.length,
+                correctAnswers: wordResults.filter((word) => word.status === 'correct').length,
+                wrongAnswers: wordResults.filter((word) => word.status === 'wrong').length,
+                longestSeries: longestSeries.previous,
+              },
+            },
+          },
+        });
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (isFinish || isLastWord) addGameStat();
+  }, [isFinish, isLastWord]);
+
   return (
     <div>
       {isFinish || isLastWord ? (

@@ -75,11 +75,55 @@ export type UserWordsDTO = {
 //#region UserStatistics
 export type UserStatisticsBody = {
   learnedWords: number;
+  optional?: {
+    [key: string]: {
+      sprint?: {
+        totalWords: number;
+        correctAnswers: number;
+        wrongAnswers: number;
+        longestSeries: number;
+      };
+      audiocall?: {
+        totalWords: number;
+        correctAnswers: number;
+        wrongAnswers: number;
+        longestSeries: number;
+      };
+      savannah?: {
+        totalWords: number;
+        correctAnswers: number;
+        wrongAnswers: number;
+        longestSeries: number;
+      };
+    };
+  };
 };
 
 export type UserStatisticsDTO = {
   id: string;
   learnedWords: number;
+  optional?: {
+    [key: string]: {
+      sprint?: {
+        totalWords: number;
+        correctAnswers: number;
+        wrongAnswers: number;
+        longestSeries: number;
+      };
+      audiocall?: {
+        totalWords: number;
+        correctAnswers: number;
+        wrongAnswers: number;
+        longestSeries: number;
+      };
+      savannah?: {
+        totalWords: number;
+        correctAnswers: number;
+        wrongAnswers: number;
+        longestSeries: number;
+      };
+    };
+  };
 };
 //#endregion
 

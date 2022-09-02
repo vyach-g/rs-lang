@@ -8,6 +8,7 @@ import {
   UsersDTO,
   UserSettingsBody,
   UserSettingsDTO,
+  UserStatisticsBody,
   UserStatisticsDTO,
   UserWordsBody,
   UserWordsDTO,
@@ -123,7 +124,7 @@ export const getUserAggregatedWordsById = (id: string, wordId: string) => {
 export const getUserStatistics = (id: string) => {
   return axios.get<UserStatisticsDTO>(`${API_URL}/users/${id}/statistics`);
 };
-export const updateUserStatistics = (id: string, body: UserSettingsBody) => {
+export const updateUserStatistics = (id: string, body: UserStatisticsBody) => {
   return axios.put<UserStatisticsDTO>(`${API_URL}/users/${id}/statistics`, body);
 };
 
