@@ -18,13 +18,13 @@ import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
 import { green, grey, red } from '@mui/material/colors';
 import { GROUP_COLORS } from '../../modules/WordList/wordListConsts';
 
-interface IWordCard extends UserAggregatedWord {
+interface WordCardProps extends UserAggregatedWord {
   index: number;
   isHardGroup: boolean;
   removeFromHard: (num: number) => void;
 }
 
-const WordCard: React.FC<IWordCard> = ({
+const WordCard: React.FC<WordCardProps> = ({
   _id,
   word,
   group,
@@ -53,13 +53,7 @@ const WordCard: React.FC<IWordCard> = ({
   const handleDifficulty = (newDifficulty: 'hard' | 'easy') => {
     if (auth) {
       if (difficulty) {
-        if (difficulty === newDifficulty) {
-          deleteUserWord(auth?.userId, _id);
-          setDifficulty(undefined);
-          if (isHardGroup) {
-            removeFromHard(index);
-          }
-        } else {
+        if (difficulty !== newDifficulty) {
           updateUserWord(auth?.userId, _id, {
             difficulty: newDifficulty,
           });
