@@ -185,6 +185,7 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
 
   const setupOptions = (words?: WordDTO[]) => {
     let randIDs: Array<number> = [answerID];
+    let randomizedWordList;
     let randID;
 
     while (randIDs.length !== 4) {
@@ -194,12 +195,7 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
       }
     }
 
-    randIDs = randIDs
-      .map((value) => ({ value, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value);
-
-    let randomizedWordList;
+    randIDs = shuffleArray(randIDs);
 
     if (data) {
       randomizedWordList = randIDs.map((id) => data[id]);

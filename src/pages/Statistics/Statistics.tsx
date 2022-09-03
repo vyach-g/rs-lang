@@ -9,7 +9,6 @@ const Statistics = () => {
     <Default>
       <Box
         sx={{
-          height: '100vh',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',

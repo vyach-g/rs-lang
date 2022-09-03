@@ -145,6 +145,7 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
     if (state) {
       const { page } = state as ShowcaseProps;
       randPageID = page;
+      console.log(page, difficulty);
     }
 
     const { response } = await withAsync(() => getWords(difficulty, randPageID));
