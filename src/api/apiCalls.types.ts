@@ -50,24 +50,63 @@ export type UsersDTO = {
 
 //#region UserWords
 export type UserWordsBody = {
-  difficulty: string;
+  difficulty: 'easy' | 'hard';
+  optional?: {
+    [key: string]: {
+      game: 'sprint' | 'audiocall' | 'savannah' | 'textbook';
+      learned: boolean;
+    };
+  };
 };
 
 export type UserWordsDTO = {
   id: string;
-  difficulty: string;
+  difficulty: 'easy' | 'hard';
   wordId: string;
+  optional?: {
+    [key: string]: {
+      game: 'sprint' | 'audiocall' | 'savannah' | 'textbook';
+      learned: boolean;
+    };
+  };
 };
 //#endregion
 
 //#region UserStatistics
+export type GameStats = {
+  sprint?: {
+    totalWords: number;
+    correctAnswers: number;
+    wrongAnswers: number;
+    longestSeries: number;
+  };
+  audiocall?: {
+    totalWords: number;
+    correctAnswers: number;
+    wrongAnswers: number;
+    longestSeries: number;
+  };
+  savannah?: {
+    totalWords: number;
+    correctAnswers: number;
+    wrongAnswers: number;
+    longestSeries: number;
+  };
+};
+
 export type UserStatisticsBody = {
   learnedWords: number;
+  optional?: {
+    [key: string]: GameStats;
+  };
 };
 
 export type UserStatisticsDTO = {
   id: string;
   learnedWords: number;
+  optional?: {
+    [key: string]: GameStats;
+  };
 };
 //#endregion
 

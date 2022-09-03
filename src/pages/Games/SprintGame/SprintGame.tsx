@@ -72,8 +72,8 @@ export default function SprintGame({ customWords = [] }: { customWords?: Array<W
   async function startGame(page?: number, group?: number) {
     const defaultPage = Math.floor(Math.random() * 30);
 
-    const requestPage = page ? page : defaultPage;
-    const requestLevel = group ? group : level;
+    const requestPage = page ?? defaultPage;
+    const requestLevel = group ?? level;
 
     setApiStatus('PENDING');
     const { response, error } = await withAsync(() => getWords(requestLevel, requestPage));
