@@ -7,20 +7,14 @@ import { UserAggregatedWord, UserAggregatedWords } from '../../../api/apiCalls.t
 import {
   GROUP_COLORS,
   PAGE_PER_GROUP,
-  TextbookTab,
+  TextbookGroup,
   WORDS_TOTAL,
   WORD_PER_PAGE,
 } from './wordListConsts';
 
 import { WordCard } from '../../base';
-import {
-  Container,
-  Typography,
-  Grid,
-  Box,
-  Card,
-  CardMedia,
-} from '@mui/material';
+import { Container, Typography, Grid, Box, Card, CardMedia } from '@mui/material';
+import NoHardWords from '../../../assets/no-hard.png';
 
 type WordListProps = {
   group: number;
@@ -59,7 +53,7 @@ const WordList: React.FC<WordListProps> = (props) => {
           console.log(err);
         });
     } else {
-      if (group !== TextbookTab.Hard) {
+      if (group !== TextbookGroup.Hard) {
         getUserAggregatedWords(auth.userId, group, page, WORD_PER_PAGE)
           .then((res) => {
             const words = res.data[0].paginatedResults;
@@ -105,7 +99,7 @@ const WordList: React.FC<WordListProps> = (props) => {
   };
 
   useEffect(() => {
-    if (auth && page !== TextbookTab.Hard) {
+    if (auth && page !== TextbookGroup.Hard) {
       const pagesPromises: Promise<AxiosResponse<UserAggregatedWords>>[] = [];
       for (let i = 0; i < PAGE_PER_GROUP; i++) {
         pagesPromises.push(getUserAggregatedWords(auth.userId, group, i, WORD_PER_PAGE));
@@ -187,7 +181,7 @@ const WordList: React.FC<WordListProps> = (props) => {
             })}
           </Box>
         </Box>
-        {group !== TextbookTab.Hard && (
+        {group !== TextbookGroup.Hard && (
           <Box
             sx={{
               width: '100%',
@@ -257,7 +251,7 @@ const WordList: React.FC<WordListProps> = (props) => {
               return (
                 <WordCard
                   removeFromHard={removeFromHard}
-                  isHardGroup={group === TextbookTab.Hard}
+                  isHardGroup={group === TextbookGroup.Hard}
                   index={index}
                   key={word._id}
                   {...word}
@@ -266,34 +260,31 @@ const WordList: React.FC<WordListProps> = (props) => {
             })}
           </>
         }
-        {
-          isLoading &&
-            Array(20)
-              .fill('')
-              .map((elem, index) => {
-                return (
-                  <Container key={index} maxWidth="md">
-                    <Card
-                      sx={{
-                        display: { sm: 'flex' },
-                        height: { xs: '510px', sm: '186px' },
-                        backgroundColor: '#F3F3F3',
-                        borderRadius: 3,
-                        marginBottom: '30px',
-                        boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
-                      }}
-                    >
-                      <CardMedia
-                        sx={{ width: { sm: 200 }, minHeight: 186, backgroundColor: '#E3E3E3' }}
-                        component="span"
-                      />
-                    </Card>
-                  </Container>
-                );
-              })
-
-        }
-        {auth && !isLoading && group === TextbookTab.Hard && wordList.length === 0 && (
+        {isLoading &&
+          Array(20)
+            .fill('')
+            .map((elem, index) => {
+              return (
+                <Container key={index} maxWidth="md">
+                  <Card
+                    sx={{
+                      display: { sm: 'flex' },
+                      height: { xs: '510px', sm: '186px' },
+                      backgroundColor: '#F3F3F3',
+                      borderRadius: 3,
+                      marginBottom: '30px',
+                      boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
+                    }}
+                  >
+                    <CardMedia
+                      sx={{ width: { sm: 200 }, minHeight: 186, backgroundColor: '#E3E3E3' }}
+                      component="span"
+                    />
+                  </Card>
+                </Container>
+              );
+            })}
+        {auth && !isLoading && group === TextbookGroup.Hard && wordList.length === 0 && (
           <>
             <Typography variant="h4" align="center" gutterBottom={true}>
               Отличная работа!
@@ -301,6 +292,17 @@ const WordList: React.FC<WordListProps> = (props) => {
             <Typography variant="h5" align="center" gutterBottom={true}>
               Все сложные слова выучены
             </Typography>
+            <Box
+              sx={{
+                backgroundImage: `url(${NoHardWords})`,
+                height: '400px',
+                width: '100%',
+                backgroundRepeat: 'no-repeat',
+                backgroundSize: 'contain',
+                backgroundPosition: 'center',
+                marginBottom: '50px',
+              }}
+            ></Box>
           </>
         )}
       </Grid>

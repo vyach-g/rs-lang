@@ -5,7 +5,7 @@ export const PAGE_PER_GROUP = 30;
 export const WORD_PER_PAGE = 20;
 export const WORDS_TOTAL = 3600;
 
-export enum TextbookTab {
+export enum TextbookGroup {
   A1,
   A2,
   B1,
