@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
 
 import { randomInBetween } from '../../../utils/randomIdGenerator';
-import { getWords } from '../../../api/apiCalls';
+import { addWordStat, getWords } from '../../../api/apiCalls';
 import { withAsync } from '../../../api/helpers/withAsync';
 
 import { styled } from '@mui/material/styles';
@@ -15,6 +15,7 @@ import { CountDown } from '../../../components/base';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 
 import shuffleArray from '../../../utils/shuffleArray';
+
 import { useLocation } from 'react-router-dom';
 import { ShowcaseProps } from '../../../components/modules/Showcase/Showcase';
 
@@ -60,19 +61,23 @@ const ButtonCustom = styled('button')(({ theme }) => ({
 
 interface Props {
   newDifficulty: number;
-  onGameEnd: (arg: IAnswer[]) => void;
+  onGameEnd: (arg: IAnswer[], longestSeries: number) => void;
 }
 
 const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
   const difficulty = newDifficulty;
+
   const [currHP, setCurrHP] = useState(5);
   const [data, setData] = useState<WordDTO[] | null>(null);
 
   const [answer, setAnswer] = useState<WordDTO>();
   const [answerID, setAnswerID] = useState<number>(0);
-  const [answers, setAnswers] = useState<IAnswer[]>([]);
 
+  const [answers, setAnswers] = useState<IAnswer[]>([]);
   const [asnwerOptions, setAsnwerOptions] = useState<(WordDTO | undefined)[]>([]);
+
+  const [currSeries, setCurrSeries] = useState(0);
+  const [longestSeries, setLongestSeries] = useState(0);
 
   const { state } = useLocation();
 
@@ -81,30 +86,41 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
   }, []);
 
   const handleGameProcess = (event: React.MouseEvent) => {
-    const userAnswer = {
-      word: answer,
-      isCorrect: true,
-    };
+    if (!answer) return;
 
     const buttonEl = event.currentTarget as HTMLButtonElement;
+    const isCorrect = answer?.wordTranslate === buttonEl.textContent;
 
-    if (answer?.wordTranslate !== buttonEl.textContent) {
+    const userAnswer = {
+      word: answer,
+      isCorrect: isCorrect,
+    };
+
+    if (isCorrect) {
+      setCurrSeries(currSeries + 1);
+    } else {
+      setCurrSeries(0);
       setCurrHP(currHP - 1);
-      userAnswer.isCorrect = false;
+
+      if (currSeries > longestSeries) {
+        setLongestSeries(currSeries);
+      }
     }
 
-    setAnswers([...answers, userAnswer]);
-    setupOptions();
+    addWordStat(answer, isCorrect, 'savannah');
+
+    if (currHP === 1 || answerID === 20) {
+      onGameEnd([...answers, userAnswer], longestSeries);
+    } else {
+      setAnswers([...answers, userAnswer]);
+      setupOptions();
+    }
   };
 
   const setupOptions = (words?: WordDTO[]) => {
     let randIDs: Array<number> = [answerID];
+    let randomizedWordList;
     let randID;
-
-    if (currHP === 1) {
-      onGameEnd(answers);
-      return;
-    }
 
     while (randIDs.length !== 4) {
       randID = randomInBetween(0, 19);
@@ -113,12 +129,7 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
       }
     }
 
-    randIDs = randIDs
-      .map((value) => ({ value, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value);
-
-    let randomizedWordList;
+    randIDs = shuffleArray(randIDs);
 
     if (data) {
       randomizedWordList = randIDs.map((id) => data[id]);
@@ -128,15 +139,10 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
       setAnswer(words[answerID]);
     }
 
-    if (!randomizedWordList) return;
-
-    if (answerID === 20) {
-      onGameEnd(answers);
-      return;
+    if (randomizedWordList) {
+      setAsnwerOptions(randomizedWordList);
+      setAnswerID(answerID + 1);
     }
-
-    setAsnwerOptions(randomizedWordList);
-    setAnswerID(answerID + 1);
   };
 
   const setupData = async () => {
@@ -145,7 +151,6 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
     if (state) {
       const { page } = state as ShowcaseProps;
       randPageID = page;
-      console.log(page, difficulty);
     }
 
     const { response } = await withAsync(() => getWords(difficulty, randPageID));
@@ -173,7 +178,7 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
     >
       {data ? (
         <>
-          <CountDown onCountZero={onCountZero} />
+          <CountDown onCountZero={onCountZero} resetOnChange={answerID} />
           <Box
             sx={{
               display: 'flex',

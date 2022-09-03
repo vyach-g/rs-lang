@@ -61,7 +61,7 @@ const Header = () => {
       <HeaderContainer>
         <HeaderGeneral>
           <Typography variant="h6" component="div">
-            <LinkOuter href="https://rs.school/" sx={{ textDecoration: 'none', color: 'inherit' }}>
+            <LinkOuter href="/" sx={{ textDecoration: 'none', color: 'inherit' }}>
               RSLang
             </LinkOuter>
           </Typography>

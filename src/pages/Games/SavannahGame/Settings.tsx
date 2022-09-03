@@ -110,7 +110,7 @@ const Settings: React.FC<Props> = ({ onGameStart }) => {
     setDifficulty(Aliases[targetedEl.innerText]);
   };
 
-  const onSettingsSubmit = (event: React.MouseEvent) => {
+  const onSettingsSubmit = () => {
     onGameStart(difficulty);
   };
 

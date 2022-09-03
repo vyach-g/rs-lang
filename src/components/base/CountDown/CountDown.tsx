@@ -5,27 +5,23 @@ const INITIAL_COUNT = 15;
 
 interface Props {
   onCountZero: () => void;
+  resetOnChange?: number;
 }
 
-const CountDown: React.FC<Props> = ({ onCountZero }) => {
+const CountDown: React.FC<Props> = ({ onCountZero, resetOnChange }) => {
   const [currCount, setCurrCount] = useState(INITIAL_COUNT);
-  const [isRunning, setIsRunning] = useState(true);
 
-  useInterval(
-    () => {
-      if (currCount > 0) {
-        setCurrCount(currCount - 1);
-      } else {
-        onCountZero();
-        setCurrCount(INITIAL_COUNT);
-      }
-    },
-    isRunning ? 1000 : null
-  );
+  useEffect(() => {
+    setCurrCount(INITIAL_COUNT);
+  }, [resetOnChange]);
 
-  const toggleTimer = () => {
-    setIsRunning(!isRunning);
-  };
+  useInterval(() => {
+    if (currCount > 0) {
+      setCurrCount(currCount - 1);
+    } else {
+      onCountZero();
+    }
+  }, 1000);
 
   return (
     <Box
