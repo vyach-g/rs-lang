@@ -170,7 +170,7 @@ const WordList: React.FC<WordListProps> = (props) => {
                         setLearnedPages([]);
                         setWordList([]);
                         setGroup(index);
-                        setPage(1);
+                        setPage(0);
                       }
                     }}
                   >
@@ -252,9 +252,10 @@ const WordList: React.FC<WordListProps> = (props) => {
                 <WordCard
                   removeFromHard={removeFromHard}
                   isHardGroup={group === TextbookGroup.Hard}
-                  index={index}
+                  numberInList={index}
                   key={word._id}
-                  {...word}
+                  word={word}
+                  // {...word}
                 ></WordCard>
               );
             })}

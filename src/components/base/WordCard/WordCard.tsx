@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useAuthContext } from '../../../context/AuthContextProvider';
-import { createUserWord, updateUserWord, deleteUserWord } from '../../../api/apiCalls';
+import { createUserWord, updateUserWord, deleteUserWord, addWordStat } from '../../../api/apiCalls';
 import { UserAggregatedWord } from '../../../api/apiCalls.types';
 import { API_URL } from '../../../api/apiUrl';
 import {
@@ -19,56 +19,34 @@ import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
 import { green, grey, red } from '@mui/material/colors';
 import { GROUP_COLORS } from '../../modules/WordList/wordListConsts';
 
-interface WordCardProps extends UserAggregatedWord {
-  index: number;
+type WordCardProps = {
+  word: UserAggregatedWord;
+  numberInList: number;
   isHardGroup: boolean;
   removeFromHard: (num: number) => void;
-}
+};
 
-const WordCard: React.FC<WordCardProps> = ({
-  _id,
-  word,
-  group,
-  image,
-  textMeaning,
-  textMeaningTranslate,
-  textExample,
-  textExampleTranslate,
-  transcription,
-  audio,
-  audioMeaning,
-  audioExample,
-  wordTranslate,
-  userWord,
-  index,
-  removeFromHard,
-  isHardGroup,
-}) => {
+const WordCard: React.FC<WordCardProps> = ({ word, numberInList, removeFromHard, isHardGroup }) => {
+  console.log(word);
   const { auth } = useAuthContext();
-  const [difficulty, setDifficulty] = useState(userWord?.difficulty);
+  const [difficulty, setDifficulty] = useState(word.userWord?.difficulty);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const audioList = [audio, audioMeaning, audioExample];
+  const audioList = [word.audio, word.audioMeaning, word.audioExample];
 
   let audioPointer = 0;
   const [isPlaying, setIsPlaying] = useState(false);
 
   const handleDifficulty = (newDifficulty: 'hard' | 'easy') => {
+    const isCorrect = newDifficulty === 'easy';
+    const adaptedWord = Object.assign(word, { id: word._id });
+
     if (auth) {
-      if (difficulty) {
-        if (difficulty !== newDifficulty) {
-          updateUserWord(auth?.userId, _id, {
-            difficulty: newDifficulty,
-          });
-          setDifficulty(newDifficulty);
-          if (newDifficulty === 'easy' && isHardGroup) {
-            removeFromHard(index);
-          }
-        }
-      } else {
-        createUserWord(auth?.userId, _id, {
-          difficulty: newDifficulty,
-        });
+      if (difficulty !== newDifficulty) {
+        addWordStat(adaptedWord, isCorrect, 'textbook');
         setDifficulty(newDifficulty);
+        if (newDifficulty === 'easy' && isHardGroup) {
+          removeFromHard(numberInList);
+        }
       }
     }
   };
@@ -116,8 +94,8 @@ const WordCard: React.FC<WordCardProps> = ({
         <CardMedia
           sx={{ width: { sm: 200 }, minHeight: 150, p: 1, borderRadius: '15px' }}
           component="img"
-          image={`${API_URL}/${image}`}
-          alt={word}
+          image={`${API_URL}/${word.image}`}
+          alt={word.word}
         />
         <CardContent sx={{ width: '100%' }}>
           <Box
@@ -131,7 +109,7 @@ const WordCard: React.FC<WordCardProps> = ({
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Box
                 sx={{
-                  backgroundColor: GROUP_COLORS[group].dark,
+                  backgroundColor: GROUP_COLORS[word.group].dark,
                   width: '3px',
                   height: '40px',
                   display: 'inline-block',
@@ -154,7 +132,7 @@ const WordCard: React.FC<WordCardProps> = ({
                   }}
                 >
                   <Typography variant="h5" component="span">
-                    {word}
+                    {word.word}
                   </Typography>
 
                   <IconButton
@@ -167,12 +145,12 @@ const WordCard: React.FC<WordCardProps> = ({
                   </IconButton>
 
                   <Typography component="span" variant="body1" sx={{ color: 'text.secondary' }}>
-                    {transcription}
+                    {word.transcription}
                   </Typography>
                 </Box>
                 <Box>
                   <Typography variant="h6" component="span">
-                    {wordTranslate}
+                    {word.wordTranslate}
                   </Typography>
                 </Box>
               </Box>
@@ -205,14 +183,14 @@ const WordCard: React.FC<WordCardProps> = ({
 
           <Box sx={{ marginBottom: 1 }}>
             <Typography variant="body1" sx={{ color: 'text.primary' }}>
-              {textMeaning.split(/<\/?i>/).map((value, index) => {
+              {word.textMeaning.split(/<\/?i>/).map((value, index) => {
                 return (
                   <Box
                     component="span"
                     key={index}
                     sx={
                       index === 1
-                        ? { fontStyle: 'italic', backgroundColor: GROUP_COLORS[group].light }
+                        ? { fontStyle: 'italic', backgroundColor: GROUP_COLORS[word.group].light }
                         : {}
                     }
                   >
@@ -222,20 +200,20 @@ const WordCard: React.FC<WordCardProps> = ({
               })}
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {textMeaningTranslate}
+              {word.textMeaningTranslate}
             </Typography>
           </Box>
 
           <Box>
             <Typography variant="body1" sx={{ color: 'text.primary' }}>
-              {textExample.split(/<\/?b>/).map((value, index) => {
+              {word.textExample.split(/<\/?b>/).map((value, index) => {
                 return (
                   <Box
                     component="span"
                     key={index}
                     sx={
                       index === 1
-                        ? { fontWeight: 'bold', backgroundColor: GROUP_COLORS[group].light }
+                        ? { fontWeight: 'bold', backgroundColor: GROUP_COLORS[word.group].light }
                         : {}
                     }
                   >
@@ -245,7 +223,7 @@ const WordCard: React.FC<WordCardProps> = ({
               })}
             </Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {textExampleTranslate}
+              {word.textExampleTranslate}
             </Typography>
           </Box>
         </CardContent>
