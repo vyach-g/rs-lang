@@ -12,6 +12,7 @@ import {
   IconButton,
   Container,
 } from '@mui/material';
+import StopIcon from '@mui/icons-material/Stop';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
@@ -47,8 +48,9 @@ const WordCard: React.FC<WordCardProps> = ({
   const [difficulty, setDifficulty] = useState(userWord?.difficulty);
   const audioRef = useRef<HTMLAudioElement>(null);
   const audioList = [audio, audioMeaning, audioExample];
+
   let audioPointer = 0;
-  let isAudioPlaying = false;
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const handleDifficulty = (newDifficulty: 'hard' | 'easy') => {
     if (auth) {
@@ -73,21 +75,17 @@ const WordCard: React.FC<WordCardProps> = ({
 
   const playAudio = () => {
     if (audioRef.current) {
-      isAudioPlaying = true;
+      setIsPlaying(true);
       if (audioPointer < 3) {
         audioRef.current.src = `${API_URL}/${audioList[audioPointer]}`;
         audioRef.current.play();
         audioPointer += 1;
-        audioRef.current?.addEventListener(
-          'ended',
-          () => {
-            playAudio();
-          },
-          { once: true }
-        );
+        audioRef.current.onended = () => {
+          playAudio();
+        };
       } else {
         audioPointer = 0;
-        isAudioPlaying = false;
+        setIsPlaying(false);
       }
     }
   };
@@ -97,7 +95,7 @@ const WordCard: React.FC<WordCardProps> = ({
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
       audioPointer = 0;
-      isAudioPlaying = false;
+      setIsPlaying(false);
     }
   };
 
@@ -162,10 +160,10 @@ const WordCard: React.FC<WordCardProps> = ({
                   <IconButton
                     sx={{ width: 32, height: 32 }}
                     onClick={() => {
-                      isAudioPlaying ? stopAudio() : playAudio();
+                      isPlaying ? stopAudio() : playAudio();
                     }}
                   >
-                    <VolumeUpIcon />
+                    {isPlaying ? <StopIcon /> : <VolumeUpIcon />}
                   </IconButton>
 
                   <Typography component="span" variant="body1" sx={{ color: 'text.secondary' }}>
