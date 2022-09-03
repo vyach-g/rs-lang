@@ -128,7 +128,7 @@ export const updateUserStatistics = (id: string, body: UserStatisticsBody) => {
   return axios.put<UserStatisticsDTO>(`${API_URL}/users/${id}/statistics`, body);
 };
 
-//usesr-settings
+//user-settings
 export const getUserSettings = (id: string) => {
   return axios.get<UserSettingsDTO>(`${API_URL}/users/${id}/settings`);
 };

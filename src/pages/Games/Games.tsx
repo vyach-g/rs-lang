@@ -68,7 +68,7 @@ export default function Games() {
             <Link to="savannah" style={{ textDecoration: 'none' }}>
               <GameButtonSavannah>
                 <GameName>Саванна</GameName>
-                <GameAction>Развивает словарный запас.</GameAction>
+                <GameAction>Развивает словарный запас</GameAction>
               </GameButtonSavannah>
             </Link>
 

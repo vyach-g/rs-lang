@@ -73,29 +73,31 @@ export type UserWordsDTO = {
 //#endregion
 
 //#region UserStatistics
+export type GameStats = {
+  sprint?: {
+    totalWords: number;
+    correctAnswers: number;
+    wrongAnswers: number;
+    longestSeries: number;
+  };
+  audiocall?: {
+    totalWords: number;
+    correctAnswers: number;
+    wrongAnswers: number;
+    longestSeries: number;
+  };
+  savannah?: {
+    totalWords: number;
+    correctAnswers: number;
+    wrongAnswers: number;
+    longestSeries: number;
+  };
+};
+
 export type UserStatisticsBody = {
   learnedWords: number;
   optional?: {
-    [key: string]: {
-      sprint?: {
-        totalWords: number;
-        correctAnswers: number;
-        wrongAnswers: number;
-        longestSeries: number;
-      };
-      audiocall?: {
-        totalWords: number;
-        correctAnswers: number;
-        wrongAnswers: number;
-        longestSeries: number;
-      };
-      savannah?: {
-        totalWords: number;
-        correctAnswers: number;
-        wrongAnswers: number;
-        longestSeries: number;
-      };
-    };
+    [key: string]: GameStats;
   };
 };
 
@@ -103,26 +105,7 @@ export type UserStatisticsDTO = {
   id: string;
   learnedWords: number;
   optional?: {
-    [key: string]: {
-      sprint?: {
-        totalWords: number;
-        correctAnswers: number;
-        wrongAnswers: number;
-        longestSeries: number;
-      };
-      audiocall?: {
-        totalWords: number;
-        correctAnswers: number;
-        wrongAnswers: number;
-        longestSeries: number;
-      };
-      savannah?: {
-        totalWords: number;
-        correctAnswers: number;
-        wrongAnswers: number;
-        longestSeries: number;
-      };
-    };
+    [key: string]: GameStats;
   };
 };
 //#endregion
