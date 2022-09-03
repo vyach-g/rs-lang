@@ -53,6 +53,7 @@ const AudioCallGame = () => {
 
   const [difficulty, setDifficulty] = useState(0);
   const [answers, setAnswers] = useState<IAnswer[]>([]);
+  const [longestSeries, setLongestSeries] = useState(0);
 
   const navigate = useNavigate();
 
@@ -61,8 +62,10 @@ const AudioCallGame = () => {
     setStatus('STARTED');
   };
 
-  const onGameEnd = (answers: IAnswer[]) => {
+  const onGameEnd = (answers: IAnswer[], longestSeries: number) => {
     setAnswers(answers);
+    setLongestSeries(longestSeries);
+
     setStatus('PENDING');
   };
 
@@ -91,7 +94,12 @@ const AudioCallGame = () => {
           <Game newDifficulty={difficulty} onGameEnd={onGameEnd} />
         </>
       ) : (
-        <Result onNextGame={onNextGame} currAnswers={answers} gameStatus={status} />
+        <Result
+          onNextGame={onNextGame}
+          currAnswers={answers}
+          longestSeries={longestSeries}
+          gameStatus={status}
+        />
       )}
     </GameContainer>
   );

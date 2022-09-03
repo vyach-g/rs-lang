@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Box, Button, Typography } from '@mui/material';
-
 import { GameWordCard } from '../../../components/base';
 
+import { getUserStatistics, updateUserStatistics } from '../../../api/apiCalls';
+import { withAsync } from '../../../api/helpers/withAsync';
+import { SignInDTO } from '../../../api/apiCalls.types';
 import { useNavigate } from 'react-router-dom';
 import { IAnswer } from './types';
+
+import storage from '../../../storage/storage';
 
 import { styled } from '@mui/material/styles';
 
@@ -86,18 +90,20 @@ const ButtonCustom = styled(Button)(({ theme }) => ({
 interface Props {
   onNextGame: () => void;
   currAnswers: IAnswer[] | [];
+  longestSeries: number;
   gameStatus: string;
 }
 
-const Result: React.FC<Props> = ({ onNextGame, currAnswers, gameStatus }) => {
-  const correctAnswers = currAnswers
-    .filter((answer) => answer.isCorrect)
-    .map((answer) => answer.word);
-  const wrongAnswers = currAnswers
-    .filter((answer) => !answer.isCorrect)
-    .map((answer) => answer.word);
+const Result: React.FC<Props> = ({ onNextGame, currAnswers, longestSeries, gameStatus }) => {
+  const correctAnswers = currAnswers.filter((answer) => answer.isCorrect);
+  const wrongAnswers = currAnswers.filter((answer) => !answer.isCorrect);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log(longestSeries);
+    handleUpdateStats();
+  }, []);
 
   const handleNewGame = () => {
     onNextGame();
@@ -105,6 +111,52 @@ const Result: React.FC<Props> = ({ onNextGame, currAnswers, gameStatus }) => {
 
   const handleExit = () => {
     navigate('/games');
+  };
+
+  const handleUpdateStats = async () => {
+    const auth = storage.getItem<SignInDTO>('auth');
+
+    if (!auth) return;
+
+    const { response, error } = await withAsync(() => getUserStatistics(auth.userId));
+
+    const timeStamp = Date.now();
+
+    if (error) {
+      await updateUserStatistics(auth.userId, {
+        learnedWords: correctAnswers.length,
+        optional: {
+          [timeStamp]: {
+            audiocall: {
+              totalWords: currAnswers.length,
+              correctAnswers: correctAnswers.length,
+              wrongAnswers: wrongAnswers.length,
+              longestSeries: longestSeries,
+            },
+          },
+        },
+      });
+    }
+
+    if (response && response.status == 200) {
+      const { data } = response;
+      const { learnedWords, ...rest } = data;
+
+      await updateUserStatistics(auth.userId, {
+        learnedWords: learnedWords + currAnswers.length,
+        optional: {
+          ...rest.optional,
+          [timeStamp]: {
+            audiocall: {
+              totalWords: currAnswers.length,
+              correctAnswers: correctAnswers.length,
+              wrongAnswers: wrongAnswers.length,
+              longestSeries: longestSeries,
+            },
+          },
+        },
+      });
+    }
   };
 
   const GameResults =
@@ -116,12 +168,12 @@ const Result: React.FC<Props> = ({ onNextGame, currAnswers, gameStatus }) => {
       <AnswersCustom>
         <AnswersList sx={{ color: '#009933' }}>
           {correctAnswers.map((answer, index) => (
-            <GameWordCard key={index} answer={answer} />
+            <GameWordCard key={index} answer={answer.word} />
           ))}
         </AnswersList>
         <AnswersList sx={{ color: '#A24C43' }}>
           {wrongAnswers.map((answer, index) => (
-            <GameWordCard key={index} answer={answer} />
+            <GameWordCard key={index} answer={answer.word} />
           ))}
         </AnswersList>
       </AnswersCustom>
