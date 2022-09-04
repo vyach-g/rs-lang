@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Default } from '../../components/layout';
 
@@ -33,6 +33,11 @@ import {
 } from './Statistics.styles';
 import { GameAction, GameName } from '../Games/Games.styles';
 
+import { Chart, registerables } from 'chart.js';
+Chart.register(...registerables);
+import { green, blue, red } from '@mui/material/colors';
+import { Counter, Games } from './Statistics.types';
+
 const Statistics = () => {
   const { auth } = useAuthContext();
   const [stats, setStats] = useState<UserStatisticsDTO>();
@@ -66,6 +71,123 @@ const Statistics = () => {
 
     response && setWordStats(response.data);
   }, []);
+
+  const chartRef = useRef<HTMLCanvasElement>(null);
+  const chartTotalRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (wordStats) {
+      const data = wordStats;
+      const lastResultByDayAndGame = data.map((word) => {
+        const detail = word.optional;
+        const games: Games = {};
+
+        for (let key in detail) {
+          if (!games[detail[key].game]) {
+            games[detail[key].game] = {};
+          }
+          const date = new Date(+key).toLocaleDateString('ru-RU');
+          games[detail[key].game][date] = detail[key].learned;
+          return games;
+        }
+      });
+
+      const counter: Counter = {};
+
+      lastResultByDayAndGame.forEach((word) => {
+        for (let key in word) {
+          const dateString = Object.keys(word[key])[0];
+
+          if (!counter[dateString]) counter[dateString] = {};
+          if (!counter[dateString]?.right) counter[dateString].right = 0;
+          if (!counter[dateString]?.wrong) counter[dateString].wrong = 0;
+
+          const lastResultOfDay = word[key][dateString];
+          if (lastResultOfDay === true) counter[dateString].right += 1;
+          if (lastResultOfDay === false) counter[dateString].wrong += 1;
+        }
+      });
+
+      if (chartRef) {
+        const ctx = chartRef.current?.getContext('2d') as CanvasRenderingContext2D;
+        const labels = Object.keys(counter);
+        const data = {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Ошибочные ответы',
+              data: Object.values(counter).map((value) => value.wrong),
+              borderColor: red[300],
+              backgroundColor: '#e5737355',
+              lineTension: 0.25,
+              fill: true,
+            },
+            {
+              label: 'Верные ответы',
+              data: Object.values(counter).map((value) => value.right),
+              borderColor: green[300],
+              backgroundColor: '#81c78455',
+              lineTension: 0.25,
+              fill: true,
+            },
+          ],
+        };
+
+        const chart = new Chart(ctx, {
+          type: 'line',
+          data: data,
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              title: {
+                display: false,
+                text: 'Chart.js Line Chart',
+              },
+            },
+          },
+        });
+      }
+
+      if (chartTotalRef) {
+        const ctx = chartTotalRef.current?.getContext('2d') as CanvasRenderingContext2D;
+
+        const labels = Object.keys(counter);
+        const data = {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Изучено слов',
+              data: Object.values(counter).map((value) => value.right + value.wrong),
+              borderColor: blue[300],
+              backgroundColor: '#64b5f655',
+              fill: true,
+              lineTension: 0.25,
+            },
+          ],
+        };
+
+        const chart = new Chart(ctx, {
+          type: 'line',
+          data: data,
+          options: {
+            responsive: true,
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              title: {
+                display: false,
+                text: 'Chart.js Line Chart',
+              },
+            },
+          },
+        });
+      }
+    }
+  }, [wordStats]);
 
   useEffect(() => {
     getStats();
@@ -158,7 +280,7 @@ const Statistics = () => {
       return word;
     }
   });
-  
+
   const todayNewSavannahWords = todayWords?.filter((word) => {
     const timestamp = Object.keys(word.optional!)[0];
 
@@ -172,12 +294,10 @@ const Statistics = () => {
       <Wrapper>
         <Box
           sx={{
-            height: 'calc(100vh - 203px)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            overflow: 'auto',
           }}
         >
           <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
@@ -329,6 +449,32 @@ const Statistics = () => {
               </GameStatsRows>
             </GameCardSavannah>
           </Stack>
+          <Box
+            sx={{
+              width: '740px',
+              height: '400px',
+              borderRadius: '6px',
+              boxShadow: '0 2px 4px 0 rgb(0 0 0 / 16%), 0 0 1px 0 rgb(0 0 0 / 12%)',
+              padding: '16px',
+              my: '16px',
+              backgroundColor: '#ffffff',
+            }}
+          >
+            <canvas ref={chartRef} width="740px" height="400px"></canvas>
+          </Box>
+          <Box
+            sx={{
+              width: '740px',
+              height: '400px',
+              borderRadius: '6px',
+              boxShadow: '0 2px 4px 0 rgb(0 0 0 / 16%), 0 0 1px 0 rgb(0 0 0 / 12%)',
+              padding: '16px',
+              my: '16px',
+              backgroundColor: '#ffffff',
+            }}
+          >
+            <canvas ref={chartTotalRef} width="740px" height="400px"></canvas>
+          </Box>
         </Box>
       </Wrapper>
     </Default>

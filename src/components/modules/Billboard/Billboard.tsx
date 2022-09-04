@@ -120,7 +120,7 @@ const Billboard = () => {
           <BillboardDescription>
             Мы используем простые и крайне эффективные методы обучения
             <br />
-            При пользовании ими, успех не заставит себя ждать
+            Попробуй увлекательные игры для тренировки слов и отслеживай ежедневный прогресс
           </BillboardDescription>
           <BillboardSubmit variant="outlined" onClick={handleAnchor}>
             Узнать Больше

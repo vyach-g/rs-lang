@@ -139,6 +139,12 @@ export type UserAggregatedWord = {
   wordTranslate: string;
   userWord?: {
     difficulty: 'easy' | 'hard';
+    optional?: {
+      [key: string]: {
+        game: 'sprint' | 'audiocall' | 'savannah' | 'textbook';
+        learned: boolean;
+      };
+    };
   };
 };
 export type UserAggregatedWords = [
