@@ -101,7 +101,7 @@ const Settings: React.FC<Props> = ({ onGameStart }) => {
   useEffect(() => {
     if (state) {
       const { group } = state as ShowcaseProps;
-      onGameStart(Aliases[group]);
+      onGameStart(group);
     }
   }, []);
 
@@ -110,7 +110,7 @@ const Settings: React.FC<Props> = ({ onGameStart }) => {
     setDifficulty(Aliases[targetedEl.innerText]);
   };
 
-  const onSettingsSubmit = (event: React.MouseEvent) => {
+  const onSettingsSubmit = () => {
     onGameStart(difficulty);
   };
 

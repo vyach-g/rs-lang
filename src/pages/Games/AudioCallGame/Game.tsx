@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Box, CircularProgress, fabClasses, Typography } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
 
 import { randomInBetween } from '../../../utils/randomIdGenerator';
-import { getWords } from '../../../api/apiCalls';
+import { addWordStat, getWords } from '../../../api/apiCalls';
 
 import { styled } from '@mui/material/styles';
 
@@ -15,6 +15,7 @@ import { useLocation } from 'react-router-dom';
 import { ShowcaseProps } from '../../../components/modules/Showcase/Showcase';
 
 import shuffleArray from '../../../utils/shuffleArray';
+import { cursorTo } from 'readline';
 
 const ButtonCustom = styled('button')(({ theme }) => ({
   display: 'flex',
@@ -139,7 +140,7 @@ const WordImage = styled('div')({
 
 interface Props {
   newDifficulty: number;
-  onGameEnd: (arg: IAnswer[]) => void;
+  onGameEnd: (arg: IAnswer[], longestSeries: number) => void;
 }
 
 const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
@@ -148,13 +149,15 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
 
   const [answer, setAnswer] = useState<WordDTO>();
   const [answerID, setAnswerID] = useState<number>(0);
+  const [answerRevealed, setAnswerRevealed] = useState(false);
+
   const [answers, setAnswers] = useState<IAnswer[]>([]);
   const [asnwerOptions, setAsnwerOptions] = useState<(WordDTO | undefined)[]>([]);
 
-  const [answerRevealed, setAnswerRevealed] = useState(false);
+  const [currSeries, setCurrSeries] = useState(0);
+  const [longestSeries, setLongestSeries] = useState(0);
 
   const { state } = useLocation();
-
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
@@ -162,29 +165,47 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
   }, []);
 
   const handleGameProcess = (event: React.MouseEvent) => {
-    const userAnswer = {
-      word: answer,
-      isCorrect: true,
-    };
+    if (!answer) return;
 
     const buttonEl = event.currentTarget as HTMLButtonElement;
+    const isCorrect = answer?.wordTranslate === buttonEl.textContent;
 
-    if (buttonEl.textContent === 'Узнать ответ') {
+    if (isCorrect) {
+      setCurrSeries(currSeries + 1);
+    } else if (buttonEl.textContent === 'Продолжить') {
+      setCurrSeries(0);
+      setAnswerRevealed(!answerRevealed);
+
+      if (currSeries > longestSeries) {
+        setLongestSeries(currSeries);
+      }
+    } else {
       setAnswerRevealed(true);
       return;
     }
 
-    if (answer?.wordTranslate !== buttonEl.textContent || buttonEl.textContent === 'Продолжить') {
-      userAnswer.isCorrect = false;
-      setAnswerRevealed(!answerRevealed);
-    }
+    addWordStat(answer, isCorrect, 'audiocall');
 
-    setAnswers([...answers, userAnswer]);
-    setupOptions();
+    const userAnswer = {
+      word: answer,
+      isCorrect: isCorrect,
+    };
+
+    if (answerID === 4) {
+      const updatedSeries = isCorrect ? currSeries + 1 : currSeries;
+      onGameEnd(
+        [...answers, userAnswer],
+        updatedSeries > longestSeries ? updatedSeries : longestSeries
+      );
+    } else {
+      setAnswers([...answers, userAnswer]);
+      setupOptions();
+    }
   };
 
   const setupOptions = (words?: WordDTO[]) => {
     let randIDs: Array<number> = [answerID];
+    let randomizedWordList;
     let randID;
 
     while (randIDs.length !== 4) {
@@ -194,12 +215,7 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
       }
     }
 
-    randIDs = randIDs
-      .map((value) => ({ value, sort: Math.random() }))
-      .sort((a, b) => a.sort - b.sort)
-      .map(({ value }) => value);
-
-    let randomizedWordList;
+    randIDs = shuffleArray(randIDs);
 
     if (data) {
       randomizedWordList = randIDs.map((id) => data[id]);
@@ -209,15 +225,10 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
       setAnswer(words[answerID]);
     }
 
-    if (!randomizedWordList) return;
-
-    if (answerID === 20) {
-      onGameEnd(answers);
-      return;
+    if (randomizedWordList) {
+      setAsnwerOptions(randomizedWordList);
+      setAnswerID(answerID + 1);
     }
-
-    setAsnwerOptions(randomizedWordList);
-    setAnswerID(answerID + 1);
   };
 
   const setupData = async () => {

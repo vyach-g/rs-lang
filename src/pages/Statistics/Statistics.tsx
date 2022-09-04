@@ -158,6 +158,7 @@ const Statistics = () => {
       return word;
     }
   });
+  
   const todayNewSavannahWords = todayWords?.filter((word) => {
     const timestamp = Object.keys(word.optional!)[0];
 
