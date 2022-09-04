@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useAuthContext } from '../../../context/AuthContextProvider';
-import { createUserWord, updateUserWord, deleteUserWord, addWordStat } from '../../../api/apiCalls';
+import { addWordStat } from '../../../api/apiCalls';
 import { UserAggregatedWord } from '../../../api/apiCalls.types';
 import { API_URL } from '../../../api/apiUrl';
 import {
@@ -35,6 +35,25 @@ const WordCard: React.FC<WordCardProps> = ({ word, numberInList, removeFromHard,
 
   let audioPointer = 0;
   const [isPlaying, setIsPlaying] = useState(false);
+
+  const wordStat = {
+    textbook: { right: 0, wrong: 0 },
+    sprint: { right: 0, wrong: 0 },
+    audiocall: { right: 0, wrong: 0 },
+    savannah: { right: 0, wrong: 0 },
+  };
+  if (word.userWord?.optional) {
+    const stats = word.userWord.optional;
+    for (let key in stats) {
+      const game = stats[key].game;
+      if (stats[key].learned === true) {
+        wordStat[game].right += 1;
+      } else if (stats[key].learned === false) {
+        wordStat[game].wrong += 1;
+      }
+    }
+    console.log('wordStat', wordStat);
+  }
 
   const handleDifficulty = (newDifficulty: 'hard' | 'easy') => {
     const isCorrect = newDifficulty === 'easy';
@@ -92,17 +111,30 @@ const WordCard: React.FC<WordCardProps> = ({ word, numberInList, removeFromHard,
         }}
       >
         <CardMedia
-          sx={{ width: { sm: 200 }, minHeight: 150, p: 1, borderRadius: '15px' }}
+          sx={{
+            width: { sm: 200 },
+            height: { sm: 200 },
+            minHeight: 150,
+            p: 1,
+            borderRadius: '15px',
+          }}
           component="img"
           image={`${API_URL}/${word.image}`}
           alt={word.word}
         />
-        <CardContent sx={{ width: '100%' }}>
+        <CardContent
+          sx={{
+            width: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          }}
+        >
           <Box
             sx={{
               display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
+              flexDirection: 'column',
+              // alignItems: 'center',
               justifyContent: 'space-between',
             }}
           >
@@ -155,7 +187,64 @@ const WordCard: React.FC<WordCardProps> = ({ word, numberInList, removeFromHard,
                 </Box>
               </Box>
             </Box>
-            {auth && (
+
+            <Box sx={{ marginBottom: 1 }}>
+              <Typography variant="body1" sx={{ color: 'text.primary' }}>
+                {word.textMeaning.split(/<\/?i>/).map((value, index) => {
+                  return (
+                    <Box
+                      component="span"
+                      key={index}
+                      sx={
+                        index === 1
+                          ? { fontStyle: 'italic', backgroundColor: GROUP_COLORS[word.group].light }
+                          : {}
+                      }
+                    >
+                      {value}
+                    </Box>
+                  );
+                })}
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                {word.textMeaningTranslate}
+              </Typography>
+            </Box>
+
+            <Box sx={{ marginBottom: 1 }}>
+              <Typography variant="body1" sx={{ color: 'text.primary' }}>
+                {word.textExample.split(/<\/?b>/).map((value, index) => {
+                  return (
+                    <Box
+                      component="span"
+                      key={index}
+                      sx={
+                        index === 1
+                          ? { fontWeight: 'bold', backgroundColor: GROUP_COLORS[word.group].light }
+                          : {}
+                      }
+                    >
+                      {value}
+                    </Box>
+                  );
+                })}
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                {word.textExampleTranslate}
+              </Typography>
+            </Box>
+          </Box>
+
+          {auth && (
+            <Box
+              sx={{
+                width: '100px',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                flexShrink: '0',
+              }}
+            >
               <Box>
                 <IconButton
                   sx={{
@@ -170,7 +259,11 @@ const WordCard: React.FC<WordCardProps> = ({ word, numberInList, removeFromHard,
                   <CheckCircleIcon />
                 </IconButton>
                 <IconButton
-                  sx={{ width: 32, height: 32, color: difficulty === 'hard' ? red[100] : red[500] }}
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    color: difficulty === 'hard' ? red[100] : red[500],
+                  }}
                   onClick={() => {
                     handleDifficulty('hard');
                   }}
@@ -178,54 +271,60 @@ const WordCard: React.FC<WordCardProps> = ({ word, numberInList, removeFromHard,
                   <DoDisturbOnIcon />
                 </IconButton>
               </Box>
-            )}
-          </Box>
-
-          <Box sx={{ marginBottom: 1 }}>
-            <Typography variant="body1" sx={{ color: 'text.primary' }}>
-              {word.textMeaning.split(/<\/?i>/).map((value, index) => {
-                return (
-                  <Box
-                    component="span"
-                    key={index}
-                    sx={
-                      index === 1
-                        ? { fontStyle: 'italic', backgroundColor: GROUP_COLORS[word.group].light }
-                        : {}
-                    }
-                  >
-                    {value}
-                  </Box>
-                );
-              })}
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {word.textMeaningTranslate}
-            </Typography>
-          </Box>
-
-          <Box>
-            <Typography variant="body1" sx={{ color: 'text.primary' }}>
-              {word.textExample.split(/<\/?b>/).map((value, index) => {
-                return (
-                  <Box
-                    component="span"
-                    key={index}
-                    sx={
-                      index === 1
-                        ? { fontWeight: 'bold', backgroundColor: GROUP_COLORS[word.group].light }
-                        : {}
-                    }
-                  >
-                    {value}
-                  </Box>
-                );
-              })}
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-              {word.textExampleTranslate}
-            </Typography>
-          </Box>
+              {word.userWord && (
+                <Box>
+                  {!!(wordStat.sprint.right + wordStat.sprint.wrong) && (
+                    <Box sx={{ mb: 0.25 }}>
+                      <Typography align="center" variant="body2" sx={{ color: 'text.secondary' }}>
+                        Спринт
+                      </Typography>
+                      <Typography align="center" variant="body1">
+                        <Box component="span" sx={{ color: green[500] }}>
+                          {wordStat.sprint.right}
+                        </Box>
+                        /
+                        <Box component="span" sx={{ color: red[500] }}>
+                          {wordStat.sprint.wrong}
+                        </Box>
+                      </Typography>
+                    </Box>
+                  )}
+                  {!!(wordStat.audiocall.right + wordStat.audiocall.wrong) && (
+                    <Box sx={{ mb: 0.25 }}>
+                      <Typography align="center" variant="body2" sx={{ color: 'text.secondary' }}>
+                        Спринт
+                      </Typography>
+                      <Typography align="center" variant="body1">
+                        <Box component="span" sx={{ color: green[500] }}>
+                          {wordStat.audiocall.right}
+                        </Box>
+                        /
+                        <Box component="span" sx={{ color: red[500] }}>
+                          {wordStat.audiocall.wrong}
+                        </Box>
+                      </Typography>
+                    </Box>
+                  )}
+                  {!!(wordStat.savannah.right + wordStat.savannah.wrong) && (
+                    <Box sx={{ mb: 0.25 }}>
+                      <Typography align="center" variant="body2" sx={{ color: 'text.secondary' }}>
+                        Спринт
+                      </Typography>
+                      <Typography align="center" variant="body1">
+                        <Box component="span" sx={{ color: green[500] }}>
+                          {wordStat.savannah.right}
+                        </Box>
+                        /
+                        <Box component="span" sx={{ color: red[500] }}>
+                          {wordStat.sprint.wrong}
+                        </Box>
+                      </Typography>
+                    </Box>
+                  )}
+                </Box>
+              )}
+            </Box>
+          )}
         </CardContent>
         <audio ref={audioRef} src={`${API_URL}/${audioList[audioPointer]}`} />
       </Card>

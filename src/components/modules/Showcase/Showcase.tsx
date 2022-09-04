@@ -24,7 +24,7 @@ const Showcase: React.FC<ShowcaseProps> = (props) => {
       <Typography variant="h4" align="center" gutterBottom={true}>
         Закрепите знания в играх
       </Typography>
-      <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
+      <Stack direction="row" flexWrap="wrap" gap={2} justifyContent="center" alignItems="center">
         <Box
           sx={{
             height: '240px',
@@ -32,7 +32,6 @@ const Showcase: React.FC<ShowcaseProps> = (props) => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '1rem',
           }}
         >
           <GameButtonSprint
@@ -53,7 +52,6 @@ const Showcase: React.FC<ShowcaseProps> = (props) => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '1rem',
           }}
         >
           <GameButtonAudiocall
@@ -74,7 +72,6 @@ const Showcase: React.FC<ShowcaseProps> = (props) => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '1rem',
           }}
         >
           <GameButtonSavannah
