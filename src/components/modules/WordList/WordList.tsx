@@ -14,7 +14,7 @@ import {
 } from './wordListConsts';
 
 import { WordCard } from './WordCard/WordCard';
-import { Container, Typography, Grid, Box, Card, CardMedia } from '@mui/material';
+import { Container, Typography, Grid, Box } from '@mui/material';
 import { SkeletonWordCard } from './WordCard/SkeletonWordCard';
 import { NoHardWords } from './NoHardWords';
 
@@ -23,9 +23,18 @@ type WordListProps = {
   setGroup: React.Dispatch<React.SetStateAction<number>>;
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
+  currentPageLearned: boolean;
+  setCurrentPageLearned: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const WordList: React.FC<WordListProps> = (props) => {
+const WordList: React.FC<WordListProps> = ({
+  group,
+  setGroup,
+  page,
+  setPage,
+  currentPageLearned,
+  setCurrentPageLearned,
+}) => {
   const { auth } = useAuthContext();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -33,7 +42,11 @@ const WordList: React.FC<WordListProps> = (props) => {
   const [wordsToDisplay, setWordsToDisplay] = useState<WordCardData[]>([]);
   const [learnedList, setLearnedList] = useState<Array<'hard' | 'easy' | null>>([]);
 
-  const { group, setGroup, page, setPage } = props;
+  useEffect(() => {
+    const currentLearnedList = learnedList.slice(page * WORD_PER_PAGE, (page + 1) * WORD_PER_PAGE);
+    const isLearned = currentLearnedList.reduce((prev, curr) => prev && !!curr, true);
+    setCurrentPageLearned(isLearned);
+  }, [learnedList, page]);
 
   useEffect(() => {
     setIsLoading(true);
@@ -334,7 +347,7 @@ const WordList: React.FC<WordListProps> = (props) => {
                   markWordAsLearned={markWordAsLearned}
                   isHardGroup={group === TextbookGroup.Hard}
                   numberInList={index}
-                  key={word.id}
+                  key={word.listId}
                   word={word}
                 ></WordCard>
               );

@@ -275,7 +275,7 @@ const WordCard: React.FC<WordCardProps> = ({
                     ['sprint', 'audiocall', 'savannah'] as Array<
                       'sprint' | 'audiocall' | 'savannah'
                     >
-                  ).map((game) => {
+                  ).map((game, index) => {
                     let gameName: string;
                     switch (game) {
                       case 'sprint':
@@ -291,6 +291,7 @@ const WordCard: React.FC<WordCardProps> = ({
                     return (
                       !!(wordStat[game].right + wordStat[game].wrong) && (
                         <GameStat
+                          key={index}
                           gameName={gameName}
                           right={wordStat[game].right}
                           wrong={wordStat[game].wrong}
