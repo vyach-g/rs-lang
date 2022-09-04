@@ -1,8 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { useAuthContext } from '../../../context/AuthContextProvider';
-import { addWordStat } from '../../../api/apiCalls';
-import { UserAggregatedWord } from '../../../api/apiCalls.types';
-import { API_URL } from '../../../api/apiUrl';
+import { useAuthContext } from '../../../../context/AuthContextProvider';
+import { addWordStat } from '../../../../api/apiCalls';
+import { API_URL } from '../../../../api/apiUrl';
 import {
   Card,
   CardMedia,
@@ -17,19 +16,26 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DoDisturbOnIcon from '@mui/icons-material/DoDisturbOn';
 import { green, grey, red } from '@mui/material/colors';
-import { GROUP_COLORS } from '../../modules/WordList/wordListConsts';
+import { GROUP_COLORS, WordCardData } from '../wordListConsts';
+import { GameStat } from './GameStat';
 
 type WordCardProps = {
-  word: UserAggregatedWord;
+  word: WordCardData;
   numberInList: number;
   isHardGroup: boolean;
   removeFromHard: (num: number) => void;
+  markWordAsLearned: (listId: number, result: 'easy' | 'hard') => void;
 };
 
-const WordCard: React.FC<WordCardProps> = ({ word, numberInList, removeFromHard, isHardGroup }) => {
-  console.log(word);
+const WordCard: React.FC<WordCardProps> = ({
+  word,
+  numberInList,
+  removeFromHard,
+  isHardGroup,
+  markWordAsLearned,
+}) => {
   const { auth } = useAuthContext();
-  const [difficulty, setDifficulty] = useState(word.userWord?.difficulty);
+  const [difficulty, setDifficulty] = useState(word?.userWord?.difficulty);
   const audioRef = useRef<HTMLAudioElement>(null);
   const audioList = [word.audio, word.audioMeaning, word.audioExample];
 
@@ -42,7 +48,7 @@ const WordCard: React.FC<WordCardProps> = ({ word, numberInList, removeFromHard,
     audiocall: { right: 0, wrong: 0 },
     savannah: { right: 0, wrong: 0 },
   };
-  if (word.userWord?.optional) {
+  if (word?.userWord?.optional) {
     const stats = word.userWord.optional;
     for (let key in stats) {
       const game = stats[key].game;
@@ -57,11 +63,10 @@ const WordCard: React.FC<WordCardProps> = ({ word, numberInList, removeFromHard,
 
   const handleDifficulty = (newDifficulty: 'hard' | 'easy') => {
     const isCorrect = newDifficulty === 'easy';
-    const adaptedWord = Object.assign(word, { id: word._id });
-
     if (auth) {
       if (difficulty !== newDifficulty) {
-        addWordStat(adaptedWord, isCorrect, 'textbook');
+        markWordAsLearned(word.listId, newDifficulty);
+        addWordStat(word, isCorrect, 'textbook');
         setDifficulty(newDifficulty);
         if (newDifficulty === 'easy' && isHardGroup) {
           removeFromHard(numberInList);
@@ -119,6 +124,7 @@ const WordCard: React.FC<WordCardProps> = ({ word, numberInList, removeFromHard,
             borderRadius: '15px',
           }}
           component="img"
+          width="200px"
           image={`${API_URL}/${word.image}`}
           alt={word.word}
         />
@@ -134,7 +140,6 @@ const WordCard: React.FC<WordCardProps> = ({ word, numberInList, removeFromHard,
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              // alignItems: 'center',
               justifyContent: 'space-between',
             }}
           >
@@ -273,54 +278,33 @@ const WordCard: React.FC<WordCardProps> = ({ word, numberInList, removeFromHard,
               </Box>
               {word.userWord && (
                 <Box>
-                  {!!(wordStat.sprint.right + wordStat.sprint.wrong) && (
-                    <Box sx={{ mb: 0.25 }}>
-                      <Typography align="center" variant="body2" sx={{ color: 'text.secondary' }}>
-                        Спринт
-                      </Typography>
-                      <Typography align="center" variant="body1">
-                        <Box component="span" sx={{ color: green[500] }}>
-                          {wordStat.sprint.right}
-                        </Box>
-                        /
-                        <Box component="span" sx={{ color: red[500] }}>
-                          {wordStat.sprint.wrong}
-                        </Box>
-                      </Typography>
-                    </Box>
-                  )}
-                  {!!(wordStat.audiocall.right + wordStat.audiocall.wrong) && (
-                    <Box sx={{ mb: 0.25 }}>
-                      <Typography align="center" variant="body2" sx={{ color: 'text.secondary' }}>
-                        Спринт
-                      </Typography>
-                      <Typography align="center" variant="body1">
-                        <Box component="span" sx={{ color: green[500] }}>
-                          {wordStat.audiocall.right}
-                        </Box>
-                        /
-                        <Box component="span" sx={{ color: red[500] }}>
-                          {wordStat.audiocall.wrong}
-                        </Box>
-                      </Typography>
-                    </Box>
-                  )}
-                  {!!(wordStat.savannah.right + wordStat.savannah.wrong) && (
-                    <Box sx={{ mb: 0.25 }}>
-                      <Typography align="center" variant="body2" sx={{ color: 'text.secondary' }}>
-                        Спринт
-                      </Typography>
-                      <Typography align="center" variant="body1">
-                        <Box component="span" sx={{ color: green[500] }}>
-                          {wordStat.savannah.right}
-                        </Box>
-                        /
-                        <Box component="span" sx={{ color: red[500] }}>
-                          {wordStat.sprint.wrong}
-                        </Box>
-                      </Typography>
-                    </Box>
-                  )}
+                  {(
+                    ['sprint', 'audiocall', 'savannah'] as Array<
+                      'sprint' | 'audiocall' | 'savannah'
+                    >
+                  ).map((game) => {
+                    let gameName: string;
+                    switch (game) {
+                      case 'sprint':
+                        gameName = 'Спринт';
+                        break;
+                      case 'audiocall':
+                        gameName = 'Аудиовызов';
+                        break;
+                      case 'savannah':
+                        gameName = 'Саванна';
+                        break;
+                    }
+                    return (
+                      !!(wordStat[game].right + wordStat[game].wrong) && (
+                        <GameStat
+                          gameName={gameName}
+                          right={wordStat[game].right}
+                          wrong={wordStat[game].wrong}
+                        />
+                      )
+                    );
+                  })}
                 </Box>
               )}
             </Box>
