@@ -33,7 +33,7 @@ import { withAsync } from '../../../api/helpers/withAsync';
 
 function Counter(props: { handleFinish: () => void }) {
   const [count, { startCountdown }] = useCountdown({
-    countStart: 20,
+    countStart: 30,
     intervalMs: 1000,
   });
 
