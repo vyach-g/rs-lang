@@ -8,7 +8,8 @@ import sprint from '../../assets/leo-sprint.svg';
 
 export const Wrapper = styled.div`
   width: 100%;
-  height: calc(100vh - 203px);
+  padding: 32px 0;
+  // height: calc(100vh - 203px);
   background-color: #f4fbff;
   background-image: url(${bottomLeft}), url(${topRight});
   background-repeat: no-repeat;
