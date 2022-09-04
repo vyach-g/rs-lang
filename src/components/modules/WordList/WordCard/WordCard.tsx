@@ -58,7 +58,6 @@ const WordCard: React.FC<WordCardProps> = ({
         wordStat[game].wrong += 1;
       }
     }
-    console.log('wordStat', wordStat);
   }
 
   const handleDifficulty = (newDifficulty: 'hard' | 'easy') => {
@@ -174,9 +173,7 @@ const WordCard: React.FC<WordCardProps> = ({
 
                   <IconButton
                     sx={{ width: 32, height: 32 }}
-                    onClick={() => {
-                      isPlaying ? stopAudio() : playAudio();
-                    }}
+                    onClick={() => (isPlaying ? stopAudio() : playAudio())}
                   >
                     {isPlaying ? <StopIcon /> : <VolumeUpIcon />}
                   </IconButton>
@@ -257,9 +254,7 @@ const WordCard: React.FC<WordCardProps> = ({
                     height: 32,
                     color: difficulty === 'easy' ? green[100] : green[500],
                   }}
-                  onClick={() => {
-                    handleDifficulty('easy');
-                  }}
+                  onClick={() => handleDifficulty('easy')}
                 >
                   <CheckCircleIcon />
                 </IconButton>
@@ -269,9 +264,7 @@ const WordCard: React.FC<WordCardProps> = ({
                     height: 32,
                     color: difficulty === 'hard' ? red[100] : red[500],
                   }}
-                  onClick={() => {
-                    handleDifficulty('hard');
-                  }}
+                  onClick={() => handleDifficulty('hard')}
                 >
                   <DoDisturbOnIcon />
                 </IconButton>

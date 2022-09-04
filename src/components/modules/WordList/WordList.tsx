@@ -258,9 +258,7 @@ const WordList: React.FC<WordListProps> = (props) => {
                         transform: 'translate(0px, -5px)',
                       },
                     }}
-                    onClick={() => {
-                      changeGroup(index);
-                    }}
+                    onClick={() => changeGroup(index)}
                   >
                     {value}
                   </Box>
@@ -317,9 +315,7 @@ const WordList: React.FC<WordListProps> = (props) => {
                             transform: 'translate(0px, -5px)',
                           },
                         }}
-                        onClick={() => {
-                          changePage(index);
-                        }}
+                        onClick={() => changePage(index)}
                       >
                         {index + 1}
                       </Box>
