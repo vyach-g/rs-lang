@@ -24,7 +24,13 @@ const Showcase: React.FC<ShowcaseProps> = (props) => {
       <Typography variant="h4" align="center" gutterBottom={true}>
         Закрепите знания в играх
       </Typography>
-      <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
+      <Stack
+        direction="row"
+        spacing={2}
+        justifyContent="center"
+        alignItems="center"
+        sx={{ flexWrap: 'wrap', px: '20px', rowGap: '1rem' }}
+      >
         <Box
           sx={{
             height: '240px',

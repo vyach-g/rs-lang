@@ -59,6 +59,7 @@ const AnswersCustom = styled('div')({
   padding: '0 2rem',
   width: '100%',
   marginLeft: '-3rem',
+  overflowX: 'hidden',
 });
 
 const AnswersList = styled('ul')({

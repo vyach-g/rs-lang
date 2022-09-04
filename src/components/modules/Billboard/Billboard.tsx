@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { styled } from '@mui/material/styles';
 
 import { Typography } from '@mui/material';
@@ -99,8 +99,17 @@ const BillboardImage = styled('img')(({ theme }) => ({
 }));
 
 const Billboard = () => {
+  const sectionRef = useRef(null);
+
+  const handleAnchor = () => {
+    const currentSectoin = sectionRef.current;
+
+    if (currentSectoin)
+      window.scrollBy({ left: 0, top: currentSectoin['clientHeight'], behavior: 'smooth' });
+  };
+
   return (
-    <BillboardCustom>
+    <BillboardCustom ref={sectionRef}>
       <BillboardContainer>
         <BillboardInfo>
           <BillboardHeading variant="h1">
@@ -113,7 +122,9 @@ const Billboard = () => {
             <br />
             При пользовании ими, успех не заставит себя ждать
           </BillboardDescription>
-          <BillboardSubmit variant="outlined">Узнать Больше</BillboardSubmit>
+          <BillboardSubmit variant="outlined" onClick={handleAnchor}>
+            Узнать Больше
+          </BillboardSubmit>
         </BillboardInfo>
         <BillboardImage src={BgImage} />
       </BillboardContainer>

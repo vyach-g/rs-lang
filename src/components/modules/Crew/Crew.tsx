@@ -4,6 +4,10 @@ import { styled } from '@mui/material/styles';
 import { Grid, Typography } from '@mui/material';
 import { MemberCard } from '../../base';
 
+import vyachImg from '../../../assets/vyach_crew.jpeg';
+import innaImg from '../../../assets/inna_crew.png';
+import ivanImg from '../../../assets/ivan_crew.png';
+
 const CrewCustom = styled('section')(({ theme }) => ({
   display: 'block',
   padding: '3.5rem 0',
@@ -52,20 +56,23 @@ const CrewMembers = [
   {
     name: 'Вячеслав',
     location: 'г. Петропавловск, Казахстан',
+    image: vyachImg,
     description:
-      'Тим-лид проекта. Координировал работу команды. Отвечал за создание электронного учебника, за навигацию по разделам, страницам учебника. ',
+      'Тим-лид проекта. Координировал работу команды. Отвечал за создание электронного учебника, долгосрочной статистики.',
   },
   {
     name: 'Инна',
     location: 'г. Астана, Казахстан',
+    image: innaImg,
     description:
       'Разработчик. Настроила регистрацию и авторизацию пользователя. Автор игры "Спринт". Сделала страницу статистики.',
   },
   {
     name: 'Иван',
     location: 'г. Архангельск, Россия',
+    image: ivanImg,
     description:
-      'Разработчик. Отвечал за архитектуру приложения. Создатель главной страницы приложения. Автор игры "Аудиовызов" и "Саванна".',
+      'Разработчик. Отвечал за архитектуру приложения. Создатель главной страницы приложения. Автор игр "Аудиовызов" и "Саванна".',
   },
 ];
 
@@ -95,6 +102,7 @@ const Crew = () => {
               <MemberCard
                 name={member.name}
                 description={member.description}
+                img={member.image}
                 location={member.location}
                 side={index % 2}
               />

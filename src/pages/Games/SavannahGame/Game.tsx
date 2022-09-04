@@ -190,35 +190,35 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
           >
             <FavoriteIcon
               sx={{
-                fill: `${currHP > 0 ? 'rgba(250,211,207,1)' : '#C6B4CE'}`,
+                fill: `${currHP > 0 ? 'red' : '#C6B4CE'}`,
                 fontSize: '1.6rem',
                 cursor: 'pointer',
               }}
             />
             <FavoriteIcon
               sx={{
-                fill: `${currHP > 1 ? 'rgba(250,211,207,1)' : '#C6B4CE'}`,
+                fill: `${currHP > 1 ? 'red' : '#C6B4CE'}`,
                 fontSize: '1.6rem',
                 cursor: 'pointer',
               }}
             />
             <FavoriteIcon
               sx={{
-                fill: `${currHP > 2 ? 'rgba(250,211,207,1)' : '#C6B4CE'}`,
+                fill: `${currHP > 2 ? 'red' : '#C6B4CE'}`,
                 fontSize: '1.6rem',
                 cursor: 'pointer',
               }}
             />
             <FavoriteIcon
               sx={{
-                fill: `${currHP > 3 ? 'rgba(250,211,207,1)' : '#C6B4CE'}`,
+                fill: `${currHP > 3 ? 'red' : '#C6B4CE'}`,
                 fontSize: '1.6rem',
                 cursor: 'pointer',
               }}
             />
             <FavoriteIcon
               sx={{
-                fill: `${currHP > 4 ? 'rgba(250,211,207,1)' : '#C6B4CE'}`,
+                fill: `${currHP > 4 ? 'red' : '#C6B4CE'}`,
                 fontSize: '1.6rem',
                 cursor: 'pointer',
               }}
