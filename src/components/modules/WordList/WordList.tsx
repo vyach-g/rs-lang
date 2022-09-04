@@ -2,53 +2,80 @@ import React, { useEffect, useState } from 'react';
 import { AxiosResponse } from 'axios';
 import { useAuthContext } from '../../../context/AuthContextProvider';
 import storage from '../../../storage/storage';
-import { getWords, getUserAggregatedWords } from '../../../api/apiCalls';
-import { UserAggregatedWord, UserAggregatedWords } from '../../../api/apiCalls.types';
+import { getWords, getUserAggregatedWords, getUserWords } from '../../../api/apiCalls';
+import { WordDTO } from '../../../api/apiCalls.types';
 import {
   GROUP_COLORS,
   PAGE_PER_GROUP,
-  TextbookTab,
+  TextbookGroup,
+  WordCardData,
   WORDS_TOTAL,
   WORD_PER_PAGE,
 } from './wordListConsts';
 
-import { WordCard } from '../../base';
-import {
-  Container,
-  Typography,
-  Grid,
-  Box,
-  Card,
-  CardMedia,
-} from '@mui/material';
+import { WordCard } from './WordCard/WordCard';
+import { Container, Typography, Grid, Box } from '@mui/material';
+import { SkeletonWordCard } from './WordCard/SkeletonWordCard';
+import { NoHardWords } from './NoHardWords';
 
 type WordListProps = {
   group: number;
   setGroup: React.Dispatch<React.SetStateAction<number>>;
   page: number;
   setPage: React.Dispatch<React.SetStateAction<number>>;
+  currentPageLearned: boolean;
+  setCurrentPageLearned: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-const WordList: React.FC<WordListProps> = (props) => {
+const WordList: React.FC<WordListProps> = ({
+  group,
+  setGroup,
+  page,
+  setPage,
+  currentPageLearned,
+  setCurrentPageLearned,
+}) => {
   const { auth } = useAuthContext();
   const [isLoading, setIsLoading] = useState(true);
-  const [wordList, setWordList] = useState<UserAggregatedWord[]>([]);
-  const [learnedPages, setLearnedPages] = useState(new Array(PAGE_PER_GROUP));
 
-  const { group, setGroup, page, setPage } = props;
+  const [wordList, setWordList] = useState<WordCardData[]>([]);
+  const [wordsToDisplay, setWordsToDisplay] = useState<WordCardData[]>([]);
+  const [learnedList, setLearnedList] = useState<Array<'hard' | 'easy' | null>>([]);
+
+  useEffect(() => {
+    const currentLearnedList = learnedList.slice(page * WORD_PER_PAGE, (page + 1) * WORD_PER_PAGE);
+    const isLearned = currentLearnedList.reduce((prev, curr) => prev && !!curr, true);
+    setCurrentPageLearned(isLearned);
+  }, [learnedList, page]);
 
   useEffect(() => {
     setIsLoading(true);
     if (!auth) {
-      getWords(group, page)
-        .then((response) => {
-          const words = response.data.map((word) => {
-            const formattedWords = Object.assign(word);
-            formattedWords._id = formattedWords.id;
-            formattedWords.userWord = null;
-            return formattedWords;
+      const dataPromises: Promise<AxiosResponse<WordDTO[]>>[] = [];
+      for (let i = 0; i < PAGE_PER_GROUP; i++) {
+        dataPromises.push(getWords(group, i));
+      }
+
+      Promise.all(dataPromises)
+        .then(async (promises) => {
+          const wordDataByPage: Array<WordDTO[]> = [];
+          for (let i = 0; i < 30; i++) {
+            const wordData = await dataPromises[i].then((res) => res.data);
+            wordDataByPage.push(wordData);
+          }
+          const wordsData = wordDataByPage.flat();
+
+          const aggregatedData = wordsData.map((word, index) => {
+            const aggregatedWord = Object.assign(word);
+            aggregatedWord.listId = index;
+            return aggregatedWord;
           });
-          setWordList(words);
+
+          const pageWords = aggregatedData.slice(page * WORD_PER_PAGE, (page + 1) * WORD_PER_PAGE);
+
+          setWordList(aggregatedData);
+          setLearnedList(aggregatedData.map(() => null));
+          setWordsToDisplay(pageWords);
           setIsLoading(false);
         })
         .then(() => {
@@ -59,12 +86,53 @@ const WordList: React.FC<WordListProps> = (props) => {
           console.log(err);
         });
     } else {
-      if (group !== TextbookTab.Hard) {
-        getUserAggregatedWords(auth.userId, group, page, WORD_PER_PAGE)
-          .then((res) => {
-            const words = res.data[0].paginatedResults;
-            const learned = words.map((word) => !!word?.userWord?.difficulty);
-            setWordList(words);
+      if (group !== TextbookGroup.Hard) {
+        const wordPromises: Promise<AxiosResponse<WordDTO[]>>[] = [];
+        for (let i = 0; i < PAGE_PER_GROUP; i++) {
+          wordPromises.push(getWords(group, i));
+        }
+        const learnedPromise = getUserWords(auth.userId);
+        const dataPromises = [...wordPromises, learnedPromise];
+
+        Promise.all(dataPromises)
+          .then(async (promises) => {
+            const wordDataByPage: Array<WordDTO[]> = [];
+            for (let i = 0; i < 30; i++) {
+              const wordData = await wordPromises[i].then((res) => res.data);
+              wordDataByPage.push(wordData);
+            }
+
+            const wordsData = wordDataByPage.flat();
+            const learnedWords = await learnedPromise.then((res) => res.data);
+            const learnedData: Array<'hard' | 'easy' | null> = [];
+            const aggregatedData = wordsData.map((word, index) => {
+              const aggregatedWord = Object.assign(word);
+              const id = aggregatedWord.id;
+              learnedData[index] = null;
+              aggregatedWord.listId = index;
+
+              for (let i = 0; i < learnedWords.length; i++) {
+                const learnedWord = learnedWords[i];
+                if (id === learnedWord.wordId) {
+                  aggregatedWord.userWord = {
+                    difficulty: learnedWord.difficulty,
+                    optional: learnedWord.optional,
+                  };
+                  learnedData[index] = learnedWord.difficulty;
+                  break;
+                }
+              }
+              return aggregatedWord;
+            });
+
+            const pageWords = aggregatedData.slice(
+              page * WORD_PER_PAGE,
+              (page + 1) * WORD_PER_PAGE
+            );
+
+            setWordList(aggregatedData);
+            setLearnedList(learnedData);
+            setWordsToDisplay(pageWords);
             setIsLoading(false);
           })
           .then(() => {
@@ -83,9 +151,19 @@ const WordList: React.FC<WordListProps> = (props) => {
           JSON.stringify({ 'userWord.difficulty': 'hard' })
         )
           .then((res) => {
-            const words = res.data[0].paginatedResults;
-            setWordList(words);
-            storage.setItem('textbookGroup', group);
+            const wordsData = res.data[0].paginatedResults;
+            const learnedData: Array<'hard' | 'easy' | null> = [];
+            const aggregatedData = wordsData.map((word, index) => {
+              const aggregatedWord = Object.assign(word);
+              aggregatedWord.id = word._id;
+              aggregatedWord.listId = index;
+              learnedData[index] = word?.userWord?.difficulty || null;
+              return aggregatedWord;
+            });
+
+            setWordList(aggregatedData);
+            setLearnedList(learnedData);
+            setWordsToDisplay(aggregatedData);
             setIsLoading(false);
           })
           .then(() => {
@@ -97,30 +175,50 @@ const WordList: React.FC<WordListProps> = (props) => {
           });
       }
     }
-  }, [group, page]);
+  }, [group]);
 
   const removeFromHard = (num: number) => {
     const newHardWordList = [...wordList.slice(0, num), ...wordList.slice(num + 1)];
+    setWordsToDisplay(newHardWordList);
     setWordList(newHardWordList);
+    setLearnedList(newHardWordList.map((word) => word.userWord.difficulty));
   };
 
-  useEffect(() => {
-    if (auth && page !== TextbookTab.Hard) {
-      const pagesPromises: Promise<AxiosResponse<UserAggregatedWords>>[] = [];
-      for (let i = 0; i < PAGE_PER_GROUP; i++) {
-        pagesPromises.push(getUserAggregatedWords(auth.userId, group, i, WORD_PER_PAGE));
-      }
-      Promise.all(pagesPromises).then((promises) => {
-        const learned = promises.map((promise) => {
-          const words = promise.data[0].paginatedResults;
-          return words.reduce((prev, curr) => {
-            return prev && !!curr?.userWord?.difficulty;
-          }, true);
-        });
-        setLearnedPages(learned);
-      });
+  const defineLearnedPage = (pageNum: number) => {
+    const isLearned = learnedList
+      .slice(pageNum * WORD_PER_PAGE, (pageNum + 1) * WORD_PER_PAGE)
+      .reduce((prev, curr) => prev && !!curr, true);
+    return isLearned;
+  };
+
+  const changePage = (pageNum: number) => {
+    if (page !== pageNum && !isLoading) {
+      setIsLoading(true);
+      const pageWords = wordList.slice(pageNum * WORD_PER_PAGE, (pageNum + 1) * WORD_PER_PAGE);
+      setWordsToDisplay(pageWords);
+      setIsLoading(false);
+      setPage(pageNum);
+      storage.setItem('textbookGroup', group);
+      storage.setItem('textbookPage', pageNum);
     }
-  }, [group, page]);
+  };
+
+  const changeGroup = (groupNum: number) => {
+    if (group !== groupNum && !isLoading) {
+      setIsLoading(true);
+      setWordsToDisplay([]);
+      setGroup(groupNum);
+      setPage(0);
+      storage.setItem('textbookGroup', group);
+      storage.setItem('textbookPage', page);
+    }
+  };
+
+  const markWordAsLearned = (listId: number, result: 'easy' | 'hard') => {
+    const newLearnedList = learnedList.slice();
+    newLearnedList[listId] = result;
+    setLearnedList(newLearnedList);
+  };
 
   return (
     <Container sx={{ py: 2 }}>
@@ -138,7 +236,10 @@ const WordList: React.FC<WordListProps> = (props) => {
           }}
         >
           <Box sx={{ width: '850px', py: 1, display: 'flex', justifyContent: 'space-between' }}>
-            {['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Сложные слова'].map((value, index) => {
+            {(auth
+              ? ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Сложные слова']
+              : ['A1', 'A2', 'B1', 'B2', 'C1', 'C2']
+            ).map((value, index) => {
               return (
                 <Box
                   component="div"
@@ -170,15 +271,7 @@ const WordList: React.FC<WordListProps> = (props) => {
                         transform: 'translate(0px, -5px)',
                       },
                     }}
-                    onClick={() => {
-                      if (group !== index) {
-                        setIsLoading(true);
-                        setLearnedPages([]);
-                        setWordList([]);
-                        setGroup(index);
-                        setPage(1);
-                      }
-                    }}
+                    onClick={() => changeGroup(index)}
                   >
                     {value}
                   </Box>
@@ -187,7 +280,7 @@ const WordList: React.FC<WordListProps> = (props) => {
             })}
           </Box>
         </Box>
-        {group !== TextbookTab.Hard && (
+        {group !== TextbookGroup.Hard && (
           <Box
             sx={{
               width: '100%',
@@ -225,7 +318,7 @@ const WordList: React.FC<WordListProps> = (props) => {
                           boxSizing: 'border-box',
                           backgroundColor: isLoading
                             ? '#E3E3E3'
-                            : learnedPages[index]
+                            : defineLearnedPage(index)
                             ? GROUP_COLORS[group].dark
                             : GROUP_COLORS[group].light,
                           border: index === page ? '5px solid rgba(255, 255, 255, .5)' : '',
@@ -235,13 +328,7 @@ const WordList: React.FC<WordListProps> = (props) => {
                             transform: 'translate(0px, -5px)',
                           },
                         }}
-                        onClick={() => {
-                          if (page !== index && !isLoading) {
-                            setIsLoading(true);
-                            setWordList([]);
-                            setPage(index);
-                          }
-                        }}
+                        onClick={() => changePage(index)}
                       >
                         {index + 1}
                       </Box>
@@ -253,55 +340,28 @@ const WordList: React.FC<WordListProps> = (props) => {
         )}
         {
           <>
-            {wordList.map((word, index) => {
+            {wordsToDisplay.map((word, index) => {
               return (
                 <WordCard
                   removeFromHard={removeFromHard}
-                  isHardGroup={group === TextbookTab.Hard}
-                  index={index}
-                  key={word._id}
-                  {...word}
+                  markWordAsLearned={markWordAsLearned}
+                  isHardGroup={group === TextbookGroup.Hard}
+                  numberInList={index}
+                  key={word.listId}
+                  word={word}
                 ></WordCard>
               );
             })}
           </>
         }
-        {
-          isLoading &&
-            Array(20)
-              .fill('')
-              .map((elem, index) => {
-                return (
-                  <Container key={index} maxWidth="md">
-                    <Card
-                      sx={{
-                        display: { sm: 'flex' },
-                        height: { xs: '510px', sm: '186px' },
-                        backgroundColor: '#F3F3F3',
-                        borderRadius: 3,
-                        marginBottom: '30px',
-                        boxShadow: '0 4px 10px rgba(0,0,0,0.08)',
-                      }}
-                    >
-                      <CardMedia
-                        sx={{ width: { sm: 200 }, minHeight: 186, backgroundColor: '#E3E3E3' }}
-                        component="span"
-                      />
-                    </Card>
-                  </Container>
-                );
-              })
-
-        }
-        {auth && !isLoading && group === TextbookTab.Hard && wordList.length === 0 && (
-          <>
-            <Typography variant="h4" align="center" gutterBottom={true}>
-              Отличная работа!
-            </Typography>
-            <Typography variant="h5" align="center" gutterBottom={true}>
-              Все сложные слова выучены
-            </Typography>
-          </>
+        {isLoading &&
+          Array(20)
+            .fill('')
+            .map((elem, index) => {
+              return <SkeletonWordCard key={index} />;
+            })}
+        {auth && !isLoading && group === TextbookGroup.Hard && wordsToDisplay.length === 0 && (
+          <NoHardWords />
         )}
       </Grid>
     </Container>
