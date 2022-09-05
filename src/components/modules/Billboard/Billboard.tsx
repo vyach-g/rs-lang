@@ -7,11 +7,11 @@ import Button from '@mui/material/Button';
 import BgImage from '../../../assets/bg-1.png';
 
 const BillboardCustom = styled('section')(({ theme }) => ({
-  display: 'block',
-  padding: '3rem 0',
+  display: 'flex',
+  justifyContent: 'center',
+  padding: '4.5rem 0',
   [theme.breakpoints.down('md')]: {
-    padding: '1.5rem 0',
-    textAlign: 'center',
+    padding: '2.5rem 0',
   },
 }));
 
@@ -20,6 +20,7 @@ const BillboardContainer = styled('div')(({ theme }) => ({
   flexDirection: 'row-reverse',
   alignItems: 'center',
   justifyContent: 'center',
+  maxWidth: '1280px',
   rowGap: '1.4rem',
   columnGap: '4rem',
   padding: '0 24px',
@@ -60,6 +61,7 @@ const BillboardDescription = styled(Typography)(({ theme }) => ({
   fontSize: '1rem',
   color: 'inherit',
   fontWeight: '400',
+  maxWidth: '700px',
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.9rem',
   },
@@ -78,13 +80,16 @@ const BillboardSubmit = styled(Button)(({ theme }) => ({
     borderWidth: '2px',
     backgroundColor: '#ff4d4d',
   },
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '0.9rem',
+  },
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.8rem',
   },
 }));
 
 const BillboardImage = styled('img')(({ theme }) => ({
-  maxWidth: '400px',
+  maxWidth: '380px',
   width: '100%',
   height: 'auto',
   opacity: '0.8',
@@ -105,7 +110,11 @@ const Billboard = () => {
     const currentSectoin = sectionRef.current;
 
     if (currentSectoin)
-      window.scrollBy({ left: 0, top: currentSectoin['clientHeight'], behavior: 'smooth' });
+      window.scrollBy({
+        left: 0,
+        top: currentSectoin['clientHeight'] - window.pageYOffset,
+        behavior: 'smooth',
+      });
   };
 
   return (

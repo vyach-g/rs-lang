@@ -16,7 +16,10 @@ const CardCustom = styled(Card)<CardCustomProps>(({ theme, side }) => ({
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  cursor: 'pointer',
+  userSelect: 'none',
+  [theme.breakpoints.down('md')]: {
+    maxWidth: '320px',
+  },
   [theme.breakpoints.down('md')]: {
     '& .css-46bh2p-MuiCardContent-root': {
       padding: side === 'lr' ? '0.5rem 0.5rem 0.5rem 1rem' : '0.5rem 1rem 0.5rem 0.5rem',
@@ -54,21 +57,21 @@ const MemberCard: React.FC<Props> = ({ name, description, location, img, side })
         component="img"
         image={img}
         alt="Team Member"
-        sx={{ height: ['180px', '200px', '240px'] }}
+        sx={{ height: ['180px', '200px', '220px'] }}
       />
       <CardContent>
         <Typography
           gutterBottom
           variant="h6"
           component="div"
-          sx={{ fontWeight: '600', fontSize: '1.5rem' }}
+          sx={{ fontWeight: '600', fontSize: ['1.3rem', '1.3rem', '1.5rem'] }}
         >
           {name}
         </Typography>
         <Typography
           gutterBottom
           component="div"
-          sx={{ fontWeight: '500', fontSize: '1.1rem', marginTop: '-0.4rem' }}
+          sx={{ fontWeight: '500', fontSize: ['1.1rem', '1.1rem', '1.2rem'], marginTop: '-0.4rem' }}
         >
           {location}
         </Typography>

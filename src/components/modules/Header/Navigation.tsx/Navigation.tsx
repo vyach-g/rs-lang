@@ -14,8 +14,6 @@ const NavContainer = styled(List)(({ theme }) => ({
     flexDirection: 'column',
     alignItems: 'center',
     rowGap: '2rem',
-    paddingTop: '80px',
-    paddingBottom: '0',
   },
   position: 'relative',
   zIndex: '1',

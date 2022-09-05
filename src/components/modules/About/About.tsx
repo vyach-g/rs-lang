@@ -8,17 +8,15 @@ import CoverImage from '../../../assets/test6.jpg';
 
 const AboutCustom = styled('section')(({ theme }) => ({
   display: 'block',
-  padding: '3rem 0',
   width: '100%',
-  [theme.breakpoints.down('md')]: {
-    padding: '1.5rem 0',
-  },
 }));
 
 const AboutContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
+  justifyContent: 'center',
   alignItems: 'center',
+  height: '100%',
   rowGap: '1.2rem',
   paddingInline: '24px',
   textAlign: 'center',
@@ -50,11 +48,15 @@ const AboutDescription = styled(Typography)(({ theme }) => ({
 }));
 
 const PlayerRelativeWrapper = styled('div')(({ theme }) => ({
-  maxWidth: '950px',
+  maxWidth: '940px',
   width: '100%',
   height: 'auto',
   [theme.breakpoints.down('md')]: {
+    maxWidth: '700px',
+  },
+  [theme.breakpoints.down('sm')]: {
     maxWidth: '540px',
+    padding: '1.5rem 0',
   },
 }));
 
@@ -114,7 +116,7 @@ const About = () => {
         <PlayerRelativeWrapper>
           <PlayerWrapper onClick={handlePlayer} isPlaying={isPlaying}>
             <ReactPlayer
-              url="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+              url="https://www.youtube.com/watch?v=tj5oJip3HqU"
               playing
               controls
               light={CoverImage}
