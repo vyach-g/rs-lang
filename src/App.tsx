@@ -6,7 +6,14 @@ import { createTheme, ThemeProvider } from '@mui/material';
 
 const theme = createTheme({
   typography: {
-    fontFamily: ['Gilroy', 'Nunito', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'].join(','),
+    fontFamily: [
+      'Gilroy-Regular',
+      'Nunito',
+      'Roboto',
+      'Helvetica Neue',
+      'Arial',
+      'sans-serif',
+    ].join(','),
   },
 });
 
