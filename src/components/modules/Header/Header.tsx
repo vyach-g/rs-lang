@@ -60,7 +60,14 @@ const Header = () => {
     <HeaderCustom position="sticky">
       <HeaderContainer>
         <HeaderGeneral>
-          <Typography variant="h6" component="div">
+          <Typography
+            variant="h1"
+            component="div"
+            sx={{
+              fontSize: ['1.4rem', '1.6rem', '1.8rem'],
+              fontWeight: '600',
+            }}
+          >
             <LinkOuter href="/" sx={{ textDecoration: 'none', color: 'inherit' }}>
               RSLang
             </LinkOuter>
@@ -85,11 +92,14 @@ const Header = () => {
             display: ['flex', 'none'],
             position: 'relative',
             zIndex: '10',
+            '& .MuiPaper-elevation': {
+              justifyContent: 'center',
+            },
             '& .MuiDrawer-paper': { width: '100%', height: '100vh' },
             '& .css-1nvnyqx-MuiPaper-root-MuiDrawer-paper': {
               boxShadow: 'none !important',
             },
-            '& * .css-uc62by-MuiList-root': {
+            '& * .MuiList-padding': {
               display: 'flex',
             },
           }}

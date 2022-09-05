@@ -9,11 +9,15 @@ import innaImg from '../../../assets/inna_crew.png';
 import ivanImg from '../../../assets/ivan_crew.png';
 
 const CrewCustom = styled('section')(({ theme }) => ({
-  display: 'block',
-  padding: '3.5rem 0',
+  display: 'flex',
+  alignItems: 'center',
+  height: '100vh',
   [theme.breakpoints.down('md')]: {
-    padding: '1.5rem 0',
     textAlign: 'center',
+  },
+  [theme.breakpoints.down('sm')]: {
+    height: 'auto',
+    padding: '1.5rem 0 1.5rem 0',
   },
 }));
 
@@ -43,10 +47,13 @@ const CrewHeading = styled(Typography)(({ theme }) => ({
 }));
 
 const CrewDescription = styled(Typography)(({ theme }) => ({
-  fontSize: '1rem',
+  fontSize: '1.1rem',
   color: 'inherit',
   fontWeight: '400',
   textAlign: 'center',
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '1rem',
+  },
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.9rem',
   },

@@ -8,17 +8,22 @@ import CoverImage from '../../../assets/test6.jpg';
 
 const AboutCustom = styled('section')(({ theme }) => ({
   display: 'block',
-  padding: '3rem 0',
   width: '100%',
+  height: 'calc(100vh - 70px)',
   [theme.breakpoints.down('md')]: {
     padding: '1.5rem 0',
+  },
+  [theme.breakpoints.down('sm')]: {
+    height: 'auto',
   },
 }));
 
 const AboutContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
+  justifyContent: 'center',
   alignItems: 'center',
+  height: '100%',
   rowGap: '1.2rem',
   paddingInline: '24px',
   textAlign: 'center',
@@ -40,21 +45,28 @@ const AboutHeading = styled(Typography)(({ theme }) => ({
 }));
 
 const AboutDescription = styled(Typography)(({ theme }) => ({
-  fontSize: '1rem',
+  fontSize: '1.1rem',
   color: 'inherit',
   fontWeight: '400',
   textAlign: 'center',
+  [theme.breakpoints.down('lg')]: {
+    fontSize: '1rem',
+  },
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.9rem',
   },
 }));
 
 const PlayerRelativeWrapper = styled('div')(({ theme }) => ({
-  maxWidth: '950px',
+  maxWidth: '940px',
   width: '100%',
   height: 'auto',
   [theme.breakpoints.down('md')]: {
+    maxWidth: '700px',
+  },
+  [theme.breakpoints.down('sm')]: {
     maxWidth: '540px',
+    padding: '1.5rem 0',
   },
 }));
 
@@ -114,7 +126,7 @@ const About = () => {
         <PlayerRelativeWrapper>
           <PlayerWrapper onClick={handlePlayer} isPlaying={isPlaying}>
             <ReactPlayer
-              url="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+              url="https://www.youtube.com/watch?v=tj5oJip3HqU"
               playing
               controls
               light={CoverImage}
