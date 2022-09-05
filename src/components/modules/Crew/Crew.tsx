@@ -12,6 +12,7 @@ const CrewCustom = styled('section')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   height: 'calc(100vh-70px)',
+  padding: '3rem 0',
   [theme.breakpoints.down('md')]: {
     textAlign: 'center',
   },
