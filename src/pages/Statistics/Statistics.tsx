@@ -160,7 +160,12 @@ const Statistics = () => {
           datasets: [
             {
               label: 'Изучено слов',
-              data: Object.values(counter).map((value) => value.right + value.wrong),
+              data: Object.values(counter).map(
+                (elem, i, arr) =>
+                  elem.right +
+                  elem.wrong +
+                  arr.slice(0, i).reduce((prev, curr) => prev + curr.right + curr.wrong, 0)
+              ),
               borderColor: blue[300],
               backgroundColor: '#64b5f655',
               fill: true,
