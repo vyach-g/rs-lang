@@ -11,14 +11,9 @@ import ivanImg from '../../../assets/ivan_crew.png';
 const CrewCustom = styled('section')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  height: 'calc(100vh-70px)',
-  padding: '3rem 0',
+  padding: '4.5rem 0',
   [theme.breakpoints.down('md')]: {
-    textAlign: 'center',
-  },
-  [theme.breakpoints.down('sm')]: {
-    height: 'auto',
-    padding: '1.5rem 0 1.5rem 0',
+    padding: '2.5rem 0',
   },
 }));
 
@@ -39,6 +34,7 @@ const CrewHeading = styled(Typography)(({ theme }) => ({
   color: 'inherit',
   fontWeight: '600',
   textAlign: 'center',
+  lineHeight: '130%',
   [theme.breakpoints.down('md')]: {
     fontSize: '1.8rem',
   },
@@ -48,13 +44,10 @@ const CrewHeading = styled(Typography)(({ theme }) => ({
 }));
 
 const CrewDescription = styled(Typography)(({ theme }) => ({
-  fontSize: '1.1rem',
+  fontSize: '1rem',
   color: 'inherit',
   fontWeight: '400',
   textAlign: 'center',
-  [theme.breakpoints.down('lg')]: {
-    fontSize: '1rem',
-  },
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.9rem',
   },

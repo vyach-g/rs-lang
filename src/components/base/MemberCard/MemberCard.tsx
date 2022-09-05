@@ -11,7 +11,7 @@ interface CardCustomProps {
 }
 
 const CardCustom = styled(Card)<CardCustomProps>(({ theme, side }) => ({
-  maxWidth: '340px',
+  maxWidth: '300px',
   width: '100%',
   height: '100%',
   display: 'flex',
@@ -57,7 +57,7 @@ const MemberCard: React.FC<Props> = ({ name, description, location, img, side })
         component="img"
         image={img}
         alt="Team Member"
-        sx={{ height: ['180px', '200px', '250px'] }}
+        sx={{ height: ['180px', '200px', '220px'] }}
       />
       <CardContent>
         <Typography
@@ -75,9 +75,7 @@ const MemberCard: React.FC<Props> = ({ name, description, location, img, side })
         >
           {location}
         </Typography>
-        <Typography color="text.secondary" sx={{ fontSize: ['1rem', '1rem'] }}>
-          {description}
-        </Typography>
+        <Typography color="text.secondary">{description}</Typography>
       </CardContent>
     </CardCustom>
   );

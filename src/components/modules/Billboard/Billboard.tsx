@@ -8,14 +8,10 @@ import BgImage from '../../../assets/bg-1.png';
 
 const BillboardCustom = styled('section')(({ theme }) => ({
   display: 'flex',
-  alignItems: 'center',
-  height: 'calc(100vh - 70px)',
+  justifyContent: 'center',
+  padding: '4.5rem 0',
   [theme.breakpoints.down('md')]: {
-    textAlign: 'center',
-  },
-  [theme.breakpoints.down('sm')]: {
-    height: 'auto',
-    padding: '1.5rem 0',
+    padding: '2.5rem 0',
   },
 }));
 
@@ -62,12 +58,10 @@ const BillboardHeading = styled(Typography)(({ theme }) => ({
 }));
 
 const BillboardDescription = styled(Typography)(({ theme }) => ({
-  fontSize: '1.1rem',
+  fontSize: '1rem',
   color: 'inherit',
   fontWeight: '400',
-  [theme.breakpoints.down('lg')]: {
-    fontSize: '1rem',
-  },
+  maxWidth: '700px',
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.9rem',
   },
@@ -95,14 +89,10 @@ const BillboardSubmit = styled(Button)(({ theme }) => ({
 }));
 
 const BillboardImage = styled('img')(({ theme }) => ({
-  maxWidth: '400px',
+  maxWidth: '380px',
   width: '100%',
   height: 'auto',
   opacity: '0.8',
-  [theme.breakpoints.down('lg')]: {
-    maxWidth: '400px',
-    marginTop: '0',
-  },
   [theme.breakpoints.down('md')]: {
     maxWidth: '320px',
     marginTop: '0',

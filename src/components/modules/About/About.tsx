@@ -9,13 +9,6 @@ import CoverImage from '../../../assets/test6.jpg';
 const AboutCustom = styled('section')(({ theme }) => ({
   display: 'block',
   width: '100%',
-  height: 'calc(100vh - 70px)',
-  [theme.breakpoints.down('md')]: {
-    padding: '1.5rem 0',
-  },
-  [theme.breakpoints.down('sm')]: {
-    height: 'auto',
-  },
 }));
 
 const AboutContainer = styled('div')(({ theme }) => ({
@@ -45,13 +38,10 @@ const AboutHeading = styled(Typography)(({ theme }) => ({
 }));
 
 const AboutDescription = styled(Typography)(({ theme }) => ({
-  fontSize: '1.1rem',
+  fontSize: '1rem',
   color: 'inherit',
   fontWeight: '400',
   textAlign: 'center',
-  [theme.breakpoints.down('lg')]: {
-    fontSize: '1rem',
-  },
   [theme.breakpoints.down('sm')]: {
     fontSize: '0.9rem',
   },
