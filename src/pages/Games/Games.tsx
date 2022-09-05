@@ -16,7 +16,13 @@ export default function Games() {
   return (
     <Wrapper>
       <Default>
-        <Stack direction="row" spacing={2} justifyContent="center" alignItems="center">
+        <Stack
+          direction="row"
+          spacing={2}
+          justifyContent="center"
+          alignItems="center"
+          sx={{ flexWrap: 'wrap', px: '20px', rowGap: '1rem' }}
+        >
           <Box
             sx={{
               height: '240px',

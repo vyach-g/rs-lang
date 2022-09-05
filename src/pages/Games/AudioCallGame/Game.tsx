@@ -191,7 +191,7 @@ const Game: React.FC<Props> = ({ newDifficulty, onGameEnd }) => {
       isCorrect: isCorrect,
     };
 
-    if (answerID === 4) {
+    if (answerID === 20) {
       const updatedSeries = isCorrect ? currSeries + 1 : currSeries;
       onGameEnd(
         [...answers, userAnswer],

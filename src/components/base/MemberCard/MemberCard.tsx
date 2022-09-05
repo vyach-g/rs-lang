@@ -43,16 +43,18 @@ interface Props {
   name: string;
   description: string;
   location: string;
+  img: string;
   side: number;
 }
 
-const MemberCard: React.FC<Props> = ({ name, description, location, side }) => {
+const MemberCard: React.FC<Props> = ({ name, description, location, img, side }) => {
   return (
     <CardCustom side={side ? 'rl' : 'lr'}>
       <CardMedia
         component="img"
-        image="https://cdn.dribbble.com/users/79571/screenshots/5848110/illustration_4x.png"
-        alt="Member"
+        image={img}
+        alt="Team Member"
+        sx={{ height: ['180px', '200px', '240px'] }}
       />
       <CardContent>
         <Typography

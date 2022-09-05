@@ -24,7 +24,13 @@ const Showcase: React.FC<ShowcaseProps> = ({ group, page, currentPageLearned }) 
         gap={2}
         justifyContent="center"
         alignItems="center"
-        sx={{ filter: currentPageLearned ? 'grayscale(100%)' : '', transition: 'all 0.3s' }}
+        sx={{
+          filter: currentPageLearned ? 'grayscale(100%)' : '',
+          transition: 'all 0.3s',
+          flexWrap: 'wrap',
+          px: '20px',
+          rowGap: '1rem',
+        }}
       >
         {gameData.map((game) => {
           return (

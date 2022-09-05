@@ -110,9 +110,11 @@ const Registration = () => {
           justifyContent: 'center',
         }}
       >
-        <Typography variant="h2">Регистрация</Typography>
+        <Typography variant="h2" sx={{ mb: '1rem' }}>
+          Регистрация
+        </Typography>
         <form onSubmit={handleSubmit}>
-          <Stack>
+          <Stack sx={{ display: 'flex', flexDirection: 'column', rowGap: '1rem' }}>
             <FormControl variant="standard">
               <InputLabel htmlFor="username">Имя</InputLabel>
               <Input id="username" type="text" required />
@@ -121,12 +123,11 @@ const Registration = () => {
               <InputLabel htmlFor="email">Email</InputLabel>
               <Input id="email" type="email" required />
             </FormControl>
-
             <FormControl variant="standard">
               <InputLabel htmlFor="password">Пароль</InputLabel>
               <Input id="password" type="password" required />
             </FormControl>
-            <Button variant="contained" type="submit" sx={{ mt: '1rem' }}>
+            <Button variant="contained" type="submit">
               Зарегистрироваться
             </Button>
           </Stack>

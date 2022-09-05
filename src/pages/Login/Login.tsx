@@ -81,9 +81,11 @@ const Login = () => {
           justifyContent: 'center',
         }}
       >
-        <Typography variant="h2">Войти</Typography>
+        <Typography variant="h2" sx={{ mb: '1rem' }}>
+          Войти
+        </Typography>
         <form onSubmit={handleSubmit}>
-          <Stack>
+          <Stack sx={{ display: 'flex', flexDirection: 'column', rowGap: '1rem' }}>
             <FormControl variant="standard">
               <InputLabel htmlFor="email">Email</InputLabel>
               <Input id="email" type="email" required />
@@ -93,7 +95,7 @@ const Login = () => {
               <InputLabel htmlFor="password">Пароль</InputLabel>
               <Input id="password" type="password" required />
             </FormControl>
-            <Button variant="contained" type="submit" sx={{ mt: '1rem' }}>
+            <Button variant="contained" type="submit">
               Войти
             </Button>
           </Stack>
